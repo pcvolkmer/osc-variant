@@ -58,16 +58,16 @@ fn main() {
     let contents = fs::read_to_string(cli.input)
         .expect("Should have been able to read the file");
 
-    let mut xml: OnkostarEditor = from_str(contents.as_str()).unwrap();
+    let mut data: OnkostarEditor = from_str(contents.as_str()).unwrap();
 
-    xml.apply_variant();
+    data.apply_variant();
 
     let mut buf = String::new();
 
-    let mut serializier = Serializer::new(&mut buf);
-    serializier.indent(' ', 2);
+    let mut serializer = Serializer::new(&mut buf);
+    serializer.indent(' ', 2);
 
-    xml.serialize(serializier).expect("Generated XML");
+    data.serialize(serializer).expect("Generated XML");
 
     let output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".to_string()
         .add(buf
