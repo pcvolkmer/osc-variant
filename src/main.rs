@@ -58,7 +58,9 @@ fn main() {
     let contents = fs::read_to_string(cli.input)
         .expect("Should have been able to read the file");
 
-    let xml: OnkostarEditor = from_str(contents.as_str()).unwrap();
+    let mut xml: OnkostarEditor = from_str(contents.as_str()).unwrap();
+
+    xml.apply_variant();
 
     let mut buf = String::new();
 

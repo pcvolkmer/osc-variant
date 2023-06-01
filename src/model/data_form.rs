@@ -144,6 +144,22 @@ pub struct DataForm {
     ansichten: Option<Ansichten>
 }
 
+impl DataForm {
+    pub fn apply_variant(&mut self) {
+        if self.name.starts_with("DNPM") {
+            self.entries.entry.iter_mut().for_each(|mut entry| {
+                if entry.type_ == "formReference" {
+                    if let Some(referenced_data_form) = &entry.referenced_data_form {
+                        if referenced_data_form == "OS.Tumorkonferenz" {
+                            entry.referenced_data_form = Some("OS.Tumorkonferenz.VarianteUKW".to_string())
+                        }
+                    }
+                }
+            })
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DataCatalogues {
     #[serde(rename = "DataCatalogue")]

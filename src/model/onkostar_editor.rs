@@ -37,6 +37,17 @@ pub struct OnkostarEditor {
     editor: Editor
 }
 
+impl OnkostarEditor {
+    pub fn apply_variant(&mut self) {
+        self.editor.data_form.iter_mut().for_each(|data_form| {
+            data_form.apply_variant();
+        });
+        self.editor.unterformular.iter_mut().for_each(|data_form| {
+            data_form.apply_variant();
+        })
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct InfoXML {
     #[serde(rename = "DatumXML")]

@@ -1,8 +1,8 @@
-= OSC-Variant
+# OSC-Variant
 
 Anwendung zum Anpassen einer OSC-Datei an einen Standort.
 
-== Funktion
+## Funktion
 
 Diese Anwendung passt eine OSC-Datei so an, dass (standortbezogene) Formularvarianten für Formularverweise
 verwendet werden.
