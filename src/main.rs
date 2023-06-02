@@ -35,6 +35,7 @@ use serde::Serialize;
 use crate::model::onkostar_editor::OnkostarEditor;
 
 mod model;
+mod profile;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -45,6 +46,11 @@ struct Cli {
         help = "Eingabedatei"
     )]
     input: String,
+    #[arg(
+        long = "profile",
+        help = "Profildatei (Optional)"
+    )]
+    profile: Option<String>,
     #[arg(
         long = "output",
         help = "Ausgabedatei (Optional)"
