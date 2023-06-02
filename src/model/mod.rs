@@ -31,6 +31,7 @@ pub mod property_catalogue;
 pub mod unterformular;
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Script {
     #[serde(rename = "Code")]
     code: String,
@@ -39,6 +40,7 @@ pub struct Script {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct PlausibilityRule<T> {
     #[serde(rename = "Type")]
     type_: String,
@@ -69,12 +71,14 @@ pub struct PlausibilityRule<T> {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Entries<T> {
     #[serde(rename = "Entry")]
     entry: Vec<T>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Ansicht {
     #[serde(rename = "Name")]
     name: String,
@@ -101,12 +105,14 @@ pub struct Ansicht {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Ansichten {
     #[serde(rename = "Ansicht", default)]
     program_module: Vec<Ansicht>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct MenuCategory {
     #[serde(rename = "name")]
     name: String,
@@ -117,6 +123,7 @@ pub struct MenuCategory {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Filter {
     #[serde(rename = "Condition")]
     condition: String,
@@ -128,6 +135,7 @@ pub struct Filter {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct RefEntries {
     #[serde(rename = "RefEntry")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -135,6 +143,7 @@ pub struct RefEntries {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct PlausibilityRules<T> {
     #[serde(rename = "PlausibilityRule")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -142,12 +151,14 @@ pub struct PlausibilityRules<T> {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Bibliothek {
     #[serde(rename = "Name")]
     name: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Ordner {
     #[serde(rename = "Bibliothek")]
     bibliothek: Bibliothek,

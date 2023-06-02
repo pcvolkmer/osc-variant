@@ -27,6 +27,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::Ordner;
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct DataCatalogue {
     #[serde(rename = "Name")]
     name: String,
@@ -55,12 +56,14 @@ pub struct DataCatalogue {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Entries {
     #[serde(rename = "Entry")]
     entry: Vec<Entry>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Entry {
     #[serde(rename = "PropertyCatalogue")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -122,12 +125,14 @@ pub struct Entry {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Use {
     #[serde(rename = "ProgramModule", default)]
     program_module: Vec<ProgramModule>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct ProgramModule {
     #[serde(rename = "@program")]
     program: String,

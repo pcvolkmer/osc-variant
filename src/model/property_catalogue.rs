@@ -27,6 +27,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::Ordner;
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct PropertyCatalogue {
     #[serde(rename = "Name")]
     name: String,
@@ -52,6 +53,7 @@ pub struct PropertyCatalogue {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Versions {
     #[serde(rename = "Version")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -59,6 +61,7 @@ pub struct Versions {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Version {
     #[serde(rename = "VersionNumber")]
     version_number: u16,
@@ -86,12 +89,14 @@ pub struct Version {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct VersionEntries {
     #[serde(rename = "Entry", default)]
     content: Vec<VersionEntry>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct VersionEntry {
     #[serde(rename = "Code")]
     code: String,
@@ -110,12 +115,14 @@ pub struct VersionEntry {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Categories {
     #[serde(rename = "Category", default)]
     content: Vec<Category>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Category {
     #[serde(rename = "Name")]
     name: String,
@@ -132,12 +139,14 @@ pub struct Category {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct CategoryEntries {
     #[serde(rename = "CategoryEntry", default)]
     content: Vec<CategoryEntry>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct CategoryEntry {
     #[serde(rename = "Code")]
     code: String,
@@ -156,6 +165,7 @@ pub struct CategoryEntry {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Abbildung {
     #[serde(rename = "ZielMKVersionOid")]
     ziel_mk_version_oid: String,
@@ -164,6 +174,7 @@ pub struct Abbildung {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct AbbildungEintrag {
     #[serde(rename = "Entry-from")]
     entry_from: AbbildungEntry,
@@ -172,6 +183,7 @@ pub struct AbbildungEintrag {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct AbbildungEntry {
     #[serde(rename = "Code")]
     code: String,

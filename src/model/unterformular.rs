@@ -28,6 +28,7 @@ use crate::model::Ordner;
 use crate::model::{Ansichten, Entries, Filter, MenuCategory, PlausibilityRules, Script};
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Unterformular {
     #[serde(rename = "DataCatalogues")]
     data_catalogues: DataCatalogues,
@@ -170,12 +171,14 @@ impl Unterformular {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct DataCatalogues {
     #[serde(rename = "DataCatalogue")]
     data_catalogue: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Entry {
     #[serde(rename = "@parentId")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -363,6 +366,7 @@ pub struct Entry {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct DataFormEntries {
     #[serde(rename = "EntryName")]
     #[serde(skip_serializing_if = "Option::is_none")]

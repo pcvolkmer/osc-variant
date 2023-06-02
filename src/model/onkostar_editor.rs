@@ -30,6 +30,7 @@ use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::unterformular::Unterformular;
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct OnkostarEditor {
     #[serde(rename = "InfoXML")]
     info_xml: InfoXML,
@@ -49,6 +50,7 @@ impl OnkostarEditor {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct InfoXML {
     #[serde(rename = "DatumXML")]
     datum_xml: String,
@@ -59,6 +61,7 @@ pub struct InfoXML {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 struct Editor {
     #[serde(rename = "PropertyCatalogue")]
     property_catalogue: Vec<PropertyCatalogue>,
@@ -71,6 +74,7 @@ struct Editor {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Bibliothek {
     #[serde(rename = "Name")]
     name: String,
