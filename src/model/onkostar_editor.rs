@@ -34,7 +34,7 @@ pub struct OnkostarEditor {
     #[serde(rename = "InfoXML")]
     info_xml: InfoXML,
     #[serde(rename = "Editor")]
-    editor: Editor
+    editor: Editor,
 }
 
 impl OnkostarEditor {
@@ -55,7 +55,7 @@ pub struct InfoXML {
     #[serde(rename = "Name")]
     name: String,
     #[serde(rename = "Version")]
-    version: String
+    version: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -67,25 +67,11 @@ struct Editor {
     #[serde(rename = "Unterformular")]
     unterformular: Vec<Unterformular>,
     #[serde(rename = "DataForm")]
-    data_form: Vec<DataForm>
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Ordner {
-    #[serde(rename = "Bibliothek")]
-    bibliothek: Bibliothek,
-    #[serde(rename = "Name")]
-    name: String,
-    #[serde(rename = "Typ")]
-    typ: String,
-    #[serde(rename = "ParentOrdner", default)]
-    #[serde(skip_serializing_if="Option::is_none")]
-    parent_order: Option<Box<Ordner>>
+    data_form: Vec<DataForm>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Bibliothek {
     #[serde(rename = "Name")]
-    name: String
+    name: String,
 }
-

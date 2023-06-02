@@ -24,7 +24,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::onkostar_editor::Ordner;
+use crate::model::Ordner;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PropertyCatalogue {
@@ -37,7 +37,7 @@ pub struct PropertyCatalogue {
     #[serde(rename = "Readonly")]
     readonly: bool,
     #[serde(rename = "Anmerkung")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     anmerkung: Option<String>,
     #[serde(rename = "SID")]
     sid: String,
@@ -48,14 +48,14 @@ pub struct PropertyCatalogue {
     #[serde(rename = "Versions")]
     versions: Versions,
     #[serde(rename = "Ordner")]
-    ordner: Ordner
+    ordner: Ordner,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Versions {
     #[serde(rename = "Version")]
-    #[serde(skip_serializing_if="Option::is_none")]
-    entry: Option<Vec<Version>>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    entry: Option<Vec<Version>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -79,16 +79,16 @@ pub struct Version {
     #[serde(rename = "Entries")]
     entries: VersionEntries,
     #[serde(rename = "Abbildung")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     abbildung: Option<Vec<Abbildung>>,
     #[serde(rename = "Categories")]
-    categories: Categories
+    categories: Categories,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct VersionEntries {
     #[serde(rename = "Entry", default)]
-    content: Vec<VersionEntry>
+    content: Vec<VersionEntry>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -100,19 +100,19 @@ pub struct VersionEntry {
     #[serde(rename = "Description")]
     description: String,
     #[serde(rename = "Synonyms", default)]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     synonyms: Option<String>,
     #[serde(rename = "Note", default)]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     note: Option<String>,
     #[serde(rename = "Position")]
-    position: String
+    position: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Categories {
     #[serde(rename = "Category", default)]
-    content: Vec<Category>
+    content: Vec<Category>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -128,13 +128,13 @@ pub struct Category {
     #[serde(rename = "Beschreibung")]
     beschreibung: String,
     #[serde(rename = "CategoryEntries")]
-    category_entries: CategoryEntries
+    category_entries: CategoryEntries,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CategoryEntries {
     #[serde(rename = "CategoryEntry", default)]
-    content: Vec<CategoryEntry>
+    content: Vec<CategoryEntry>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -142,16 +142,16 @@ pub struct CategoryEntry {
     #[serde(rename = "Code")]
     code: String,
     #[serde(rename = "shortdesc", default)]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     shortdesc: Option<String>,
     #[serde(rename = "description", default)]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<String>,
     #[serde(rename = "Synonyms", default)]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     synonyms: Option<String>,
     #[serde(rename = "note", default)]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     note: Option<String>,
 }
 
@@ -160,7 +160,7 @@ pub struct Abbildung {
     #[serde(rename = "ZielMKVersionOid")]
     ziel_mk_version_oid: String,
     #[serde(rename = "Eintrag", default)]
-    content: Vec<AbbildungEintrag>
+    content: Vec<AbbildungEintrag>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -168,7 +168,7 @@ pub struct AbbildungEintrag {
     #[serde(rename = "Entry-from")]
     entry_from: AbbildungEntry,
     #[serde(rename = "Entry-to")]
-    entry_to: AbbildungEntry
+    entry_to: AbbildungEntry,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -180,10 +180,10 @@ pub struct AbbildungEntry {
     #[serde(rename = "Description")]
     description: String,
     #[serde(rename = "Synonyms")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     synonyms: Option<String>,
     #[serde(rename = "Note")]
     note: String,
     #[serde(rename = "Position")]
-    position: String
+    position: String,
 }

@@ -24,7 +24,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::onkostar_editor::Ordner;
+use crate::model::Ordner;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DataCatalogue {
@@ -51,19 +51,19 @@ pub struct DataCatalogue {
     #[serde(rename = "Entries")]
     entries: Entries,
     #[serde(rename = "Ordner")]
-    ordner: Ordner
+    ordner: Ordner,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Entries {
     #[serde(rename = "Entry")]
-    entry: Vec<Entry>
+    entry: Vec<Entry>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Entry {
     #[serde(rename = "PropertyCatalogue")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     property_catalogue: Option<String>,
     #[serde(rename = "Name")]
     name: String,
@@ -88,10 +88,10 @@ pub struct Entry {
     #[serde(rename = "Filterable")]
     filterable: bool,
     #[serde(rename = "RangeFrom")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     range_from: Option<String>,
     #[serde(rename = "RangeUntil")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     range_until: Option<String>,
     #[serde(rename = "MultipleChoice")]
     multiple_choice: bool,
@@ -108,10 +108,10 @@ pub struct Entry {
     #[serde(rename = "Fachabteilungsbezug")]
     fachabteilungsbezug: bool,
     #[serde(rename = "Use")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     use_: Option<Use>,
     #[serde(rename = "FesteNachkommastellen")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     feste_nachkommastellen: Option<u16>,
     #[serde(rename = "SID")]
     sid: String,
@@ -124,13 +124,13 @@ pub struct Entry {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Use {
     #[serde(rename = "ProgramModule", default)]
-    program_module: Vec<ProgramModule>
+    program_module: Vec<ProgramModule>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ProgramModule {
-    #[serde(rename="@program")]
+    #[serde(rename = "@program")]
     program: String,
-    #[serde(rename="@name")]
-    name: String
+    #[serde(rename = "@name")]
+    name: String,
 }

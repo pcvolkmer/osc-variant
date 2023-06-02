@@ -24,10 +24,10 @@
 
 use serde::{Deserialize, Serialize};
 
-pub mod onkostar_editor;
-pub mod property_catalogue;
 pub mod data_catalogue;
 pub mod data_form;
+pub mod onkostar_editor;
+pub mod property_catalogue;
 pub mod unterformular;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -35,7 +35,7 @@ pub struct Script {
     #[serde(rename = "Code")]
     code: String,
     #[serde(rename = "Valid")]
-    valid: bool
+    valid: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -57,10 +57,10 @@ pub struct PlausibilityRule<T> {
     #[serde(rename = "Valid")]
     valid: bool,
     #[serde(rename = "Condition")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     condition: Option<String>,
     #[serde(rename = "ConditionValid")]
-    #[serde(skip_serializing_if="Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     condition_valid: Option<bool>,
     #[serde(rename = "Statusauswirkung")]
     statusauswirkung: String,
@@ -71,7 +71,7 @@ pub struct PlausibilityRule<T> {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Entries<T> {
     #[serde(rename = "Entry")]
-    entry: Vec<T>
+    entry: Vec<T>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -103,7 +103,7 @@ pub struct Ansicht {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Ansichten {
     #[serde(rename = "Ansicht", default)]
-    program_module: Vec<Ansicht>
+    program_module: Vec<Ansicht>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -113,7 +113,7 @@ pub struct MenuCategory {
     #[serde(rename = "position")]
     position: String,
     #[serde(rename = "column")]
-    column: String
+    column: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -123,20 +123,39 @@ pub struct Filter {
     #[serde(rename = "Valid")]
     valid: bool,
     #[serde(rename = "RefEntries")]
-    #[serde(skip_serializing_if="Option::is_none")]
-    ref_entries: Option<RefEntries>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ref_entries: Option<RefEntries>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RefEntries {
     #[serde(rename = "RefEntry")]
-    #[serde(skip_serializing_if="Option::is_none")]
-    ref_entry: Option<Vec<String>>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ref_entry: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PlausibilityRules<T> {
     #[serde(rename = "PlausibilityRule")]
-    #[serde(skip_serializing_if="Option::is_none")]
-    plausibility_rule: Option<Vec<PlausibilityRule<T>>>
+    #[serde(skip_serializing_if = "Option::is_none")]
+    plausibility_rule: Option<Vec<PlausibilityRule<T>>>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Bibliothek {
+    #[serde(rename = "Name")]
+    name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Ordner {
+    #[serde(rename = "Bibliothek")]
+    bibliothek: Bibliothek,
+    #[serde(rename = "Name")]
+    name: String,
+    #[serde(rename = "Typ")]
+    typ: String,
+    #[serde(rename = "ParentOrdner", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    parent_order: Option<Box<Ordner>>,
 }
