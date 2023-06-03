@@ -52,6 +52,15 @@ pub struct PropertyCatalogue {
     ordner: Ordner,
 }
 
+impl PropertyCatalogue {
+    pub fn to_listed_string(&self) -> String {
+        format!(
+            "Merkmalskatalog '{}' in Revision '{}'",
+            self.name, self.revision
+        )
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Versions {

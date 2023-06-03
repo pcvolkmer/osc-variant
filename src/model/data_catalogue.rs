@@ -55,6 +55,15 @@ pub struct DataCatalogue {
     ordner: Ordner,
 }
 
+impl DataCatalogue {
+    pub fn to_listed_string(&self) -> String {
+        format!(
+            "Datenkatalog '{}' in Revision '{}'",
+            self.name, self.revision
+        )
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Entries {

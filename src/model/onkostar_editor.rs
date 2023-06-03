@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+use console::style;
 use serde::{Deserialize, Serialize};
 
 use crate::model::data_catalogue::DataCatalogue;
@@ -46,6 +47,49 @@ impl OnkostarEditor {
         self.editor.unterformular.iter_mut().for_each(|data_form| {
             data_form.apply_variant();
         })
+    }
+
+    pub fn list_forms(&self) {
+        println!(
+            "{}",
+            style("In der Datei sind folgende Inhalte gespeichert\n").bold()
+        );
+        println!(
+            "{} {}",
+            self.editor.property_catalogue.len(),
+            style("Merkmalskataloge").underlined()
+        );
+        self.editor
+            .property_catalogue
+            .iter()
+            .for_each(|data_form| println!("{}", data_form.to_listed_string()));
+        println!(
+            "\n{} {}",
+            self.editor.data_catalogue.len(),
+            style("Datenkataloge").underlined()
+        );
+        self.editor
+            .data_catalogue
+            .iter()
+            .for_each(|data_form| println!("{}", data_form.to_listed_string()));
+        println!(
+            "\n{} {}",
+            self.editor.data_form.len(),
+            style("Formulare").underlined()
+        );
+        self.editor
+            .data_form
+            .iter()
+            .for_each(|data_form| println!("{}", data_form.to_listed_string()));
+        println!(
+            "\n{} {}",
+            self.editor.unterformular.len(),
+            style("Unterformulare").underlined()
+        );
+        self.editor
+            .unterformular
+            .iter()
+            .for_each(|data_form| println!("{}", data_form.to_listed_string()));
     }
 }
 

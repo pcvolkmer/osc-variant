@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+use console::style;
 use serde::{Deserialize, Serialize};
 
 use crate::model::Ordner;
@@ -167,6 +168,21 @@ impl Unterformular {
                 }
             })
         }
+    }
+
+    pub fn to_listed_string(&self) -> String {
+        if self.hat_unterformulare {
+            return format!(
+                "Unterformular '{}' in Revision '{}' {}",
+                self.name,
+                self.revision,
+                style("Unterformular mit Markierung 'hat Unterformulare'!").red()
+            );
+        }
+        format!(
+            "Unterformular '{}' in Revision '{}'",
+            self.name, self.revision
+        )
     }
 }
 

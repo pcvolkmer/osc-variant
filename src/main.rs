@@ -27,7 +27,7 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 
-use clap::Parser;
+use clap::{Parser, Subcommand};
 use quick_xml::de::from_str;
 use quick_xml::se::Serializer;
 use serde::Serialize;
@@ -41,59 +41,91 @@ mod profile;
 #[command(author, version, about, long_about = None)]
 #[command(propagate_version = true, arg_required_else_help(true))]
 struct Cli {
-    #[arg(long = "input", help = "Eingabedatei")]
-    input: String,
-    #[arg(long = "profile", help = "Profildatei (Optional)")]
-    profile: Option<String>,
-    #[arg(long = "output", help = "Ausgabedatei (Optional)")]
-    output: Option<String>,
+    #[command(subcommand)]
+    command: Command,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    #[command(about = "Zeigt alle enthaltenen Kataloge und Formulare mit Revision an.")]
+    List { inputfile: String },
+    #[command(about = "Modifiziert die angegebene Datei anhand der Profildatei")]
+    Modify {
+        inputfile: String,
+        #[arg(long = "profile", help = "Profildatei (Optional)")]
+        profile: Option<String>,
+        #[arg(long = "output", help = "Ausgabedatei (Optional)")]
+        outputfile: Option<String>,
+    },
 }
 
 fn main() {
     let cli = Cli::parse();
 
-    let contents = fs::read_to_string(cli.input).expect("Should have been able to read the file");
+    match cli.command {
+        Command::List { inputfile } => {
+            let contents =
+                fs::read_to_string(inputfile).expect("Should have been able to read the file");
 
-    if let Ok(mut data) = from_str::<OnkostarEditor>(contents.as_str()) {
-        data.apply_variant();
-
-        let mut buf = String::new();
-
-        let mut serializer = Serializer::new(&mut buf);
-        serializer.indent(' ', 2);
-
-        data.serialize(serializer).expect("Generated XML");
-
-        let output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            .to_string()
-            .add(
-                buf
-                    // Replace &apos; and &quot; as used in original file
-                    .replace("&apos;", "'")
-                    .replace("&quot;", "\"")
-                    .as_str(),
-            );
-
-        match cli.output {
-            Some(filename) => {
-                let mut file = OpenOptions::new()
-                    .read(false)
-                    .write(true)
-                    .create(true)
-                    .truncate(true)
-                    .open(filename)
-                    .unwrap();
-                file.write_all(output.as_bytes())
-                    .expect("Should have written output file");
-            }
-            None => {
-                println!("{}", output)
+            if let Ok(mut data) = from_str::<OnkostarEditor>(contents.as_str()) {
+                data.list_forms()
+            } else {
+                eprintln!("Kann Eingabedatei nicht lesen!");
+                eprintln!(
+                    "Die Datei ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte."
+                );
             }
         }
-    } else {
-        eprintln!("Kann Eingabedatei nicht lesen!");
-        eprintln!(
-            "Die Datei ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte."
-        );
+        Command::Modify {
+            inputfile,
+            profile,
+            outputfile,
+        } => {
+            let contents =
+                fs::read_to_string(inputfile).expect("Should have been able to read the file");
+
+            if let Ok(mut data) = from_str::<OnkostarEditor>(contents.as_str()) {
+                data.apply_variant();
+
+                let mut buf = String::new();
+
+                let mut serializer = Serializer::new(&mut buf);
+                serializer.indent(' ', 2);
+
+                data.serialize(serializer).expect("Generated XML");
+
+                let output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                    .to_string()
+                    .add(
+                        buf
+                            // Replace &apos; and &quot; as used in original file
+                            .replace("&apos;", "'")
+                            .replace("&quot;", "\"")
+                            .as_str(),
+                    );
+
+                match outputfile {
+                    Some(filename) => {
+                        let mut file = OpenOptions::new()
+                            .read(false)
+                            .write(true)
+                            .create(true)
+                            .truncate(true)
+                            .open(filename)
+                            .unwrap();
+                        file.write_all(output.as_bytes())
+                            .expect("Should have written output file");
+                    }
+                    None => {
+                        println!("{}", output)
+                    }
+                }
+            } else {
+                eprintln!("Kann Eingabedatei nicht lesen!");
+                eprintln!(
+                    "Die Datei ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte."
+                );
+            }
+        }
     }
 }

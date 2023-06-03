@@ -4,11 +4,34 @@ Anwendung zum Anpassen einer OSC-Datei an einen Standort.
 
 ## Funktion
 
-Diese Anwendung passt eine OSC-Datei so an, dass (standortbezogene) Formularvarianten für Formularverweise
+Diese Anwendung passt listet die Inhalte eine OSC-Datei auf oder passt sie so an, dass (standortbezogene) Formularvarianten für Formularverweise
 verwendet werden.
 
 Hierzu wird die Datei deserialisiert, die entsprechenden Formularfelder ermittelt und die Formularvariante
 sowie die Anzeige anhand eines Profils angepasst.
+
+Wird in einer OSC-Datei eine noch nicht bekannte Eigenschaft erkannt, wird die weitere Bearbeitung abgebrochen um keine
+unvollständigen Ausgabedateien zu erzeugen.
+
+### Beispiele
+
+Zum Auflisten der Inhalte einer Datei wird folgender Befehl verwendet:
+
+```
+osc-variant list meine-beispieldatei.osc
+```
+
+Zum Anpassen des Inhalts einer Datei:
+
+```
+osc-variant modify meine-beispieldatei.osc --profile ukw-profil.yml --output ukw-beispieldatei.osc
+```
+
+Die Parameter `--profile` und `--output` sind optional.
+
+Ohne Profildatei wird die Datei lediglich eingelesen, Leerzeichen am Ende eines XML-Tags entfernt und wieder ausgegeben.
+
+Ohne eine Angabe der Ausgabedatei wird auf die Standardausgabe ausgegeben.
 
 ## Profile
 

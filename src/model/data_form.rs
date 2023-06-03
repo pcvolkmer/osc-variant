@@ -160,6 +160,10 @@ impl DataForm {
             })
         }
     }
+
+    pub fn to_listed_string(&self) -> String {
+        format!("Formular '{}' in Revision '{}'", self.name, self.revision)
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
