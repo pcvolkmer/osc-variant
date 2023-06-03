@@ -118,10 +118,3 @@ struct Editor {
     #[serde(rename = "DataForm")]
     data_form: Vec<DataForm>,
 }
-
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct Bibliothek {
-    #[serde(rename = "Name")]
-    name: String,
-}
