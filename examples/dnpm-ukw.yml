@@ -9,13 +9,9 @@ forms:
       - name: referstemtb
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
         anzeige_auswahl: 'MTB vom {Datum}'
-  - name: 'DNPM Therapieplan'
-    form_references:
       - name: reftkhumangenber
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
         anzeige_auswahl: 'MTB vom {Datum}'
-  - name: 'DNPM Therapieplan'
-    form_references:
       - name: reftkreevaluation
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
         anzeige_auswahl: 'MTB vom {Datum}'
