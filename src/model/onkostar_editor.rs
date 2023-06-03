@@ -51,8 +51,10 @@ impl OnkostarEditor {
 
     pub fn list_forms(&self) {
         println!(
-            "{}",
-            style("In der Datei sind folgende Inhalte gespeichert\n").bold()
+            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte sind gespeichert\n",
+            style(&self.info_xml.datum_xml).yellow(),
+            style(&self.info_xml.name).yellow(),
+            style(&self.info_xml.version).yellow()
         );
         println!(
             "{} {}",
