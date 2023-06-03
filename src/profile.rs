@@ -44,11 +44,11 @@ impl FromStr for Profile {
 #[derive(Deserialize)]
 struct Form {
     name: String,
-    fields: Vec<FieldChanges>,
+    form_references: Vec<FormReference>,
 }
 
 #[derive(Deserialize)]
-struct FieldChanges {
+struct FormReference {
     name: String,
     referenced_data_form: Option<String>,
     anzeige: Option<String>,
@@ -64,7 +64,7 @@ mod tests {
     fn should_deserialize_profile() {
         let content = "forms:
                - name: 'DNPM Therapieplan'
-                 fields:
+                 form_references:
                    - name: ref_first_mtb
                      referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
                      anzeige: 'Datum: {Datum}'
@@ -75,18 +75,18 @@ mod tests {
             Ok(profile) => {
                 assert_eq!(profile.forms.len(), 1);
                 assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
-                assert_eq!(profile.forms[0].fields.len(), 1);
-                assert_eq!(profile.forms[0].fields[0].name, "ref_first_mtb");
+                assert_eq!(profile.forms[0].form_references.len(), 1);
+                assert_eq!(profile.forms[0].form_references[0].name, "ref_first_mtb");
                 assert_eq!(
-                    profile.forms[0].fields[0].referenced_data_form,
+                    profile.forms[0].form_references[0].referenced_data_form,
                     Some("OS.Tumorkonferenz.VarianteUKW".to_string())
                 );
                 assert_eq!(
-                    profile.forms[0].fields[0].anzeige,
+                    profile.forms[0].form_references[0].anzeige,
                     Some("Datum: {Datum}".to_string())
                 );
                 assert_eq!(
-                    profile.forms[0].fields[0].anzeige_auswahl,
+                    profile.forms[0].form_references[0].anzeige_auswahl,
                     Some("TK vom {Datum}".to_string())
                 );
             }
@@ -98,7 +98,7 @@ mod tests {
     fn should_deserialize_profile_with_no_changes() {
         let content = "forms:
                - name: 'DNPM Therapieplan'
-                 fields:
+                 form_references:
                    - name: ref_first_mtb
             ";
 
@@ -106,11 +106,14 @@ mod tests {
             Ok(profile) => {
                 assert_eq!(profile.forms.len(), 1);
                 assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
-                assert_eq!(profile.forms[0].fields.len(), 1);
-                assert_eq!(profile.forms[0].fields[0].name, "ref_first_mtb");
-                assert_eq!(profile.forms[0].fields[0].referenced_data_form, None);
-                assert_eq!(profile.forms[0].fields[0].anzeige, None);
-                assert_eq!(profile.forms[0].fields[0].anzeige_auswahl, None);
+                assert_eq!(profile.forms[0].form_references.len(), 1);
+                assert_eq!(profile.forms[0].form_references[0].name, "ref_first_mtb");
+                assert_eq!(
+                    profile.forms[0].form_references[0].referenced_data_form,
+                    None
+                );
+                assert_eq!(profile.forms[0].form_references[0].anzeige, None);
+                assert_eq!(profile.forms[0].form_references[0].anzeige_auswahl, None);
             }
             Err(e) => panic!("Cannot deserialize profile: {}", e),
         }

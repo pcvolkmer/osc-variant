@@ -19,7 +19,7 @@ In ihr sind die durchzuführenden Änderungen definiert. Eine Profildatei hat di
 ```
 forms:
   - name: "ExampleForm"
-    fields:
+    form_references:
       - name: "ref_first_mtb"
         referenced_data_form: "Formularverweis.Variante"
         anzeige_auswahl: "Referenziertes Formular vom: {Datum}"
