@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-use std::str::FromStr;
 use serde::Deserialize;
+use std::str::FromStr;
 
 #[derive(Deserialize)]
 struct Profile {
-    forms: Vec<Form>
+    forms: Vec<Form>,
 }
 
 impl FromStr for Profile {
@@ -36,7 +36,7 @@ impl FromStr for Profile {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match serde_yaml::from_str::<Profile>(s) {
             Ok(profile) => Ok(profile),
-            Err(err) => Err(err.to_string())
+            Err(err) => Err(err.to_string()),
         }
     }
 }
@@ -44,28 +44,31 @@ impl FromStr for Profile {
 #[derive(Deserialize)]
 struct Form {
     name: String,
-    fields: Vec<FieldChanges>
+    fields: Vec<FieldChanges>,
 }
 
 #[derive(Deserialize)]
 struct FieldChanges {
     name: String,
-    referenced_data_form: Option<String>
+    referenced_data_form: Option<String>,
+    anzeige: Option<String>,
+    anzeige_auswahl: Option<String>,
 }
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
     use crate::profile::Profile;
+    use std::str::FromStr;
 
     #[test]
     fn should_deserialize_profile() {
-        let content =
-            "forms:
+        let content = "forms:
                - name: 'DNPM Therapieplan'
                  fields:
                    - name: ref_first_mtb
                      referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
+                     anzeige: 'Datum: {Datum}'
+                     anzeige_auswahl: 'TK vom {Datum}'
             ";
 
         match Profile::from_str(content) {
@@ -74,16 +77,48 @@ mod tests {
                 assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
                 assert_eq!(profile.forms[0].fields.len(), 1);
                 assert_eq!(profile.forms[0].fields[0].name, "ref_first_mtb");
-                assert_eq!(profile.forms[0].fields[0].referenced_data_form, Some("OS.Tumorkonferenz.VarianteUKW".to_string()));
-            },
-            Err(e) => panic!("Cannot deserialize profile: {}", e)
+                assert_eq!(
+                    profile.forms[0].fields[0].referenced_data_form,
+                    Some("OS.Tumorkonferenz.VarianteUKW".to_string())
+                );
+                assert_eq!(
+                    profile.forms[0].fields[0].anzeige,
+                    Some("Datum: {Datum}".to_string())
+                );
+                assert_eq!(
+                    profile.forms[0].fields[0].anzeige_auswahl,
+                    Some("TK vom {Datum}".to_string())
+                );
+            }
+            Err(e) => panic!("Cannot deserialize profile: {}", e),
+        }
+    }
+
+    #[test]
+    fn should_deserialize_profile_with_no_changes() {
+        let content = "forms:
+               - name: 'DNPM Therapieplan'
+                 fields:
+                   - name: ref_first_mtb
+            ";
+
+        match Profile::from_str(content) {
+            Ok(profile) => {
+                assert_eq!(profile.forms.len(), 1);
+                assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
+                assert_eq!(profile.forms[0].fields.len(), 1);
+                assert_eq!(profile.forms[0].fields[0].name, "ref_first_mtb");
+                assert_eq!(profile.forms[0].fields[0].referenced_data_form, None);
+                assert_eq!(profile.forms[0].fields[0].anzeige, None);
+                assert_eq!(profile.forms[0].fields[0].anzeige_auswahl, None);
+            }
+            Err(e) => panic!("Cannot deserialize profile: {}", e),
         }
     }
 
     #[test]
     fn should_not_deserialize_bad_profile() {
-        let content =
-            "forms:
+        let content = "forms:
                - name: 'DNPM Therapieplan'
                # incomplete profile ...
             ";
@@ -91,5 +126,4 @@ mod tests {
         let actual = Profile::from_str(content);
         assert!(actual.is_err());
     }
-
 }
