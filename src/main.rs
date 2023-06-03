@@ -26,6 +26,7 @@ use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
+use std::str::FromStr;
 
 use clap::{Parser, Subcommand};
 use quick_xml::de::from_str;
@@ -33,6 +34,7 @@ use quick_xml::se::Serializer;
 use serde::Serialize;
 
 use crate::model::onkostar_editor::OnkostarEditor;
+use crate::profile::Profile;
 
 mod model;
 mod profile;
@@ -85,7 +87,16 @@ fn main() {
                 fs::read_to_string(inputfile).expect("Should have been able to read the file");
 
             if let Ok(mut data) = from_str::<OnkostarEditor>(contents.as_str()) {
-                data.apply_variant();
+                if let Some(profile) = profile {
+                    let profile =
+                        fs::read_to_string(profile).expect("Should have been able to read profile");
+                    if let Ok(profile) = Profile::from_str(profile.as_str()) {
+                        data.apply_profile(&profile);
+                    } else {
+                        eprintln!("Kann Profildatei nicht lesen!");
+                        return;
+                    }
+                }
 
                 let mut buf = String::new();
 

@@ -1,0 +1,31 @@
+forms:
+  - name: 'DNPM Klinik/Anamnese'
+    form_references:
+      - name: MTB
+        referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
+        anzeige_auswahl: 'MTB vom {Datum}'
+  - name: 'DNPM Therapieplan'
+    form_references:
+      - name: referstemtb
+        referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
+        anzeige_auswahl: 'MTB vom {Datum}'
+  - name: 'DNPM Therapieplan'
+    form_references:
+      - name: reftkhumangenber
+        referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
+        anzeige_auswahl: 'MTB vom {Datum}'
+  - name: 'DNPM Therapieplan'
+    form_references:
+      - name: reftkreevaluation
+        referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
+        anzeige_auswahl: 'MTB vom {Datum}'
+  - name: 'DNPM UF Einzelempfehlung'
+    form_references:
+      - name: mtb
+        referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
+        anzeige_auswahl: 'MTB vom {Datum}'
+  - name: 'DNPM UF Rebiopsie'
+    form_references:
+      - name: reftumorkonferenz
+        referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
+        anzeige_auswahl: 'MTB vom {Datum}'

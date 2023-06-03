@@ -27,6 +27,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::Ordner;
 use crate::model::{Ansichten, Entries, Filter, MenuCategory, PlausibilityRules, Script};
+use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -155,19 +156,34 @@ pub struct Unterformular {
 }
 
 impl Unterformular {
-    pub fn apply_variant(&mut self) {
-        if self.name.starts_with("DNPM") {
-            self.entries.entry.iter_mut().for_each(|mut entry| {
-                if entry.type_ == "formReference" {
-                    if let Some(referenced_data_form) = &entry.referenced_data_form {
-                        if referenced_data_form == "OS.Tumorkonferenz" {
-                            entry.referenced_data_form =
-                                Some("OS.Tumorkonferenz.VarianteUKW".to_string())
-                        }
-                    }
-                }
-            })
-        }
+    pub fn apply_profile(&mut self, profile: &Profile) {
+        profile.forms.iter().for_each(|profile_form| {
+            if self.name == profile_form.name {
+                self.entries.entry.iter_mut().for_each(|entry| {
+                    profile_form
+                        .form_references
+                        .iter()
+                        .for_each(|form_reference| {
+                            if entry.type_ == "formReference" && entry.name == form_reference.name {
+                                if let Some(profile_referenced_data_form) =
+                                    &form_reference.referenced_data_form
+                                {
+                                    entry.referenced_data_form =
+                                        Some(profile_referenced_data_form.clone())
+                                }
+                                if let Some(profile_anzeige) = &form_reference.anzeige {
+                                    entry.anzeige = profile_anzeige.clone()
+                                }
+                                if let Some(profile_anzeige_auswahl) =
+                                    &form_reference.anzeige_auswahl
+                                {
+                                    entry.anzeige_auswahl = Some(profile_anzeige_auswahl.clone())
+                                }
+                            }
+                        });
+                })
+            }
+        });
     }
 
     pub fn to_listed_string(&self) -> String {

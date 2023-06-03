@@ -29,6 +29,7 @@ use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::unterformular::Unterformular;
+use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -40,12 +41,12 @@ pub struct OnkostarEditor {
 }
 
 impl OnkostarEditor {
-    pub fn apply_variant(&mut self) {
+    pub fn apply_profile(&mut self, profile: &Profile) {
         self.editor.data_form.iter_mut().for_each(|data_form| {
-            data_form.apply_variant();
+            data_form.apply_profile(profile);
         });
         self.editor.unterformular.iter_mut().for_each(|data_form| {
-            data_form.apply_variant();
+            data_form.apply_profile(profile);
         })
     }
 

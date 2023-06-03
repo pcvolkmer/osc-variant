@@ -26,8 +26,8 @@ use serde::Deserialize;
 use std::str::FromStr;
 
 #[derive(Deserialize)]
-struct Profile {
-    forms: Vec<Form>,
+pub struct Profile {
+    pub forms: Vec<Form>,
 }
 
 impl FromStr for Profile {
@@ -42,17 +42,17 @@ impl FromStr for Profile {
 }
 
 #[derive(Deserialize)]
-struct Form {
-    name: String,
-    form_references: Vec<FormReference>,
+pub struct Form {
+    pub name: String,
+    pub form_references: Vec<FormReference>,
 }
 
 #[derive(Deserialize)]
-struct FormReference {
-    name: String,
-    referenced_data_form: Option<String>,
-    anzeige: Option<String>,
-    anzeige_auswahl: Option<String>,
+pub struct FormReference {
+    pub name: String,
+    pub referenced_data_form: Option<String>,
+    pub anzeige: Option<String>,
+    pub anzeige_auswahl: Option<String>,
 }
 
 #[cfg(test)]
