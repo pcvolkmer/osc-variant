@@ -69,7 +69,7 @@ fn main() {
             let contents =
                 fs::read_to_string(inputfile).expect("Should have been able to read the file");
 
-            if let Ok(mut data) = from_str::<OnkostarEditor>(contents.as_str()) {
+            if let Ok(data) = from_str::<OnkostarEditor>(contents.as_str()) {
                 data.list_forms()
             } else {
                 eprintln!("Kann Eingabedatei nicht lesen!");
