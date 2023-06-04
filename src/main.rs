@@ -22,13 +22,14 @@
  * SOFTWARE.
  */
 
+use clap::Parser;
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::str::FromStr;
 
-use clap::{Parser, Subcommand};
+use crate::cli::{Cli, Command};
 use quick_xml::de::from_str;
 use quick_xml::se::Serializer;
 use serde::Serialize;
@@ -36,30 +37,9 @@ use serde::Serialize;
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 
+mod cli;
 mod model;
 mod profile;
-
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-#[command(propagate_version = true, arg_required_else_help(true))]
-struct Cli {
-    #[command(subcommand)]
-    command: Command,
-}
-
-#[derive(Subcommand)]
-enum Command {
-    #[command(about = "Zeigt alle enthaltenen Kataloge und Formulare mit Revision an.")]
-    List { inputfile: String },
-    #[command(about = "Modifiziert die angegebene Datei anhand der Profildatei")]
-    Modify {
-        inputfile: String,
-        #[arg(long = "profile", help = "Profildatei (Optional)")]
-        profile: Option<String>,
-        #[arg(long = "output", help = "Ausgabedatei (Optional)")]
-        outputfile: Option<String>,
-    },
-}
 
 fn main() {
     let cli = Cli::parse();
