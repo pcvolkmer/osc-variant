@@ -345,6 +345,9 @@ pub struct Entry {
     #[serde(rename = "MemoWidth")]
     #[serde(skip_serializing_if = "Option::is_none")]
     memo_width: Option<u32>,
+    #[serde(rename = "MemoHeight")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    memo_height: Option<u32>,
     #[serde(rename = "MemoArt")]
     #[serde(skip_serializing_if = "Option::is_none")]
     memo_art: Option<String>,
