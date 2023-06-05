@@ -23,7 +23,9 @@
  */
 
 use console::style;
+use quick_xml::de::from_str;
 use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
@@ -93,6 +95,17 @@ impl OnkostarEditor {
             .unterformular
             .iter()
             .for_each(|data_form| println!("{}", data_form.to_listed_string()));
+    }
+}
+
+impl FromStr for OnkostarEditor {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match from_str::<OnkostarEditor>(s) {
+            Ok(profile) => Ok(profile),
+            Err(err) => Err(err.to_string()),
+        }
     }
 }
 

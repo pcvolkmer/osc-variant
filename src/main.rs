@@ -49,13 +49,15 @@ fn main() {
             let contents =
                 fs::read_to_string(inputfile).expect("Should have been able to read the file");
 
-            if let Ok(data) = from_str::<OnkostarEditor>(contents.as_str()) {
-                data.list_forms()
-            } else {
-                eprintln!("Kann Eingabedatei nicht lesen!");
-                eprintln!(
-                    "Die Datei ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte."
-                );
+            match OnkostarEditor::from_str(contents.as_str()) {
+                Ok(data) => data.list_forms(),
+                Err(err) => {
+                    eprintln!("Kann Eingabedatei nicht lesen!");
+                    eprintln!(
+                        "Die Datei ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte:\n{}",
+                        err
+                    );
+                }
             }
         }
         Command::Modify {
