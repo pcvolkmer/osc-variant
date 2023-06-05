@@ -24,8 +24,8 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::Ordner;
 use crate::model::{Ansichten, Entries, Filter, MenuCategory, PlausibilityRules, Script};
+use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -133,7 +133,7 @@ pub struct DataForm {
     #[serde(rename = "PlausibilityRules")]
     plausibility_rules: PlausibilityRules<DataFormEntries>,
     #[serde(rename = "Haeufigkeiten")]
-    haeufigkeiten: String,
+    haeufigkeiten: Haeufigkeiten,
     #[serde(rename = "Kennzahlen")]
     kennzahlen: String,
     #[serde(rename = "Ordner")]

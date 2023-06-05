@@ -152,6 +152,40 @@ pub struct PlausibilityRules<T> {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
+pub struct Haeufigkeiten {
+    #[serde(rename = "Haeufigkeit", default)]
+    haeufigkeit: Vec<Haeufigkeit>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct Haeufigkeit {
+    #[serde(rename = "Name")]
+    name: String,
+    #[serde(rename = "Beschreibung")]
+    beschreibung: String,
+    #[serde(rename = "Notiz")]
+    notiz: String,
+    #[serde(rename = "Status")]
+    status: bool,
+    #[serde(rename = "Formel")]
+    formel: String,
+    #[serde(rename = "Analysezweck")]
+    analysezweck: String,
+    #[serde(rename = "Position")]
+    position: String,
+    #[serde(rename = "Ueberschrift")]
+    ueberschrift: String,
+    #[serde(rename = "TaeglichAktualisieren")]
+    taeglich_aktualisieren: bool,
+    #[serde(rename = "Typ")]
+    typ: String,
+    #[serde(rename = "TabellenName")]
+    tabellen_name: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Bibliothek {
     #[serde(rename = "Name")]
     name: String,

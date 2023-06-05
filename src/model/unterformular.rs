@@ -25,8 +25,8 @@
 use console::style;
 use serde::{Deserialize, Serialize};
 
-use crate::model::Ordner;
 use crate::model::{Ansichten, Entries, Filter, MenuCategory, PlausibilityRules, Script};
+use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -132,6 +132,9 @@ pub struct Unterformular {
     guid: String,
     #[serde(rename = "Revision")]
     revision: u16,
+    #[serde(rename = "maxAnzahl")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    max_anzahl: Option<u16>,
     #[serde(rename = "VerknuepftGUID")]
     #[serde(skip_serializing_if = "Option::is_none")]
     verknuepft_guid: Option<String>,
@@ -142,7 +145,7 @@ pub struct Unterformular {
     #[serde(rename = "PlausibilityRules")]
     plausibility_rules: PlausibilityRules<DataFormEntries>,
     #[serde(rename = "Haeufigkeiten")]
-    haeufigkeiten: String,
+    haeufigkeiten: Haeufigkeiten,
     #[serde(rename = "Kennzahlen")]
     kennzahlen: String,
     #[serde(rename = "Ordner")]
