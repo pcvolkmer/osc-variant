@@ -1,0 +1,6 @@
+forms:
+  - name: 'DNPM Klinik/Anamnese'
+    form_references:
+      - name: MTB
+        referenced_data_form: 'MR.MTB_Anmeldung'
+        anzeige_auswahl: 'MTB Anmeldung vom {Anmeldedatum}'
