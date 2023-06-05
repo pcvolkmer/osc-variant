@@ -4,13 +4,14 @@ Anwendung zum Anpassen einer OSC-Datei an einen Standort.
 
 ## Funktion
 
-Diese Anwendung passt listet die Inhalte eine OSC-Datei auf oder passt sie so an, dass (standortbezogene) Formularvarianten für Formularverweise
+Diese Anwendung passt die Inhalte eine OSC-Datei an, sodass (standortbezogene) Formularvarianten für Formularverweise
 verwendet werden.
+Weiterhin ist das Auflisten der Inhalte einer OSC-Datei möglich.
 
 Hierzu wird die Datei deserialisiert, die entsprechenden Formularfelder ermittelt und die Formularvariante
 sowie die Anzeige anhand eines Profils angepasst.
 
-Wird in einer OSC-Datei eine noch nicht bekannte Eigenschaft erkannt, wird die weitere Bearbeitung abgebrochen um keine
+Wird in einer OSC-Datei eine noch nicht bekannte Eigenschaft erkannt, wird die weitere Bearbeitung abgebrochen, um keine
 unvollständigen Ausgabedateien zu erzeugen.
 
 ### Beispiele
@@ -65,7 +66,8 @@ Die Angaben für `referenced_data_form`, `anzeige_auswahl` und `anzeige` sind op
 Wird keine Angabe gemacht, wird der bestehende Wert beibehalten.
 
 Zudem kann die Menükategorie angepasst werden.
-Hierbei sind alle Felder `name`, `position` und `column` verpflichtend, wenn eine Angabe zu einer Änderung der Menükategorie gemacht wird.
+Die Angabe einer `menu_category` ist fakultativ.
+Wird sie angeben, sind die Felder `name`, `position` und `column` verpflichtend.
 
 Es können beliebig viele Formulare mit beliebig vielen Änderungen zu Formularverweisen in einer Profildatei
 hinterlegt werden, jedoch ist mindestens eine Angabe zu einem Formularfeld erforderlich.
