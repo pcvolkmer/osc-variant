@@ -181,6 +181,14 @@ impl Unterformular {
                                 }
                             }
                         });
+
+                    if let Some(menu_category) = &profile_form.menu_category {
+                        self.menu_category = Some(MenuCategory {
+                            name: menu_category.name.clone(),
+                            position: menu_category.position.clone(),
+                            column: menu_category.column.clone(),
+                        });
+                    }
                 })
             }
         });

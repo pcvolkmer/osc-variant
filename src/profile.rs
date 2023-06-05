@@ -44,7 +44,9 @@ impl FromStr for Profile {
 #[derive(Deserialize)]
 pub struct Form {
     pub name: String,
+    #[serde(default)]
     pub form_references: Vec<FormReference>,
+    pub menu_category: Option<MenuCategory>,
 }
 
 #[derive(Deserialize)]
@@ -55,6 +57,13 @@ pub struct FormReference {
     pub anzeige_auswahl: Option<String>,
 }
 
+#[derive(Deserialize)]
+pub struct MenuCategory {
+    pub name: String,
+    pub position: String,
+    pub column: String,
+}
+
 #[cfg(test)]
 mod tests {
     use crate::profile::Profile;
@@ -62,6 +71,32 @@ mod tests {
 
     #[test]
     fn should_deserialize_profile() {
+        let content = "forms:
+               - name: 'DNPM Therapieplan'
+                 menu_category:
+                   name: DNPM
+                   position: 3.0
+                   column: 1
+                 form_references:
+                   - name: ref_first_mtb
+                     referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
+                     anzeige: 'Datum: {Datum}'
+                     anzeige_auswahl: 'TK vom {Datum}'
+            ";
+
+        match Profile::from_str(content) {
+            Ok(profile) => {
+                assert_eq!(profile.forms.len(), 1);
+                assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
+                assert!(profile.forms[0].menu_category.is_some());
+                assert_eq!(profile.forms[0].form_references.len(), 1);
+            }
+            Err(e) => panic!("Cannot deserialize profile: {}", e),
+        }
+    }
+
+    #[test]
+    fn should_deserialize_form_reference() {
         let content = "forms:
                - name: 'DNPM Therapieplan'
                  form_references:
@@ -89,6 +124,35 @@ mod tests {
                     profile.forms[0].form_references[0].anzeige_auswahl,
                     Some("TK vom {Datum}".to_string())
                 );
+            }
+            Err(e) => panic!("Cannot deserialize profile: {}", e),
+        }
+    }
+
+    #[test]
+    fn should_deserialize_menu_category() {
+        let content = "forms:
+               - name: 'DNPM Therapieplan'
+                 menu_category:
+                   name: DNPM
+                   position: 3.0
+                   column: 1
+            ";
+
+        match Profile::from_str(content) {
+            Ok(profile) => {
+                assert_eq!(profile.forms.len(), 1);
+                assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
+                assert!(profile.forms[0].menu_category.is_some());
+                assert!(profile.forms[0]
+                    .menu_category
+                    .as_ref()
+                    .is_some_and(|menu_category| {
+                        assert_eq!(menu_category.name, "DNPM");
+                        assert_eq!(menu_category.position, "3.0");
+                        assert_eq!(menu_category.column, "1");
+                        true
+                    }));
             }
             Err(e) => panic!("Cannot deserialize profile: {}", e),
         }
@@ -123,6 +187,7 @@ mod tests {
     fn should_not_deserialize_bad_profile() {
         let content = "forms:
                - name: 'DNPM Therapieplan'
+               - form_references: Unknown
                # incomplete profile ...
             ";
 

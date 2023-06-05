@@ -47,6 +47,10 @@ forms:
         referenced_data_form: "Formularverweis.Variante"
         anzeige_auswahl: "Referenziertes Formular vom: {Datum}"
         anzeige: "Datum im referenzierten Formular: {Datum}"
+    menu_category:
+      name: Beispielformulare
+      position: 1.0
+      column: 0
 ```
 
 Hierzu wird die Anwendung angewiesen im Formular "ExampleForm" den Formularverweis im Formularfeld "ref_first_mtb":
@@ -59,6 +63,9 @@ und dabei die vorhandenen Angaben für den Formularverweis zu ersetzen.
 
 Die Angaben für `referenced_data_form`, `anzeige_auswahl` und `anzeige` sind optional.
 Wird keine Angabe gemacht, wird der bestehende Wert beibehalten.
+
+Zudem kann die Menükategorie angepasst werden.
+Hierbei sind alle Felder `name`, `position` und `column` verpflichtend, wenn eine Angabe zu einer Änderung der Menükategorie gemacht wird.
 
 Es können beliebig viele Formulare mit beliebig vielen Änderungen zu Formularverweisen in einer Profildatei
 hinterlegt werden, jedoch ist mindestens eine Angabe zu einem Formularfeld erforderlich.
