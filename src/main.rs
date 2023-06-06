@@ -22,18 +22,19 @@
  * SOFTWARE.
  */
 
-use clap::Parser;
+use std::error::Error;
+use std::fmt::{Debug, Display, Formatter};
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::str::FromStr;
 
-use crate::cli::{Cli, Command};
-use quick_xml::de::from_str;
+use clap::Parser;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 
+use crate::cli::{Cli, Command};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 
@@ -41,84 +42,113 @@ mod cli;
 mod model;
 mod profile;
 
-fn main() {
+enum FileError {
+    Reading(String, String),
+    Writing(String, String),
+    Parsing(String, String),
+}
+
+impl Error for FileError {}
+
+impl Debug for FileError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        Display::fmt(self, f)
+    }
+}
+
+impl Display for FileError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match &self {
+                FileError::Reading(filename, err) => format!("Kann Datei '{}' nicht lesen: {}", filename, err),
+                FileError::Writing(filename, err) => format!("Kann Datei '{}' nicht schreiben: {}", filename, err),
+                FileError::Parsing(filename, err) => format!(
+                    "Die Datei '{}' ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte\n{}",
+                    filename,
+                    err
+                ),
+            }
+        )
+    }
+}
+
+fn read_inputfile(inputfile: String) -> Result<OnkostarEditor, FileError> {
+    return match fs::read_to_string(inputfile.clone()) {
+        Ok(content) => match OnkostarEditor::from_str(content.as_str()) {
+            Ok(data) => Ok(data),
+            Err(err) => Err(FileError::Parsing(inputfile, err)),
+        },
+        Err(err) => Err(FileError::Reading(inputfile, err.to_string())),
+    };
+}
+
+fn read_profile(filename: String) -> Result<Profile, FileError> {
+    let profile = fs::read_to_string(filename.clone())
+        .map_err(|err| FileError::Reading(filename.clone(), err.to_string()))?;
+    let profile =
+        Profile::from_str(profile.as_str()).map_err(|err| FileError::Reading(filename, err))?;
+    Ok(profile)
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
     match cli.command {
         Command::List { inputfile } => {
-            let contents =
-                fs::read_to_string(inputfile).expect("Should have been able to read the file");
-
-            match OnkostarEditor::from_str(contents.as_str()) {
-                Ok(data) => data.list_forms(),
-                Err(err) => {
-                    eprintln!("Kann Eingabedatei nicht lesen!");
-                    eprintln!(
-                        "Die Datei ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte:\n{}",
-                        err
-                    );
-                }
-            }
+            let data = read_inputfile(inputfile)?;
+            data.list_forms();
         }
         Command::Modify {
             inputfile,
             profile,
             outputfile,
         } => {
-            let contents =
-                fs::read_to_string(inputfile).expect("Should have been able to read the file");
+            let data = &mut read_inputfile(inputfile)?;
 
-            if let Ok(mut data) = from_str::<OnkostarEditor>(contents.as_str()) {
-                if let Some(profile) = profile {
-                    let profile =
-                        fs::read_to_string(profile).expect("Should have been able to read profile");
-                    if let Ok(profile) = Profile::from_str(profile.as_str()) {
-                        data.apply_profile(&profile);
-                    } else {
-                        eprintln!("Kann Profildatei nicht lesen!");
-                        return;
-                    }
-                }
+            if let Some(profile) = profile {
+                let profile = read_profile(profile.clone()).map_err(|_| {
+                    FileError::Reading(profile, "Kann Profildatei nicht lesen!".into())
+                })?;
+                data.apply_profile(&profile);
+            }
 
-                let mut buf = String::new();
+            let mut buf = String::new();
 
-                let mut serializer = Serializer::new(&mut buf);
-                serializer.indent(' ', 2);
+            let mut serializer = Serializer::new(&mut buf);
+            serializer.indent(' ', 2);
 
-                data.serialize(serializer).expect("Generated XML");
+            data.serialize(serializer).expect("Generated XML");
 
-                let output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                    .to_string()
-                    .add(
-                        buf
-                            // Replace &apos; and &quot; as used in original file
-                            .replace("&apos;", "'")
-                            .replace("&quot;", "\"")
-                            .as_str(),
-                    );
-
-                match outputfile {
-                    Some(filename) => {
-                        let mut file = OpenOptions::new()
-                            .read(false)
-                            .write(true)
-                            .create(true)
-                            .truncate(true)
-                            .open(filename)
-                            .unwrap();
-                        file.write_all(output.as_bytes())
-                            .expect("Should have written output file");
-                    }
-                    None => {
-                        println!("{}", output)
-                    }
-                }
-            } else {
-                eprintln!("Kann Eingabedatei nicht lesen!");
-                eprintln!(
-                    "Die Datei ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte."
+            let output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                .to_string()
+                .add(
+                    buf
+                        // Replace &apos; and &quot; as used in original file
+                        .replace("&apos;", "'")
+                        .replace("&quot;", "\"")
+                        .as_str(),
                 );
+
+            match outputfile {
+                Some(filename) => {
+                    let mut file = OpenOptions::new()
+                        .read(false)
+                        .write(true)
+                        .create(true)
+                        .truncate(true)
+                        .open(filename.clone())
+                        .map_err(|err| FileError::Writing(filename.clone(), err.to_string()))?;
+                    file.write_all(output.as_bytes())
+                        .map_err(|err| FileError::Writing(filename, err.to_string()))?;
+                }
+                None => {
+                    println!("{}", output)
+                }
             }
         }
-    }
+    };
+
+    Ok(())
 }
