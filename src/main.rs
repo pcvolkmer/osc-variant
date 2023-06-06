@@ -84,6 +84,19 @@ fn read_inputfile(inputfile: String) -> Result<OnkostarEditor, FileError> {
     };
 }
 
+fn write_outputfile(filename: String, content: &String) -> Result<(), FileError> {
+    let mut file = OpenOptions::new()
+        .read(false)
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(filename.clone())
+        .map_err(|err| FileError::Writing(filename.clone(), err.to_string()))?;
+    file.write_all(content.as_bytes())
+        .map_err(|err| FileError::Writing(filename, err.to_string()))?;
+    Ok(())
+}
+
 fn read_profile(filename: String) -> Result<Profile, FileError> {
     let profile = fs::read_to_string(filename.clone())
         .map_err(|err| FileError::Reading(filename.clone(), err.to_string()))?;
@@ -121,7 +134,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             data.serialize(serializer).expect("Generated XML");
 
-            let output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            let output = &"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 .to_string()
                 .add(
                     buf
@@ -132,17 +145,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 );
 
             match outputfile {
-                Some(filename) => {
-                    let mut file = OpenOptions::new()
-                        .read(false)
-                        .write(true)
-                        .create(true)
-                        .truncate(true)
-                        .open(filename.clone())
-                        .map_err(|err| FileError::Writing(filename.clone(), err.to_string()))?;
-                    file.write_all(output.as_bytes())
-                        .map_err(|err| FileError::Writing(filename, err.to_string()))?;
-                }
+                Some(filename) => write_outputfile(filename, output)?,
                 None => {
                     println!("{}", output)
                 }
