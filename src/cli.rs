@@ -39,9 +39,11 @@ pub enum Command {
     #[command(about = "Modifiziert die angegebene Datei anhand der Profildatei")]
     Modify {
         inputfile: String,
-        #[arg(long = "profile", help = "Profildatei (Optional)")]
+        #[arg(long = "profile", help = "Profildatei (optional)")]
         profile: Option<String>,
-        #[arg(long = "output", help = "Ausgabedatei (Optional)")]
+        #[arg(long = "output", help = "Ausgabedatei (optional)")]
         outputfile: Option<String>,
+        #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
+        compact: bool,
     },
 }

@@ -34,6 +34,11 @@ Ohne Profildatei wird die Datei lediglich eingelesen, Leerzeichen am Ende eines 
 
 Ohne eine Angabe der Ausgabedatei wird auf die Standardausgabe ausgegeben.
 
+#### Kompakte Ausgabe
+
+OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne Zeilenumbrüche.
+Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 30% eingespart werden.
+
 ## Profile
 
 Zum Erstellen von Varianten einer OSC-Datei wird eine Profildatei im YAML-Format verwendet.
@@ -72,4 +77,4 @@ Wird sie angeben, sind die Felder `name`, `position` und `column` verpflichtend.
 Es können beliebig viele Formulare mit beliebig vielen Änderungen zu Formularverweisen in einer Profildatei
 hinterlegt werden, jedoch ist mindestens eine Angabe zu einem Formularfeld erforderlich.
 
-Beispiele für eine Profildatei sind unter [`examples/`](examples/) zu finden. 
+Beispiele für eine Profildatei sind unter [`examples/`](examples/) zu finden.

@@ -117,6 +117,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             inputfile,
             profile,
             outputfile,
+            compact,
         } => {
             let data = &mut read_inputfile(inputfile)?;
 
@@ -130,7 +131,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             let mut buf = String::new();
 
             let mut serializer = Serializer::new(&mut buf);
-            serializer.indent(' ', 2);
+            if !compact {
+                serializer.indent(' ', 2);
+            }
 
             data.serialize(serializer).expect("Generated XML");
 
