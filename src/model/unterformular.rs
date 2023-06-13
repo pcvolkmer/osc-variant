@@ -57,7 +57,8 @@ pub struct Unterformular {
     #[serde(rename = "Aktenbereich")]
     aktenbereich: String,
     #[serde(rename = "BefragungRelevant")]
-    befragung_relevant: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    befragung_relevant: Option<bool>,
     #[serde(rename = "Hotkey")]
     #[serde(skip_serializing_if = "Option::is_none")]
     hotkey: Option<String>,
@@ -100,7 +101,8 @@ pub struct Unterformular {
     #[serde(rename = "Datenbankexport")]
     datenbankexport: bool,
     #[serde(rename = "DatenschutzRelevant")]
-    datenschutz_relevant: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    datenschutz_relevant: Option<bool>,
     #[serde(rename = "KonferenzRelevant")]
     konferenz_relevant: bool,
     #[serde(rename = "hatUnterformulare")]
@@ -139,7 +141,8 @@ pub struct Unterformular {
     #[serde(skip_serializing_if = "Option::is_none")]
     verknuepft_guid: Option<String>,
     #[serde(rename = "SeitenzahlSichtbar")]
-    seitenanzahl_sichtbar: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    seitenanzahl_sichtbar: Option<bool>,
     #[serde(rename = "Entries")]
     entries: Entries<Entry>,
     #[serde(rename = "PlausibilityRules")]
@@ -365,7 +368,8 @@ pub struct Entry {
     #[serde(rename = "Resizable")]
     resizable: bool,
     #[serde(rename = "Verschluesselt")]
-    verschluesselt: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    verschluesselt: Option<bool>,
     #[serde(rename = "MemoWidth")]
     #[serde(skip_serializing_if = "Option::is_none")]
     memo_width: Option<u32>,
@@ -406,9 +410,11 @@ pub struct Entry {
     #[serde(rename = "Revision")]
     revision: u16,
     #[serde(rename = "vorherigeWerte")]
-    vorherige_werte: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    vorherige_werte: Option<String>,
     #[serde(rename = "EinfuegenVerhindern")]
-    einfuegen_verhindern: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    einfuegen_verhindern: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
