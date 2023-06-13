@@ -1,0 +1,27 @@
+forms:
+  - name: 'DNPM Klinik/Anamnese'
+    form_references:
+      - name: MTB
+        referenced_data_form: 'UMG.MolTB_neu'
+        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+  - name: 'DNPM Therapieplan'
+    form_references:
+      - name: referstemtb
+        referenced_data_form: 'UMG.MolTB_neu'
+        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+      - name: reftkhumangenber
+        referenced_data_form: 'UMG.MolTB_neu'
+        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+      - name: reftkreevaluation
+        referenced_data_form: 'UMG.MolTB_neu'
+        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+  - name: 'DNPM UF Einzelempfehlung'
+    form_references:
+      - name: mtb
+        referenced_data_form: 'UMG.MolTB_neu'
+        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+  - name: 'DNPM UF Rebiopsie'
+    form_references:
+      - name: reftumorkonferenz
+        referenced_data_form: 'UMG.MolTB_neu'
+        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
