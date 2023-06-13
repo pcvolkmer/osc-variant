@@ -1,31 +1,52 @@
 forms:
   - name: 'DNPM Klinik/Anamnese'
     form_references:
+      # Existiert in neuerer Formularversion nicht mehr
       - name: MTB
         referenced_data_form: 'UMG.MolTB_neu'
-        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+        anzeige_auswahl: 'MTB mit Anmeldung vom {Anmeldedatum}'
+        scripts_code: |
+          // Angepasst an UMG: Verwende 'Anmeldedatum'
+          var datum = getFieldValue('MTB').Anmeldedatum;
+          setFieldValue('AnmeldedatumMTB', datum);
   - name: 'DNPM Therapieplan'
     form_references:
       - name: referstemtb
         referenced_data_form: 'UMG.MolTB_neu'
-        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+        anzeige_auswahl: 'MTB vom {DatumErstvorstellung}'
         scripts_code: |
-          // Angepass an UMG: Verwende 'DatumErstevorstellung'
-          var datum = getFieldValue('referstemtb').DatumErstevorstellung;
+          // Angepasst an UMG: Verwende 'DatumErstvorstellung'
+          var datum = getFieldValue('referstemtb').DatumErstvorstellung;
           setFieldValue('datum', datum);
       - name: reftkhumangenber
         referenced_data_form: 'UMG.MolTB_neu'
-        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+        anzeige_auswahl: 'MTB vom {DatumErstvorstellung}'
+        scripts_code: |
+          // Angepasst an UMG: Verwende 'DatumErstevorstellung'
+          var datum = getFieldValue('reftkhumangenber').DatumErstvorstellung;
+          setFieldValue('datumtkhumangenber', datum);
       - name: reftkreevaluation
         referenced_data_form: 'UMG.MolTB_neu'
-        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+        anzeige_auswahl: 'MTB vom {DatumErstvorstellung}'
+        scripts_code: |
+          // Angepasst an UMG: Verwende 'DatumErstevorstellung'
+          var datum = getFieldValue('reftkreevaluation').DatumErstvorstellung;
+          setFieldValue('datumtkreevaluation', datum);
   - name: 'DNPM UF Einzelempfehlung'
     form_references:
       - name: mtb
         referenced_data_form: 'UMG.MolTB_neu'
-        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+        anzeige_auswahl: 'MTB vom {DatumErstvorstellung}'
+        scripts_code: |
+          // Angepasst an UMG: Verwende 'DatumErstvorstellung'
+          var datum = getFieldValue('mtb').DatumErstvorstellung;
+          setFieldValue('ufeedatum', datum);
   - name: 'DNPM UF Rebiopsie'
     form_references:
       - name: reftumorkonferenz
         referenced_data_form: 'UMG.MolTB_neu'
-        anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+        anzeige_auswahl: 'MTB vom {DatumErstvorstellung}'
+        scripts_code: |
+          // Angepasst an UMG: Verwende 'DatumErstvorstellung'
+          var datum = getFieldValue('reftumorkonferenz').DatumErstvorstellung;
+          setFieldValue('ufrbdatum', datum);
