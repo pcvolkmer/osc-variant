@@ -9,6 +9,10 @@ forms:
       - name: referstemtb
         referenced_data_form: 'UMG.MolTB_neu'
         anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'
+        scripts_code: |
+          // Angepass an UMG: Verwende 'DatumErstevorstellung'
+          var datum = getFieldValue('referstemtb').DatumErstevorstellung;
+          setFieldValue('datum', datum);
       - name: reftkhumangenber
         referenced_data_form: 'UMG.MolTB_neu'
         anzeige_auswahl: 'MTB vom {DatumErstevorstellung}'

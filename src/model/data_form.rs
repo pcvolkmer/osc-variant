@@ -173,6 +173,12 @@ impl DataForm {
                                 {
                                     entry.anzeige_auswahl = Some(profile_anzeige_auswahl.clone())
                                 }
+                                if let Some(scripts_code) = &form_reference.escaped_scripts_code() {
+                                    entry.scripts = Some(Script {
+                                        code: scripts_code.clone(),
+                                        valid: true,
+                                    })
+                                }
                             }
                         });
 

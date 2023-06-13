@@ -53,6 +53,9 @@ forms:
         referenced_data_form: "Formularverweis.Variante"
         anzeige_auswahl: "Referenziertes Formular vom: {Datum}"
         anzeige: "Datum im referenzierten Formular: {Datum}"
+        scripts_code: |
+          // Beispielcode
+          console.log(getFieldValue('ref_first_mtb'));
     menu_category:
       name: Beispielformulare
       position: 1.0
@@ -64,11 +67,14 @@ Hierzu wird die Anwendung angewiesen im Formular "ExampleForm" den Formularverwe
 * den Verweis auf das Formular "Formularverweis.Variante" zu setzen
 * die Anzeige im Auswahlmenü auf "Referenziertes Formular vom: {Datum}" zu setzen
 * die Anzeige unterhalb des Auswahlmenüs auf "Datum im referenzierten Formular: {Datum}" zu setzen
+* den Code zur Ausführung "nach Aktualisierung" für das Formularfeld auf die angegebene, mehrzeilige Zeichenkette anzupassen
 
 und dabei die vorhandenen Angaben für den Formularverweis zu ersetzen.
 
-Die Angaben für `referenced_data_form`, `anzeige_auswahl` und `anzeige` sind optional.
+Die Angaben für `referenced_data_form`, `anzeige_auswahl`, `anzeige` und `scripts_code` sind optional.
 Wird keine Angabe gemacht, wird der bestehende Wert beibehalten.
+
+**Achtung!** Diese Anwendung überprüft keine Scripts und verwendet angegebene Scripts als "valid" im resultierenden OSC-File.
 
 Zudem kann die Menükategorie angepasst werden.
 Die Angabe einer `menu_category` ist fakultativ.

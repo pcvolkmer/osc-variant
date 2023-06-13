@@ -25,6 +25,10 @@
 use serde::Deserialize;
 use std::str::FromStr;
 
+fn escape_script(script: &str) -> String {
+    script.replace('\n', "&#10;")
+}
+
 #[derive(Deserialize)]
 pub struct Profile {
     pub forms: Vec<Form>,
@@ -55,6 +59,13 @@ pub struct FormReference {
     pub referenced_data_form: Option<String>,
     pub anzeige: Option<String>,
     pub anzeige_auswahl: Option<String>,
+    scripts_code: Option<String>,
+}
+
+impl FormReference {
+    pub fn escaped_scripts_code(&self) -> Option<String> {
+        self.scripts_code.as_ref().map(|code| escape_script(code))
+    }
 }
 
 #[derive(Deserialize)]
@@ -104,6 +115,9 @@ mod tests {
                      referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
                      anzeige: 'Datum: {Datum}'
                      anzeige_auswahl: 'TK vom {Datum}'
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
             ";
 
         match Profile::from_str(content) {
@@ -123,6 +137,10 @@ mod tests {
                 assert_eq!(
                     profile.forms[0].form_references[0].anzeige_auswahl,
                     Some("TK vom {Datum}".to_string())
+                );
+                assert_eq!(
+                    profile.forms[0].form_references[0].escaped_scripts_code(),
+                    Some("// Example code&#10;console.log(42);".to_string())
                 );
             }
             Err(e) => panic!("Cannot deserialize profile: {}", e),
