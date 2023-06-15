@@ -55,7 +55,7 @@ impl OnkostarEditor {
 
     pub fn print_list(&self) {
         println!(
-            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte sind gespeichert\n",
+            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte sind gespeichert",
             style(&self.info_xml.datum_xml).yellow(),
             style(&self.info_xml.name).yellow(),
             style(&self.info_xml.version).yellow()

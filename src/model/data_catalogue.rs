@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+use console::style;
 use serde::{Deserialize, Serialize};
 
 use crate::model::{Listable, Ordner, Sortable};
@@ -59,7 +60,8 @@ impl Listable for DataCatalogue {
     fn to_listed_string(&self) -> String {
         format!(
             "Datenkatalog '{}' in Revision '{}'",
-            self.name, self.revision
+            style(&self.name).yellow(),
+            style(&self.revision).yellow()
         )
     }
 }

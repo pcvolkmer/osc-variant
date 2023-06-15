@@ -194,14 +194,15 @@ impl Listable for Unterformular {
         if self.hat_unterformulare {
             return format!(
                 "Unterformular '{}' in Revision '{}' {}",
-                self.name,
-                self.revision,
+                style(&self.name).yellow(),
+                style(&self.revision).yellow(),
                 style("Unterformular mit Markierung 'hat Unterformulare'!").red()
             );
         }
         format!(
             "Unterformular '{}' in Revision '{}'",
-            self.name, self.revision
+            style(&self.name).yellow(),
+            style(&self.revision).yellow()
         )
     }
 }

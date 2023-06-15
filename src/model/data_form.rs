@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+use console::style;
 use serde::{Deserialize, Serialize};
 
 use crate::model::{
@@ -179,7 +180,11 @@ impl FormEntryContainer for DataForm {
 
 impl Listable for DataForm {
     fn to_listed_string(&self) -> String {
-        format!("Formular '{}' in Revision '{}'", self.name, self.revision)
+        format!(
+            "Formular '{}' in Revision '{}'",
+            style(&self.name).yellow(),
+            style(&self.revision).yellow()
+        )
     }
 }
 
