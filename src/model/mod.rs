@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+use crate::profile::{FormReference, Profile};
 use serde::{Deserialize, Serialize};
 
 pub mod data_catalogue;
@@ -203,4 +204,41 @@ pub struct Ordner {
     #[serde(rename = "ParentOrdner", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     parent_order: Option<Box<Ordner>>,
+}
+
+fn apply_profile_to_form_entry<E>(entry: &mut E, form_reference: &FormReference)
+where
+    E: FormEntry,
+{
+    if entry.get_type() == "formReference" && entry.get_name() == form_reference.name {
+        if let Some(profile_referenced_data_form) = &form_reference.referenced_data_form {
+            entry.update_referenced_data_form(profile_referenced_data_form.clone());
+        }
+        if let Some(profile_anzeige) = &form_reference.anzeige {
+            entry.update_anzeige(profile_anzeige.clone());
+        }
+        if let Some(profile_anzeige_auswahl) = &form_reference.anzeige_auswahl {
+            entry.update_anzeige_auswahl(profile_anzeige_auswahl.clone());
+        }
+        if let Some(scripts_code) = &form_reference.escaped_scripts_code() {
+            entry.update_scripts_code(scripts_code.clone());
+        }
+    }
+}
+
+pub trait FormEntryContainer {
+    fn apply_profile(&mut self, profile: &Profile);
+}
+
+pub trait Listable {
+    fn to_listed_string(&self) -> String;
+}
+
+pub trait FormEntry {
+    fn get_name(&self) -> String;
+    fn get_type(&self) -> String;
+    fn update_referenced_data_form(&mut self, value: String);
+    fn update_anzeige(&mut self, value: String);
+    fn update_anzeige_auswahl(&mut self, value: String);
+    fn update_scripts_code(&mut self, value: String);
 }

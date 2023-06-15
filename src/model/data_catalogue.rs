@@ -24,7 +24,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::Ordner;
+use crate::model::{Listable, Ordner};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -55,8 +55,8 @@ pub struct DataCatalogue {
     ordner: Ordner,
 }
 
-impl DataCatalogue {
-    pub fn to_listed_string(&self) -> String {
+impl Listable for DataCatalogue {
+    fn to_listed_string(&self) -> String {
         format!(
             "Datenkatalog '{}' in Revision '{}'",
             self.name, self.revision

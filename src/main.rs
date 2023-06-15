@@ -111,7 +111,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     match cli.command {
         Command::List { inputfile } => {
             let data = read_inputfile(inputfile)?;
-            data.list_forms();
+            data.print_list();
         }
         Command::Modify {
             inputfile,

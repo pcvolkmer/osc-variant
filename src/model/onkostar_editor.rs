@@ -31,6 +31,7 @@ use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::unterformular::Unterformular;
+use crate::model::{FormEntryContainer, Listable};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -52,7 +53,7 @@ impl OnkostarEditor {
         })
     }
 
-    pub fn list_forms(&self) {
+    pub fn print_list(&self) {
         println!(
             "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte sind gespeichert\n",
             style(&self.info_xml.datum_xml).yellow(),

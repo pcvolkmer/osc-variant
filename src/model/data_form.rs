@@ -24,7 +24,10 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Ansichten, Entries, Filter, MenuCategory, PlausibilityRules, Script};
+use crate::model::{
+    apply_profile_to_form_entry, Ansichten, Entries, Filter, FormEntry, FormEntryContainer,
+    Listable, MenuCategory, PlausibilityRules, Script,
+};
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
 
@@ -149,8 +152,8 @@ pub struct DataForm {
     ansichten: Option<Ansichten>,
 }
 
-impl DataForm {
-    pub fn apply_profile(&mut self, profile: &Profile) {
+impl FormEntryContainer for DataForm {
+    fn apply_profile(&mut self, profile: &Profile) {
         profile.forms.iter().for_each(|profile_form| {
             if self.name == profile_form.name {
                 self.entries.entry.iter_mut().for_each(|entry| {
@@ -158,28 +161,7 @@ impl DataForm {
                         .form_references
                         .iter()
                         .for_each(|form_reference| {
-                            if entry.type_ == "formReference" && entry.name == form_reference.name {
-                                if let Some(profile_referenced_data_form) =
-                                    &form_reference.referenced_data_form
-                                {
-                                    entry.referenced_data_form =
-                                        Some(profile_referenced_data_form.clone())
-                                }
-                                if let Some(profile_anzeige) = &form_reference.anzeige {
-                                    entry.anzeige = profile_anzeige.clone()
-                                }
-                                if let Some(profile_anzeige_auswahl) =
-                                    &form_reference.anzeige_auswahl
-                                {
-                                    entry.anzeige_auswahl = Some(profile_anzeige_auswahl.clone())
-                                }
-                                if let Some(scripts_code) = &form_reference.escaped_scripts_code() {
-                                    entry.scripts = Some(Script {
-                                        code: scripts_code.clone(),
-                                        valid: true,
-                                    })
-                                }
-                            }
+                            apply_profile_to_form_entry(entry, form_reference)
                         });
 
                     if let Some(menu_category) = &profile_form.menu_category {
@@ -193,8 +175,10 @@ impl DataForm {
             }
         });
     }
+}
 
-    pub fn to_listed_string(&self) -> String {
+impl Listable for DataForm {
+    fn to_listed_string(&self) -> String {
         format!("Formular '{}' in Revision '{}'", self.name, self.revision)
     }
 }
@@ -397,6 +381,35 @@ pub struct Entry {
     #[serde(rename = "EinfuegenVerhindern")]
     #[serde(skip_serializing_if = "Option::is_none")]
     einfuegen_verhindern: Option<String>,
+}
+
+impl FormEntry for Entry {
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
+    fn get_type(&self) -> String {
+        self.type_.clone()
+    }
+
+    fn update_referenced_data_form(&mut self, value: String) {
+        self.referenced_data_form = Some(value);
+    }
+
+    fn update_anzeige(&mut self, value: String) {
+        self.anzeige = value;
+    }
+
+    fn update_anzeige_auswahl(&mut self, value: String) {
+        self.anzeige_auswahl = Some(value);
+    }
+
+    fn update_scripts_code(&mut self, value: String) {
+        self.scripts = Some(Script {
+            code: value,
+            valid: true,
+        });
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
