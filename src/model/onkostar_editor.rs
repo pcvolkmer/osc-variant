@@ -60,42 +60,16 @@ impl OnkostarEditor {
             style(&self.info_xml.name).yellow(),
             style(&self.info_xml.version).yellow()
         );
-        println!(
-            "{} {}",
-            self.editor.property_catalogue.len(),
-            style("Merkmalskataloge").underlined()
-        );
-        self.editor
-            .property_catalogue
-            .iter()
-            .for_each(|data_form| println!("{}", data_form.to_listed_string()));
-        println!(
-            "\n{} {}",
-            self.editor.data_catalogue.len(),
-            style("Datenkataloge").underlined()
-        );
-        self.editor
-            .data_catalogue
-            .iter()
-            .for_each(|data_form| println!("{}", data_form.to_listed_string()));
-        println!(
-            "\n{} {}",
-            self.editor.data_form.len(),
-            style("Formulare").underlined()
-        );
-        self.editor
-            .data_form
-            .iter()
-            .for_each(|data_form| println!("{}", data_form.to_listed_string()));
-        println!(
-            "\n{} {}",
-            self.editor.unterformular.len(),
-            style("Unterformulare").underlined()
-        );
-        self.editor
-            .unterformular
-            .iter()
-            .for_each(|data_form| println!("{}", data_form.to_listed_string()));
+        Self::print_items("Merkmalskataloge", &self.editor.property_catalogue);
+        Self::print_items("Datenkataloge", &self.editor.data_catalogue);
+        Self::print_items("Formulare", &self.editor.data_form);
+        Self::print_items("Unterformulare", &self.editor.unterformular);
+    }
+
+    fn print_items(title: &str, list: &[impl Listable]) {
+        println!("\n{} {}", list.len(), style(title).underlined());
+        list.iter()
+            .for_each(|entry| println!("{}", entry.to_listed_string()));
     }
 }
 
