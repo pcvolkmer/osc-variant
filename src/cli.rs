@@ -35,7 +35,14 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Command {
     #[command(about = "Zeigt alle enthaltenen Kataloge und Formulare mit Revision an.")]
-    List { inputfile: String },
+    List {
+        inputfile: String,
+        #[arg(
+            long = "sorted",
+            help = "Sortiere Kataloge und Formulare nach Name (Optional)"
+        )]
+        sorted: bool,
+    },
     #[command(about = "Modifiziert die angegebene Datei anhand der Profildatei")]
     Modify {
         inputfile: String,

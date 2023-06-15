@@ -26,7 +26,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::{
     apply_profile_to_form_entry, Ansichten, Entries, Filter, FormEntry, FormEntryContainer,
-    Listable, MenuCategory, PlausibilityRules, Script,
+    Listable, MenuCategory, PlausibilityRules, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
@@ -180,6 +180,12 @@ impl FormEntryContainer for DataForm {
 impl Listable for DataForm {
     fn to_listed_string(&self) -> String {
         format!("Formular '{}' in Revision '{}'", self.name, self.revision)
+    }
+}
+
+impl Sortable for DataForm {
+    fn sorting_key(&self) -> String {
+        self.name.clone()
     }
 }
 

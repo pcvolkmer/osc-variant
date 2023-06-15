@@ -31,7 +31,7 @@ use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::unterformular::Unterformular;
-use crate::model::{FormEntryContainer, Listable};
+use crate::model::{FormEntryContainer, Listable, Sortable};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -70,6 +70,24 @@ impl OnkostarEditor {
         println!("\n{} {}", list.len(), style(title).underlined());
         list.iter()
             .for_each(|entry| println!("{}", entry.to_listed_string()));
+    }
+
+    pub fn sorted(&mut self) {
+        self.editor
+            .property_catalogue
+            .sort_unstable_by_key(|e| e.sorting_key());
+
+        self.editor
+            .data_catalogue
+            .sort_unstable_by_key(|e| e.sorting_key());
+
+        self.editor
+            .data_form
+            .sort_unstable_by_key(|e| e.sorting_key());
+
+        self.editor
+            .unterformular
+            .sort_unstable_by_key(|e| e.sorting_key());
     }
 }
 

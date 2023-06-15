@@ -234,6 +234,10 @@ pub trait Listable {
     fn to_listed_string(&self) -> String;
 }
 
+pub trait Sortable {
+    fn sorting_key(&self) -> String;
+}
+
 pub trait FormEntry {
     fn get_name(&self) -> String;
     fn get_type(&self) -> String;

@@ -39,6 +39,10 @@ Ohne eine Angabe der Ausgabedatei wird auf die Standardausgabe ausgegeben.
 OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne Zeilenumbrüche.
 Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 30% eingespart werden.
 
+#### Sortierung
+
+Bei der Auflistung der Inhalte, kann optional `--sorted` dazu verwendet werden, die angezeigten Einträge alphabetisch zu sortieren.
+
 ## Profile
 
 Zum Erstellen von Varianten einer OSC-Datei wird eine Profildatei im YAML-Format verwendet.

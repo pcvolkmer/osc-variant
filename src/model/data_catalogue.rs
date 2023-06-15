@@ -24,7 +24,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Listable, Ordner};
+use crate::model::{Listable, Ordner, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -61,6 +61,12 @@ impl Listable for DataCatalogue {
             "Datenkatalog '{}' in Revision '{}'",
             self.name, self.revision
         )
+    }
+}
+
+impl Sortable for DataCatalogue {
+    fn sorting_key(&self) -> String {
+        self.name.clone()
     }
 }
 

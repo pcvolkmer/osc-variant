@@ -27,7 +27,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::{
     apply_profile_to_form_entry, Ansichten, Entries, Filter, FormEntry, FormEntryContainer,
-    Listable, MenuCategory, PlausibilityRules, Script,
+    Listable, MenuCategory, PlausibilityRules, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
@@ -203,6 +203,12 @@ impl Listable for Unterformular {
             "Unterformular '{}' in Revision '{}'",
             self.name, self.revision
         )
+    }
+}
+
+impl Sortable for Unterformular {
+    fn sorting_key(&self) -> String {
+        self.name.clone()
     }
 }
 

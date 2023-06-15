@@ -109,8 +109,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
     match cli.command {
-        Command::List { inputfile } => {
-            let data = read_inputfile(inputfile)?;
+        Command::List { inputfile, sorted } => {
+            let mut data = read_inputfile(inputfile)?;
+            if sorted {
+                data.sorted()
+            }
             data.print_list();
         }
         Command::Modify {
