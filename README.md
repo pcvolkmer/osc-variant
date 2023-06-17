@@ -41,7 +41,8 @@ Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 
 
 #### Sortierung
 
-Bei der Auflistung der Inhalte, kann optional `--sorted` dazu verwendet werden, die angezeigten Einträge alphabetisch zu sortieren.
+Bei der Auflistung der Inhalte, kann die Option `--sorted` dazu verwendet werden, die angezeigten Einträge alphabetisch zu sortieren.
+Die Sortierung erfolgt dabei nach Namen des Katalogs oder des Formulars.
 
 ## Profile
 
