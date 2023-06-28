@@ -4,3 +4,24 @@ forms:
       - name: MTB
         referenced_data_form: 'MR.MTB_Anmeldung'
         anzeige_auswahl: 'MTB Anmeldung vom {Anmeldedatum}'
+  - name: 'DNPM Therapieplan'
+    form_references:
+      - name: referstemtb
+        referenced_data_form: 'MR.MTB_Empfehlung'
+        anzeige_auswahl: 'MTB vom {Datum}'
+      - name: reftkhumangenber
+        referenced_data_form: 'MR.MTB_Empfehlung'
+        anzeige_auswahl: 'MTB vom {Datum}'
+      - name: reftkreevaluation
+        referenced_data_form: 'MR.MTB_Empfehlung'
+        anzeige_auswahl: 'MTB vom {Datum}'
+  - name: 'DNPM UF Einzelempfehlung'
+    form_references:
+      - name: mtb
+        referenced_data_form: 'MR.MTB_Empfehlung'
+        anzeige_auswahl: 'MTB vom {Datum}'
+  - name: 'DNPM UF Rebiopsie'
+    form_references:
+      - name: reftumorkonferenz
+        referenced_data_form: 'MR.MTB_Empfehlung'
+        anzeige_auswahl: 'MTB vom {Datum}'
