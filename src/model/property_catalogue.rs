@@ -25,7 +25,7 @@
 use console::style;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Listable, Ordner, Sortable};
+use crate::model::{Comparable, Listable, Ordner, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -66,6 +66,16 @@ impl Listable for PropertyCatalogue {
 impl Sortable for PropertyCatalogue {
     fn sorting_key(&self) -> String {
         self.name.clone()
+    }
+}
+
+impl Comparable for PropertyCatalogue {
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
+    fn get_revision(&self) -> u16 {
+        self.revision
     }
 }
 

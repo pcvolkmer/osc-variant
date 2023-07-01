@@ -31,6 +31,7 @@ use std::ops::Add;
 use std::str::FromStr;
 
 use clap::Parser;
+use console::style;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 
@@ -156,6 +157,22 @@ fn main() -> Result<(), Box<dyn Error>> {
                     println!("{}", output)
                 }
             }
+        }
+        Command::Diff {
+            inputfile_a,
+            inputfile_b,
+            strict,
+        } => {
+            println!(
+                "Vergleiche Datei A ({}) mit Datei B ({})",
+                style(&inputfile_a).yellow(),
+                style(&inputfile_b).yellow()
+            );
+
+            let data_a = &mut read_inputfile(inputfile_a)?;
+            let data_b = &mut read_inputfile(inputfile_b)?;
+
+            data_a.print_diff(data_b, strict);
         }
     };
 

@@ -25,13 +25,15 @@
 use console::style;
 use quick_xml::de::from_str;
 use serde::{Deserialize, Serialize};
+use std::cmp::Ordering;
+use std::fmt::Debug;
 use std::str::FromStr;
 
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::unterformular::Unterformular;
-use crate::model::{FormEntryContainer, Listable, Sortable};
+use crate::model::{Comparable, FormEntryContainer, Listable, Sortable};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -88,6 +90,115 @@ impl OnkostarEditor {
         self.editor
             .unterformular
             .sort_unstable_by_key(|e| e.sorting_key());
+    }
+
+    pub fn print_diff(&mut self, other: &mut Self, strict: bool) {
+        self.sorted();
+        other.sorted();
+
+        Self::print_item_diff(
+            "Merkmalskataloge",
+            &self.editor.property_catalogue,
+            &other.editor.property_catalogue,
+            strict,
+        );
+        Self::print_item_diff(
+            "Datenkataloge",
+            &self.editor.data_catalogue,
+            &other.editor.data_catalogue,
+            strict,
+        );
+        Self::print_item_diff(
+            "Formulare",
+            &self.editor.data_form,
+            &other.editor.data_form,
+            strict,
+        );
+        Self::print_item_diff(
+            "Unterformulare",
+            &self.editor.unterformular,
+            &other.editor.unterformular,
+            strict,
+        );
+    }
+
+    fn print_item_diff(
+        title: &str,
+        list_a: &[impl Comparable],
+        list_b: &[impl Comparable],
+        strict: bool,
+    ) {
+        println!("\n{}", style(title).underlined());
+
+        let mut has_diff = false;
+
+        let names_a = list_a
+            .iter()
+            .map(|entry| entry.get_name())
+            .collect::<Vec<_>>();
+        let names_b = list_b
+            .iter()
+            .map(|entry| entry.get_name())
+            .collect::<Vec<_>>();
+
+        names_b.iter().for_each(|entry| {
+            if !names_a.contains(entry) {
+                println!("{}: {}", entry, style("Nicht in Datei A enthalten!").red());
+                has_diff = true;
+            }
+        });
+
+        names_a.iter().for_each(|entry| {
+            if !names_b.contains(entry) {
+                println!("{}: {}", entry, style("Nicht in Datei B enthalten!").red());
+                has_diff = true;
+            }
+        });
+
+        list_a.iter().for_each(|entry_a| {
+            list_b.iter().for_each(|entry_b| {
+                if entry_a.get_name() == entry_b.get_name() {
+                    match entry_a.get_revision().cmp(&entry_b.get_revision()) {
+                        Ordering::Less => {
+                            println!(
+                                "{}: {} (Revision {} < Revision {})",
+                                entry_a.get_name(),
+                                style("Neuer in Datei B").yellow(),
+                                style(entry_a.get_revision()).blue(),
+                                style(entry_b.get_revision()).green()
+                            );
+                            has_diff = true;
+                        }
+                        Ordering::Greater => {
+                            println!(
+                                "{}: {} (Revision {} > Revision {})",
+                                entry_a.get_name(),
+                                style("Neuer in Datei A").yellow(),
+                                style(entry_a.get_revision()).green(),
+                                style(entry_b.get_revision()).blue()
+                            );
+                            has_diff = true;
+                        }
+                        _ => {
+                            if strict && entry_a.get_hash() != entry_b.get_hash() {
+                                println!(
+                                    "{}: {} (z.B. Reihenfolge von Unterelementen)",
+                                    entry_a.get_name(),
+                                    style("Inhaltlich verschieden").yellow()
+                                );
+                                has_diff = true;
+                            } else if strict {
+                                println!("{}: {}", entry_a.get_name(), style("Identisch").green())
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        if !has_diff {
+            println!("Keine Unterschiede")
+        }
     }
 }
 

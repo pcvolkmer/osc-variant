@@ -24,6 +24,9 @@
 
 use crate::profile::{FormReference, Profile};
 use serde::{Deserialize, Serialize};
+use std::collections::hash_map::DefaultHasher;
+use std::fmt::Debug;
+use std::hash::{Hash, Hasher};
 
 pub mod data_catalogue;
 pub mod data_form;
@@ -236,6 +239,16 @@ pub trait Listable {
 
 pub trait Sortable {
     fn sorting_key(&self) -> String;
+}
+
+pub trait Comparable: Debug {
+    fn get_name(&self) -> String;
+    fn get_revision(&self) -> u16;
+    fn get_hash(&self) -> String {
+        let mut h = DefaultHasher::new();
+        format!("{:?}", self).hash(&mut h);
+        h.finish().to_string()
+    }
 }
 
 pub trait FormEntry {

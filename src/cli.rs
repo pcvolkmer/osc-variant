@@ -53,4 +53,11 @@ pub enum Command {
         #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
         compact: bool,
     },
+    #[command(about = "Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte")]
+    Diff {
+        inputfile_a: String,
+        inputfile_b: String,
+        #[arg(long = "strict", help = "Strikter Vergleich des Inhalts")]
+        strict: bool,
+    },
 }

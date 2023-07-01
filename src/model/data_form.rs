@@ -26,8 +26,8 @@ use console::style;
 use serde::{Deserialize, Serialize};
 
 use crate::model::{
-    apply_profile_to_form_entry, Ansichten, Entries, Filter, FormEntry, FormEntryContainer,
-    Listable, MenuCategory, PlausibilityRules, Script, Sortable,
+    apply_profile_to_form_entry, Ansichten, Comparable, Entries, Filter, FormEntry,
+    FormEntryContainer, Listable, MenuCategory, PlausibilityRules, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
@@ -191,6 +191,16 @@ impl Listable for DataForm {
 impl Sortable for DataForm {
     fn sorting_key(&self) -> String {
         self.name.clone()
+    }
+}
+
+impl Comparable for DataForm {
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+
+    fn get_revision(&self) -> u16 {
+        self.revision
     }
 }
 

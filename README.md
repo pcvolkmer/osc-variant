@@ -22,6 +22,20 @@ Zum Auflisten der Inhalte einer Datei wird folgender Befehl verwendet:
 osc-variant list meine-beispieldatei.osc
 ```
 
+Zum Vergleich zweier OSC-Dateien wird der Unterbefehl `diff` verwendet.
+Der optionale Parameter `--strict` vergleicht auch den Inhalt der OSC-Datei.
+Ohne diesen wird nur das Vorhandensein von Inhalten und die Revision verglichen. 
+
+```
+osc-variant list meine-beispieldatei.osc andere-beispieldatei.osc
+```
+
+bzw.
+
+```
+osc-variant list meine-beispieldatei.osc andere-beispieldatei.osc --strict
+```
+
 Zum Anpassen des Inhalts einer Datei:
 
 ```
