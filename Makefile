@@ -38,7 +38,11 @@ win-binary-x86_64:
 linux-binary-x86_64:
 	cargo build --release --target=x86_64-unknown-linux-gnu
 
-.PHONE: clean
+.PHONY: install
+install:
+	cargo install --path .
+
+.PHONY: clean
 clean:
 	cargo clean
 	rm -rf osc-variant 2>/dev/null || true
