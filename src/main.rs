@@ -122,6 +122,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             profile,
             outputfile,
             compact,
+            sorted,
         } => {
             let data = &mut read_inputfile(inputfile)?;
 
@@ -130,6 +131,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                     FileError::Reading(profile, "Kann Profildatei nicht lesen!".into())
                 })?;
                 data.apply_profile(&profile);
+            }
+
+            if sorted {
+                data.sorted();
             }
 
             let mut buf = String::new();
