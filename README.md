@@ -27,13 +27,13 @@ Der optionale Parameter `--strict` vergleicht auch den Inhalt der OSC-Datei.
 Ohne diesen wird nur das Vorhandensein von Inhalten und die Revision verglichen. 
 
 ```
-osc-variant list meine-beispieldatei.osc andere-beispieldatei.osc
+osc-variant diff meine-beispieldatei.osc andere-beispieldatei.osc
 ```
 
 bzw.
 
 ```
-osc-variant list meine-beispieldatei.osc andere-beispieldatei.osc --strict
+osc-variant diff meine-beispieldatei.osc andere-beispieldatei.osc --strict
 ```
 
 Zum Anpassen des Inhalts einer Datei:
