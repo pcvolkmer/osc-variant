@@ -67,6 +67,16 @@ impl Sortable for PropertyCatalogue {
     fn sorting_key(&self) -> String {
         self.name.clone()
     }
+
+    fn sorted(&mut self) -> &Self {
+        if let Some(ref mut versions) = self.versions.entry {
+            versions.sort_unstable_by_key(|item| item.version_number);
+            versions.iter_mut().for_each(|version| {
+                version.sorted();
+            });
+        }
+        self
+    }
 }
 
 impl Comparable for PropertyCatalogue {
@@ -115,6 +125,40 @@ pub struct Version {
     categories: Categories,
 }
 
+impl Sortable for Version {
+    fn sorting_key(&self) -> String {
+        self.oid.clone()
+    }
+
+    fn sorted(&mut self) -> &Self
+    where
+        Self: Sized,
+    {
+        if let Some(ref mut abbildung) = self.abbildung {
+            abbildung.sort_unstable_by_key(|item| item.sorting_key());
+            abbildung.iter_mut().for_each(|item| {
+                item.sorted();
+            });
+        }
+
+        self.entries
+            .content
+            .sort_unstable_by_key(|item| item.sorting_key());
+        self.entries.content.iter_mut().for_each(|item| {
+            item.sorted();
+        });
+
+        self.categories
+            .content
+            .sort_unstable_by_key(|item| item.sorting_key());
+        self.categories.content.iter_mut().for_each(|item| {
+            item.sorted();
+        });
+
+        self
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct VersionEntries {
@@ -141,6 +185,12 @@ pub struct VersionEntry {
     position: String,
 }
 
+impl Sortable for VersionEntry {
+    fn sorting_key(&self) -> String {
+        self.code.clone()
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Categories {
@@ -163,6 +213,26 @@ pub struct Category {
     beschreibung: String,
     #[serde(rename = "CategoryEntries")]
     category_entries: CategoryEntries,
+}
+
+impl Sortable for Category {
+    fn sorting_key(&self) -> String {
+        self.name.clone()
+    }
+
+    fn sorted(&mut self) -> &Self
+    where
+        Self: Sized,
+    {
+        self.category_entries
+            .content
+            .sort_unstable_by_key(|item| item.sorting_key());
+        self.category_entries.content.iter_mut().for_each(|item| {
+            item.sorted();
+        });
+
+        self
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -191,6 +261,12 @@ pub struct CategoryEntry {
     note: Option<String>,
 }
 
+impl Sortable for CategoryEntry {
+    fn sorting_key(&self) -> String {
+        self.code.clone()
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Abbildung {
@@ -200,6 +276,24 @@ pub struct Abbildung {
     content: Vec<AbbildungEintrag>,
 }
 
+impl Sortable for Abbildung {
+    fn sorting_key(&self) -> String {
+        self.ziel_mk_version_oid.clone()
+    }
+
+    fn sorted(&mut self) -> &Self
+    where
+        Self: Sized,
+    {
+        self.content.sort_unstable_by_key(|item| item.sorting_key());
+        self.content.iter_mut().for_each(|item| {
+            item.sorted();
+        });
+
+        self
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct AbbildungEintrag {
@@ -207,6 +301,12 @@ pub struct AbbildungEintrag {
     entry_from: AbbildungEntry,
     #[serde(rename = "Entry-to")]
     entry_to: AbbildungEntry,
+}
+
+impl Sortable for AbbildungEintrag {
+    fn sorting_key(&self) -> String {
+        format!("{}-{}", self.entry_from.code, self.entry_to.code)
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]

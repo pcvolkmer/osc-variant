@@ -211,6 +211,29 @@ impl Sortable for Unterformular {
     fn sorting_key(&self) -> String {
         self.name.clone()
     }
+
+    fn sorted(&mut self) -> &Self {
+        self.data_catalogues.data_catalogue.sort_unstable();
+
+        self.entries
+            .entry
+            .sort_unstable_by_key(|item| item.sorting_key());
+
+        self.entries.entry.iter_mut().for_each(|item| {
+            item.sorted();
+        });
+
+        if let Some(ref mut plausibility_rule) = self.plausibility_rules.plausibility_rule {
+            plausibility_rule.sort_unstable_by_key(|item| item.bezeichnung.clone());
+
+            plausibility_rule.iter_mut().for_each(|item| {
+                if let Some(ref mut data_form_entry_names) = item.data_form_entries.entry_name {
+                    data_form_entry_names.sort_unstable();
+                }
+            });
+        }
+        self
+    }
 }
 
 impl Comparable for Unterformular {
@@ -450,6 +473,26 @@ impl FormEntry for Entry {
             code: value,
             valid: true,
         });
+    }
+}
+
+impl Sortable for Entry {
+    fn sorting_key(&self) -> String {
+        self.name.clone()
+    }
+
+    fn sorted(&mut self) -> &Self
+    where
+        Self: Sized,
+    {
+        if let Some(ref mut filter) = self.filter {
+            if let Some(ref mut ref_entries) = filter.ref_entries {
+                if let Some(ref mut ref_entry) = ref_entries.ref_entry {
+                    ref_entry.sort_unstable()
+                }
+            }
+        }
+        self
     }
 }
 

@@ -79,17 +79,33 @@ impl OnkostarEditor {
             .property_catalogue
             .sort_unstable_by_key(|e| e.sorting_key());
 
+        self.editor.property_catalogue.iter_mut().for_each(|item| {
+            item.sorted();
+        });
+
         self.editor
             .data_catalogue
             .sort_unstable_by_key(|e| e.sorting_key());
+
+        self.editor.data_catalogue.iter_mut().for_each(|item| {
+            item.sorted();
+        });
 
         self.editor
             .data_form
             .sort_unstable_by_key(|e| e.sorting_key());
 
+        self.editor.data_form.iter_mut().for_each(|item| {
+            item.sorted();
+        });
+
         self.editor
             .unterformular
             .sort_unstable_by_key(|e| e.sorting_key());
+
+        self.editor.unterformular.iter_mut().for_each(|item| {
+            item.sorted();
+        });
     }
 
     pub fn print_diff(&mut self, other: &mut Self, strict: bool) {
@@ -182,7 +198,7 @@ impl OnkostarEditor {
                         _ => {
                             if strict && entry_a.get_hash() != entry_b.get_hash() {
                                 println!(
-                                    "{}: {} (z.B. Reihenfolge von Unterelementen)",
+                                    "{}: {} (z.B. GUID oder Reihenfolge von Unterelementen)",
                                     entry_a.get_name(),
                                     style("Inhaltlich verschieden").yellow()
                                 );

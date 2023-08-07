@@ -52,6 +52,11 @@ pub enum Command {
         outputfile: Option<String>,
         #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
         compact: bool,
+        #[arg(
+            long = "x-sorted",
+            help = "EXPERIMENTELL: Sortiere Kataloge und Formulare nach Name (Optional). Kann negative Auswirkungen auf den ordnungsgemäßen Import haben."
+        )]
+        sorted: bool,
     },
     #[command(about = "Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte")]
     Diff {
