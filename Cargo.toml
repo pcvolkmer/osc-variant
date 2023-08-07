@@ -1,7 +1,11 @@
 [package]
 name = "osc-variant"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
+authors = ["Paul-Christian Volkmer <volkmer_p@ukw.de>"]
+description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort"
+license = "MIT"
+readme = "README.md"
 
 [dependencies]
 clap = { version = "4.3", features = ["std", "help", "usage", "derive", "error-context"], default-features = false }
@@ -17,3 +21,6 @@ codegen-units = 1
 lto = "thin"
 strip = true
 panic = "abort"
+
+[package.metadata.deb]
+copyright = "Copyright (c) 2023 Comprehensive Cancer Center Mainfranken"
