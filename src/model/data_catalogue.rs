@@ -70,6 +70,16 @@ impl Sortable for DataCatalogue {
     fn sorting_key(&self) -> String {
         self.name.clone()
     }
+
+    fn sorted(&mut self) -> &Self {
+        self.entries
+            .entry
+            .sort_unstable_by_key(|item| item.sorting_key());
+        self.entries.entry.iter_mut().for_each(|item| {
+            item.sorted();
+        });
+        self
+    }
 }
 
 impl Comparable for DataCatalogue {
@@ -151,6 +161,23 @@ pub struct Entry {
     revision: u16,
 }
 
+impl Sortable for Entry {
+    fn sorting_key(&self) -> String {
+        self.name.clone()
+    }
+
+    fn sorted(&mut self) -> &Self
+    where
+        Self: Sized,
+    {
+        if let Some(ref mut use_) = self.use_ {
+            use_.program_module
+                .sort_unstable_by_key(|item| item.sorting_key())
+        }
+        self
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Use {
@@ -165,4 +192,10 @@ pub struct ProgramModule {
     program: String,
     #[serde(rename = "@name")]
     name: String,
+}
+
+impl Sortable for ProgramModule {
+    fn sorting_key(&self) -> String {
+        format!("{}-{}", self.program, self.name)
+    }
 }

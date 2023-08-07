@@ -239,6 +239,12 @@ pub trait Listable {
 
 pub trait Sortable {
     fn sorting_key(&self) -> String;
+    fn sorted(&mut self) -> &Self
+    where
+        Self: Sized,
+    {
+        self
+    }
 }
 
 pub trait Comparable: Debug {
