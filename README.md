@@ -22,6 +22,15 @@ Zum Auflisten der Inhalte einer Datei wird folgender Befehl verwendet:
 osc-variant list meine-beispieldatei.osc
 ```
 
+Zum Auflisten der Inhalte mit allen Abhängigkeiten, z.B. Daten- und Merkmalkataloge und bei Formularen wird der Befehl
+`tree` verwendet:
+
+```
+osc-variant tree meine-beispieldatei.osc
+```
+
+Achtung! Dies erzeugt eine sehr umfangreiche Ausgabe.
+
 Zum Vergleich zweier OSC-Dateien wird der Unterbefehl `diff` verwendet.
 Der optionale Parameter `--strict` vergleicht auch den Inhalt der OSC-Datei.
 Ohne diesen wird nur das Vorhandensein von Inhalten und die Revision verglichen. 

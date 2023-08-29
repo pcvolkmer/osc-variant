@@ -22,16 +22,19 @@
  * SOFTWARE.
  */
 
-use crate::profile::{FormReference, Profile};
-use serde::{Deserialize, Serialize};
 use std::collections::hash_map::DefaultHasher;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
+
+use serde::{Deserialize, Serialize};
+
+use crate::profile::{FormReference, Profile};
 
 pub mod data_catalogue;
 pub mod data_form;
 pub mod onkostar_editor;
 pub mod property_catalogue;
+pub mod requirements;
 pub mod unterformular;
 
 #[derive(Serialize, Deserialize, Debug)]

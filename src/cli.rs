@@ -43,6 +43,15 @@ pub enum Command {
         )]
         sorted: bool,
     },
+    #[command(about = "Zeigt Kataloge und Formulare mit Revision und Abhängigkeiten an.")]
+    Tree {
+        inputfile: String,
+        #[arg(
+            long = "sorted",
+            help = "Sortiere Kataloge und Formulare nach Name (Optional)"
+        )]
+        sorted: bool,
+    },
     #[command(about = "Modifiziert die angegebene Datei anhand der Profildatei")]
     Modify {
         inputfile: String,
