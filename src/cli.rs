@@ -63,7 +63,7 @@ pub enum Command {
         compact: bool,
         #[arg(
             long = "x-sorted",
-            help = "EXPERIMENTELL: Sortiere Kataloge und Formulare nach Name (Optional). Kann negative Auswirkungen auf den ordnungsgemäßen Import haben."
+            help = "EXPERIMENTELL: Sortiere Kataloge und Formulare nach Name (Optional).\nKann negative Auswirkungen auf den ordnungsgemäßen Import haben."
         )]
         sorted: bool,
     },
