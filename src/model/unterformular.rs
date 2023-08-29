@@ -22,9 +22,13 @@
  * SOFTWARE.
  */
 
+use std::collections::HashSet;
+
 use console::style;
 use serde::{Deserialize, Serialize};
 
+use crate::model::onkostar_editor::OnkostarEditor;
+use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
     apply_profile_to_form_entry, Ansichten, Comparable, Entries, Filter, FormEntry,
     FormEntryContainer, Listable, MenuCategory, PlausibilityRules, Script, Sortable,
@@ -243,6 +247,56 @@ impl Comparable for Unterformular {
 
     fn get_revision(&self) -> u16 {
         self.revision
+    }
+}
+
+impl Requires for Unterformular {
+    fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
+        self.data_catalogues
+            .data_catalogue
+            .iter()
+            .collect::<HashSet<_>>()
+            .into_iter()
+            .map(|entry| all.find_data_catalogue(entry.as_str()))
+            .filter(Option::is_some)
+            .map(|entry| Requirement::DataCatalogue(entry.unwrap()))
+            .collect::<Vec<_>>()
+    }
+
+    fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
+        format!(
+            "Unterformular '{}' in Revision '{}'\n{}",
+            style(&self.name).yellow(),
+            style(&self.revision).yellow(),
+            self.get_required_entries(all)
+                .iter()
+                .map(|entry| match entry {
+                    Requirement::DataCatalogue(x) => {
+                        let inner = x
+                            .get_required_entries(all)
+                            .iter()
+                            .map(|inner_entry| match inner_entry {
+                                Requirement::PropertyCatalogue(y) => Some(y.to_listed_string()),
+                                _ => None,
+                            })
+                            .filter(Option::is_some)
+                            .map(|item| format!("    - {}\n", item.unwrap()))
+                            .collect::<Vec<_>>()
+                            .join("");
+
+                        if inner.is_empty() {
+                            Some(format!("  + {}\n", x.to_listed_string()))
+                        } else {
+                            Some(format!("  + {}\n{}", x.to_listed_string(), inner))
+                        }
+                    }
+                    _ => None,
+                })
+                .filter(Option::is_some)
+                .flatten()
+                .collect::<Vec<_>>()
+                .join("")
+        )
     }
 }
 

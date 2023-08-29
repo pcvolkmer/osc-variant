@@ -117,6 +117,13 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
             data.print_list();
         }
+        Command::Tree { inputfile, sorted } => {
+            let mut data = read_inputfile(inputfile)?;
+            if sorted {
+                data.sorted()
+            }
+            OnkostarEditor::print_tree(&data);
+        }
         Command::Modify {
             inputfile,
             profile,

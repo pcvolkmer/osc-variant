@@ -1,6 +1,6 @@
 [package]
 name = "osc-variant"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["Paul-Christian Volkmer <volkmer_p@ukw.de>"]
 description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort"

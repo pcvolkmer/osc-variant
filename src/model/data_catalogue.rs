@@ -22,9 +22,13 @@
  * SOFTWARE.
  */
 
+use std::collections::HashSet;
+
 use console::style;
 use serde::{Deserialize, Serialize};
 
+use crate::model::onkostar_editor::OnkostarEditor;
+use crate::model::requirements::{Requirement, Requires};
 use crate::model::{Comparable, Listable, Ordner, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -89,6 +93,45 @@ impl Comparable for DataCatalogue {
 
     fn get_revision(&self) -> u16 {
         self.revision
+    }
+}
+
+impl Requires for DataCatalogue {
+    fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
+        self.entries
+            .entry
+            .iter()
+            .filter(|&entry| entry.property_catalogue.is_some())
+            .map(|entry| match &entry.property_catalogue {
+                Some(entry) => entry.to_string(),
+                _ => String::new(),
+            })
+            .collect::<HashSet<_>>()
+            .into_iter()
+            .map(|entry| all.find_property_catalogue(entry.as_str()))
+            .filter(Option::is_some)
+            .map(|entry| Requirement::PropertyCatalogue(entry.unwrap()))
+            .collect::<Vec<_>>()
+    }
+
+    fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
+        format!(
+            "Datenkatalog '{}' in Revision '{}'\n{}",
+            style(&self.name).yellow(),
+            style(&self.revision).yellow(),
+            self.get_required_entries(all)
+                .iter()
+                .map(|entry| match entry {
+                    Requirement::PropertyCatalogue(x) => {
+                        Some(format!("  + {}\n", x.to_listed_string()))
+                    }
+                    _ => None,
+                })
+                .filter(Option::is_some)
+                .flatten()
+                .collect::<Vec<_>>()
+                .join("")
+        )
     }
 }
 

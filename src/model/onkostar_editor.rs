@@ -22,16 +22,18 @@
  * SOFTWARE.
  */
 
-use console::style;
-use quick_xml::de::from_str;
-use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::fmt::Debug;
 use std::str::FromStr;
 
+use console::style;
+use quick_xml::de::from_str;
+use serde::{Deserialize, Serialize};
+
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
+use crate::model::requirements::Requires;
 use crate::model::unterformular::Unterformular;
 use crate::model::{Comparable, FormEntryContainer, Listable, Sortable};
 use crate::profile::Profile;
@@ -46,6 +48,32 @@ pub struct OnkostarEditor {
 }
 
 impl OnkostarEditor {
+    pub fn find_property_catalogue<'a>(&'a self, name: &str) -> Option<&'a PropertyCatalogue> {
+        match self
+            .editor
+            .property_catalogue
+            .iter()
+            .filter(|&item| item.get_name().eq_ignore_ascii_case(name))
+            .nth(0)
+        {
+            Some(x) => Some(x),
+            _ => None,
+        }
+    }
+
+    pub fn find_data_catalogue<'a>(&'a self, name: &str) -> Option<&'a DataCatalogue> {
+        match self
+            .editor
+            .data_catalogue
+            .iter()
+            .filter(|&item| item.get_name().eq_ignore_ascii_case(name))
+            .nth(0)
+        {
+            Some(x) => Some(x),
+            _ => None,
+        }
+    }
+
     pub fn apply_profile(&mut self, profile: &Profile) {
         self.editor.data_form.iter_mut().for_each(|data_form| {
             data_form.apply_profile(profile);
@@ -72,6 +100,26 @@ impl OnkostarEditor {
         println!("\n{} {}", list.len(), style(title).underlined());
         list.iter()
             .for_each(|entry| println!("{}", entry.to_listed_string()));
+    }
+
+    pub fn print_tree(&self) {
+        println!(
+            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte sind gespeichert",
+            style(&self.info_xml.datum_xml).yellow(),
+            style(&self.info_xml.name).yellow(),
+            style(&self.info_xml.version).yellow()
+        );
+
+        Self::print_items("Merkmalskataloge", &self.editor.property_catalogue);
+        self.print_items_tree("Datenkataloge", &self.editor.data_catalogue);
+        self.print_items_tree("Formulare", &self.editor.data_form);
+        self.print_items_tree("Unterformulare", &self.editor.unterformular);
+    }
+
+    fn print_items_tree(&self, title: &str, list: &[impl Requires]) {
+        println!("\n{} {}", list.len(), style(title).underlined());
+        list.iter()
+            .for_each(|entry| println!("{}", entry.to_requirement_string(self)));
     }
 
     pub fn sorted(&mut self) {
