@@ -157,6 +157,22 @@ impl OnkostarEditor {
     }
 
     pub fn print_diff(&mut self, other: &mut Self, strict: bool) {
+        println!();
+
+        println!(
+            "Datei A wurde am {} mit {} in Version {} erstellt.",
+            style(&self.info_xml.datum_xml).yellow(),
+            style(&self.info_xml.name).yellow(),
+            style(&self.info_xml.version).yellow()
+        );
+
+        println!(
+            "Datei B wurde am {} mit {} in Version {} erstellt.",
+            style(&other.info_xml.datum_xml).yellow(),
+            style(&other.info_xml.name).yellow(),
+            style(&other.info_xml.version).yellow()
+        );
+
         self.sorted();
         other.sorted();
 
