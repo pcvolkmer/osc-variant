@@ -25,7 +25,7 @@
 use console::style;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Comparable, Listable, Ordner, Sortable};
+use crate::model::{Comparable, FolderContent, Listable, Ordner, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -56,7 +56,11 @@ pub struct PropertyCatalogue {
 impl Listable for PropertyCatalogue {
     fn to_listed_string(&self) -> String {
         format!(
-            "Merkmalskatalog '{}' in Revision '{}'",
+            "Merkmalskatalog ({}) '{}' in Revision '{}'",
+            match self.is_system_library_content() {
+                true => style("S").yellow(),
+                _ => style("u"),
+            },
             style(&self.name).yellow(),
             style(&self.revision).yellow()
         )
@@ -86,6 +90,12 @@ impl Comparable for PropertyCatalogue {
 
     fn get_revision(&self) -> u16 {
         self.revision
+    }
+}
+
+impl FolderContent for PropertyCatalogue {
+    fn get_library_folder(&self) -> String {
+        self.ordner.bibliothek.name.to_string()
     }
 }
 

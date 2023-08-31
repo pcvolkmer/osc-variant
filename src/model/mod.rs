@@ -268,3 +268,11 @@ pub trait FormEntry {
     fn update_anzeige_auswahl(&mut self, value: String);
     fn update_scripts_code(&mut self, value: String);
 }
+
+pub trait FolderContent {
+    fn get_library_folder(&self) -> String;
+
+    fn is_system_library_content(&self) -> bool {
+        "ONKOSTAR Bibliothek" == self.get_library_folder()
+    }
+}

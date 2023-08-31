@@ -29,7 +29,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
-use crate::model::{Comparable, Listable, Ordner, Sortable};
+use crate::model::{Comparable, FolderContent, Listable, Ordner, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -63,7 +63,11 @@ pub struct DataCatalogue {
 impl Listable for DataCatalogue {
     fn to_listed_string(&self) -> String {
         format!(
-            "Datenkatalog '{}' in Revision '{}'",
+            "Datenkatalog ({}) '{}' in Revision '{}'",
+            match self.is_system_library_content() {
+                true => style("S").yellow(),
+                _ => style("u"),
+            },
             style(&self.name).yellow(),
             style(&self.revision).yellow()
         )
@@ -116,9 +120,8 @@ impl Requires for DataCatalogue {
 
     fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
         format!(
-            "Datenkatalog '{}' in Revision '{}'\n{}",
-            style(&self.name).yellow(),
-            style(&self.revision).yellow(),
+            "{}\n{}",
+            self.to_listed_string(),
             self.get_required_entries(all)
                 .iter()
                 .map(|entry| match entry {
@@ -132,6 +135,12 @@ impl Requires for DataCatalogue {
                 .collect::<Vec<_>>()
                 .join("")
         )
+    }
+}
+
+impl FolderContent for DataCatalogue {
+    fn get_library_folder(&self) -> String {
+        self.ordner.bibliothek.name.to_string()
     }
 }
 

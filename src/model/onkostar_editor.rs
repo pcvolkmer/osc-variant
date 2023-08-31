@@ -97,7 +97,11 @@ impl OnkostarEditor {
     }
 
     fn print_items(title: &str, list: &[impl Listable]) {
-        println!("\n{} {}", list.len(), style(title).underlined());
+        print!("\n{} {}", list.len(), style(title).underlined());
+        println!(
+            " - Inhalte der Systembibliothek sind mit ({}) markiert",
+            style("S").yellow()
+        );
         list.iter()
             .for_each(|entry| println!("{}", entry.to_listed_string()));
     }
@@ -117,7 +121,11 @@ impl OnkostarEditor {
     }
 
     fn print_items_tree(&self, title: &str, list: &[impl Requires]) {
-        println!("\n{} {}", list.len(), style(title).underlined());
+        print!("\n{} {}", list.len(), style(title).underlined());
+        println!(
+            " - Inhalte der Systembibliothek sind mit ({}) markiert",
+            style("S").yellow()
+        );
         list.iter()
             .for_each(|entry| println!("{}", entry.to_requirement_string(self)));
     }

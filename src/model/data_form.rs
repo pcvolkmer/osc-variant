@@ -30,7 +30,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
-    apply_profile_to_form_entry, Ansichten, Comparable, Entries, Filter, FormEntry,
+    apply_profile_to_form_entry, Ansichten, Comparable, Entries, Filter, FolderContent, FormEntry,
     FormEntryContainer, Listable, MenuCategory, PlausibilityRules, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
@@ -185,7 +185,11 @@ impl FormEntryContainer for DataForm {
 impl Listable for DataForm {
     fn to_listed_string(&self) -> String {
         format!(
-            "Formular '{}' in Revision '{}'",
+            "Formular ({}) '{}' in Revision '{}'",
+            match self.is_system_library_content() {
+                true => style("S").yellow(),
+                _ => style("u"),
+            },
             style(&self.name).yellow(),
             style(&self.revision).yellow()
         )
@@ -246,9 +250,8 @@ impl Requires for DataForm {
 
     fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
         format!(
-            "Formular '{}' in Revision '{}'\n{}",
-            style(&self.name).yellow(),
-            style(&self.revision).yellow(),
+            "{}\n{}",
+            self.to_listed_string(),
             self.get_required_entries(all)
                 .iter()
                 .map(|entry| match entry {
@@ -278,6 +281,12 @@ impl Requires for DataForm {
                 .collect::<Vec<_>>()
                 .join("")
         )
+    }
+}
+
+impl FolderContent for DataForm {
+    fn get_library_folder(&self) -> String {
+        self.ordner.bibliothek.name.to_string()
     }
 }
 
