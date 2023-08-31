@@ -341,12 +341,12 @@ pub struct InfoXML {
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 struct Editor {
-    #[serde(rename = "PropertyCatalogue")]
+    #[serde(rename = "PropertyCatalogue", default)]
     property_catalogue: Vec<PropertyCatalogue>,
-    #[serde(rename = "DataCatalogue")]
+    #[serde(rename = "DataCatalogue", default)]
     data_catalogue: Vec<DataCatalogue>,
-    #[serde(rename = "Unterformular")]
+    #[serde(rename = "Unterformular", default)]
     unterformular: Vec<Unterformular>,
-    #[serde(rename = "DataForm")]
+    #[serde(rename = "DataForm", default)]
     data_form: Vec<DataForm>,
 }
