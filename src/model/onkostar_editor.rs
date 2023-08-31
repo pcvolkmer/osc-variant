@@ -107,7 +107,7 @@ impl OnkostarEditor {
     fn print_items(title: &str, list: &[impl Listable]) {
         print!("\n{} {}", list.len(), style(title).underlined());
         println!(
-            " - Inhalte der Systembibliothek sind mit ({}) markiert",
+            " - Inhalte der Systembibliothek sind mit ({}), der Benutzerbibliothek mit (u) markiert",
             style("S").yellow()
         );
         list.iter()
@@ -131,7 +131,7 @@ impl OnkostarEditor {
     fn print_items_tree(&self, title: &str, list: &[impl Requires]) {
         print!("\n{} {}", list.len(), style(title).underlined());
         println!(
-            " - Inhalte der Systembibliothek sind mit ({}) markiert",
+            " - Inhalte der Systembibliothek sind mit ({}), der Benutzerbibliothek mit (u) markiert",
             style("S").yellow()
         );
         list.iter()
