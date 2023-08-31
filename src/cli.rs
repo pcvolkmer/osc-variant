@@ -66,6 +66,11 @@ pub enum Command {
             help = "EXPERIMENTELL: Sortiere Kataloge und Formulare nach Name (Optional).\nKann negative Auswirkungen auf den ordnungsgemäßen Import haben."
         )]
         sorted: bool,
+        #[arg(
+            long = "x-strip",
+            help = "EXPERIMENTELL: Entferne Einträge aus der Systembibliothek die nicht importiert werden (Optional).\nKann negative Auswirkungen auf den ordnungsgemäßen Import haben."
+        )]
+        strip: bool,
     },
     #[command(about = "Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte")]
     Diff {

@@ -130,6 +130,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             outputfile,
             compact,
             sorted,
+            strip,
         } => {
             let data = &mut read_inputfile(inputfile)?;
 
@@ -142,6 +143,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             if sorted {
                 data.sorted();
+            }
+
+            if strip {
+                data.strip_system_library_content();
             }
 
             let mut buf = String::new();

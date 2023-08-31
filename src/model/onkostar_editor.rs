@@ -172,6 +172,24 @@ impl OnkostarEditor {
         });
     }
 
+    pub fn strip_system_library_content(&mut self) {
+        self.editor
+            .property_catalogue
+            .retain(|e| !e.is_system_library_content());
+
+        self.editor
+            .data_catalogue
+            .retain(|e| !e.is_system_library_content());
+
+        self.editor
+            .data_form
+            .retain(|e| !e.is_system_library_content());
+
+        self.editor
+            .unterformular
+            .retain(|e| !e.is_system_library_content());
+    }
+
     pub fn print_diff(&mut self, other: &mut Self, strict: bool) {
         println!();
 
