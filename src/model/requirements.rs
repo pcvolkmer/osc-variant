@@ -25,10 +25,29 @@
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::property_catalogue::PropertyCatalogue;
+use crate::model::Listable;
 
+#[allow(clippy::enum_variant_names)]
 pub enum Requirement<'a> {
     PropertyCatalogue(&'a PropertyCatalogue),
     DataCatalogue(&'a DataCatalogue),
+    ExternalPropertyCatalogue(String),
+    ExternalDataCatalogue(String),
+}
+
+impl ToString for Requirement<'_> {
+    fn to_string(&self) -> String {
+        match self {
+            Requirement::PropertyCatalogue(item) => item.to_listed_string(),
+            Requirement::DataCatalogue(item) => item.to_listed_string(),
+            Requirement::ExternalPropertyCatalogue(name) => {
+                format!("Merkmalskatalog (-) '{}' - hier nicht enthalten", name)
+            }
+            Requirement::ExternalDataCatalogue(name) => {
+                format!("Datenkatalog (-) '{}' - hier nicht enthalten", name)
+            }
+        }
+    }
 }
 
 pub trait Requires {

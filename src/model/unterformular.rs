@@ -265,9 +265,10 @@ impl Requires for Unterformular {
             .iter()
             .collect::<HashSet<_>>()
             .into_iter()
-            .map(|entry| all.find_data_catalogue(entry.as_str()))
-            .filter(Option::is_some)
-            .map(|entry| Requirement::DataCatalogue(entry.unwrap()))
+            .map(|entry| match all.find_data_catalogue(entry.as_str()) {
+                Some(contained) => Requirement::DataCatalogue(contained),
+                None => Requirement::ExternalDataCatalogue(entry.to_string()),
+            })
             .collect::<Vec<_>>()
     }
 
@@ -283,7 +284,10 @@ impl Requires for Unterformular {
                             .get_required_entries(all)
                             .iter()
                             .map(|inner_entry| match inner_entry {
-                                Requirement::PropertyCatalogue(y) => Some(y.to_listed_string()),
+                                Requirement::PropertyCatalogue(_) => Some(inner_entry.to_string()),
+                                Requirement::ExternalPropertyCatalogue(_) => {
+                                    Some(inner_entry.to_string())
+                                }
                                 _ => None,
                             })
                             .filter(Option::is_some)
@@ -296,6 +300,9 @@ impl Requires for Unterformular {
                         } else {
                             Some(format!("  + {}\n{}", x.to_listed_string(), inner))
                         }
+                    }
+                    Requirement::ExternalDataCatalogue(_) => {
+                        Some(format!("  + {}\n", entry.to_string()))
                     }
                     _ => None,
                 })

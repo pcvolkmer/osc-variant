@@ -112,9 +112,10 @@ impl Requires for DataCatalogue {
             })
             .collect::<HashSet<_>>()
             .into_iter()
-            .map(|entry| all.find_property_catalogue(entry.as_str()))
-            .filter(Option::is_some)
-            .map(|entry| Requirement::PropertyCatalogue(entry.unwrap()))
+            .map(|entry| match all.find_property_catalogue(entry.as_str()) {
+                Some(contained) => Requirement::PropertyCatalogue(contained),
+                None => Requirement::ExternalPropertyCatalogue(entry),
+            })
             .collect::<Vec<_>>()
     }
 
@@ -125,8 +126,11 @@ impl Requires for DataCatalogue {
             self.get_required_entries(all)
                 .iter()
                 .map(|entry| match entry {
-                    Requirement::PropertyCatalogue(x) => {
-                        Some(format!("  + {}\n", x.to_listed_string()))
+                    Requirement::PropertyCatalogue(_) => {
+                        Some(format!("  + {}\n", entry.to_string()))
+                    }
+                    Requirement::ExternalPropertyCatalogue(_) => {
+                        Some(format!("  + {}\n", entry.to_string()))
                     }
                     _ => None,
                 })
