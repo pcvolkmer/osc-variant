@@ -267,6 +267,7 @@ pub trait FormEntry {
     fn update_anzeige(&mut self, value: String);
     fn update_anzeige_auswahl(&mut self, value: String);
     fn update_scripts_code(&mut self, value: String);
+    fn hide(&mut self);
 }
 
 pub trait FolderContent {
