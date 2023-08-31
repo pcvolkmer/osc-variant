@@ -35,7 +35,7 @@ use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::requirements::Requires;
 use crate::model::unterformular::Unterformular;
-use crate::model::{Comparable, FormEntryContainer, Listable, Sortable};
+use crate::model::{Comparable, FolderContent, FormEntryContainer, Listable, Sortable};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -75,12 +75,20 @@ impl OnkostarEditor {
     }
 
     pub fn apply_profile(&mut self, profile: &Profile) {
-        self.editor.data_form.iter_mut().for_each(|data_form| {
-            data_form.apply_profile(profile);
-        });
-        self.editor.unterformular.iter_mut().for_each(|data_form| {
-            data_form.apply_profile(profile);
-        })
+        self.editor
+            .data_form
+            .iter_mut()
+            .filter(|data_form| !data_form.is_system_library_content())
+            .for_each(|data_form| {
+                data_form.apply_profile(profile);
+            });
+        self.editor
+            .unterformular
+            .iter_mut()
+            .filter(|data_form| !data_form.is_system_library_content())
+            .for_each(|data_form| {
+                data_form.apply_profile(profile);
+            });
     }
 
     pub fn print_list(&self) {
