@@ -28,7 +28,7 @@ use std::hash::{Hash, Hasher};
 
 use serde::{Deserialize, Serialize};
 
-use crate::profile::{FormReference, Profile};
+use crate::profile::{FormField, FormReference, Profile};
 
 pub mod data_catalogue;
 pub mod data_form;
@@ -229,6 +229,15 @@ where
         if let Some(scripts_code) = &form_reference.escaped_scripts_code() {
             entry.update_scripts_code(scripts_code.clone());
         }
+    }
+}
+
+fn apply_profile_to_form_field<E>(entry: &mut E, form_field: &FormField)
+where
+    E: FormEntry,
+{
+    if entry.get_name() == form_field.name && form_field.hide {
+        entry.hide()
     }
 }
 
