@@ -30,8 +30,9 @@ use serde::{Deserialize, Serialize};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
-    apply_profile_to_form_entry, Ansichten, Comparable, Entries, Filter, FolderContent, FormEntry,
-    FormEntryContainer, Listable, MenuCategory, PlausibilityRules, Script, Sortable,
+    apply_profile_to_form_entry, apply_profile_to_form_field, Ansichten, Comparable, Entries,
+    Filter, FolderContent, FormEntry, FormEntryContainer, Listable, MenuCategory,
+    PlausibilityRules, RefEntries, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
@@ -179,6 +180,12 @@ impl FormEntryContainer for Unterformular {
                         .for_each(|form_reference| {
                             apply_profile_to_form_entry(entry, form_reference)
                         });
+
+                    // Hide form field using filter set to "false" if requested
+                    profile_form
+                        .form_fields
+                        .iter()
+                        .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
 
                     if let Some(menu_category) = &profile_form.menu_category {
                         self.menu_category = Some(MenuCategory {
@@ -547,6 +554,15 @@ impl FormEntry for Entry {
             code: value,
             valid: true,
         });
+    }
+
+    fn hide(&mut self) {
+        self.filter = Some(Filter {
+            condition: "false".into(),
+            valid: true,
+            ref_entries: Some(RefEntries { ref_entry: None }),
+        });
+        self.speichern = "0".into()
     }
 }
 

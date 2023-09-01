@@ -50,6 +50,8 @@ pub struct Form {
     pub name: String,
     #[serde(default)]
     pub form_references: Vec<FormReference>,
+    #[serde(default)]
+    pub form_fields: Vec<FormField>,
     pub menu_category: Option<MenuCategory>,
 }
 
@@ -66,6 +68,13 @@ impl FormReference {
     pub fn escaped_scripts_code(&self) -> Option<String> {
         self.scripts_code.as_ref().map(|code| escape_script(code))
     }
+}
+
+#[derive(Deserialize)]
+pub struct FormField {
+    pub name: String,
+    #[serde(default)]
+    pub hide: bool,
 }
 
 #[derive(Deserialize)]
@@ -93,6 +102,9 @@ mod tests {
                      referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
                      anzeige: 'Datum: {Datum}'
                      anzeige_auswahl: 'TK vom {Datum}'
+                 form_fields:
+                   - name: eingabefeld
+                     hide: true
             ";
 
         match Profile::from_str(content) {
@@ -101,6 +113,7 @@ mod tests {
                 assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
                 assert!(profile.forms[0].menu_category.is_some());
                 assert_eq!(profile.forms[0].form_references.len(), 1);
+                assert_eq!(profile.forms[0].form_fields.len(), 1)
             }
             Err(e) => panic!("Cannot deserialize profile: {}", e),
         }
@@ -211,5 +224,30 @@ mod tests {
 
         let actual = Profile::from_str(content);
         assert!(actual.is_err());
+    }
+
+    #[test]
+    fn should_deserialize_form_fields() {
+        let content = "forms:
+               - name: 'DNPM Therapieplan'
+                 form_fields:
+                   - name: formularfeld_to_keep
+                     hide: false
+                   - name: formularfeld_to_hide
+                     hide: true
+            ";
+
+        match Profile::from_str(content) {
+            Ok(profile) => {
+                assert_eq!(profile.forms.len(), 1);
+                assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
+                assert_eq!(profile.forms[0].form_fields.len(), 2);
+                assert_eq!(profile.forms[0].form_fields[0].name, "formularfeld_to_keep");
+                assert!(!profile.forms[0].form_fields[0].hide);
+                assert_eq!(profile.forms[0].form_fields[1].name, "formularfeld_to_hide");
+                assert!(profile.forms[0].form_fields[1].hide);
+            }
+            Err(e) => panic!("Cannot deserialize profile: {}", e),
+        }
     }
 }

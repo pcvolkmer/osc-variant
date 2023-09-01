@@ -93,6 +93,9 @@ In ihr sind die durchzuführenden Änderungen definiert. Eine Profildatei hat di
 ```
 forms:
   - name: "ExampleForm"
+    form_field:
+      - name: "formularfeld"
+        hide: true
     form_references:
       - name: "ref_first_mtb"
         referenced_data_form: "Formularverweis.Variante"
@@ -118,6 +121,12 @@ und dabei die vorhandenen Angaben für den Formularverweis zu ersetzen.
 
 Die Angaben für `referenced_data_form`, `anzeige_auswahl`, `anzeige` und `scripts_code` sind optional.
 Wird keine Angabe gemacht, wird der bestehende Wert beibehalten.
+
+Zudem wird im Formular "ExampleForm" das Formularfeld "formularfeld" ausgeblendet, indem der Filter auf "false" gesetzt wird.
+Dadurch wird das Formularfeld nie angezeigt.
+Ein zuvor bestehender Filter wird ersetzt.
+Weiterhin wird die Eigenschaft "Speichern" des Formularfelds auf "Immer speichern" gesetzt um sicherzustellen, dass zuvor
+enthaltene Daten weiterhin gespeichert bleiben und werden, auch wenn das Formularfeld nicht sichtbar ist.
 
 **Achtung!** Diese Anwendung überprüft keine Scripts und verwendet angegebene Scripts als "valid" im resultierenden OSC-File.
 
