@@ -561,7 +561,8 @@ impl FormEntry for Entry {
             condition: "false".into(),
             valid: true,
             ref_entries: Some(RefEntries { ref_entry: None }),
-        })
+        });
+        self.speichern = "0".into()
     }
 }
 
