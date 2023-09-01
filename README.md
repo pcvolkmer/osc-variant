@@ -137,4 +137,4 @@ Wird sie angeben, sind die Felder `name`, `position` und `column` verpflichtend.
 Es können beliebig viele Formulare mit beliebig vielen Änderungen zu Formularverweisen in einer Profildatei
 hinterlegt werden, jedoch ist mindestens eine Angabe zu einem Formularfeld erforderlich.
 
-Beispiele für eine Profildatei sind unter [`examples/`](examples/) zu finden.
+Beispiele für eine Profildatei sind unter [`examples/`](/examples) zu finden.
