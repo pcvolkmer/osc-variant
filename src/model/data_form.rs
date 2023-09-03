@@ -192,13 +192,25 @@ impl FormEntryContainer for DataForm {
 impl Listable for DataForm {
     fn to_listed_string(&self) -> String {
         format!(
-            "Formular ({}) '{}' in Revision '{}'",
+            "Formular ({}) '{}' in Revision '{}' {}",
             match self.is_system_library_content() {
                 true => style("S").yellow(),
                 _ => style("u"),
             },
             style(&self.name).yellow(),
-            style(&self.revision).yellow()
+            style(&self.revision).yellow(),
+            if self
+                .entries
+                .entry
+                .iter()
+                .filter(|entry| entry.procedure_date_status != "none")
+                .count()
+                == 0
+            {
+                style("Formular hat keine Angabe zum Prozedurdatum!").red()
+            } else {
+                style("")
+            }
         )
     }
 }
