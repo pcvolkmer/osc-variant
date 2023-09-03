@@ -34,6 +34,11 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Command {
+    #[command(
+        name = "sha256sum",
+        about = "Berechne SHA256 Prüfsumme für die angegebene Datei"
+    )]
+    Sha256Sum { inputfile: String },
     #[command(about = "Zeigt alle enthaltenen Kataloge und Formulare mit Revision an.")]
     List {
         inputfile: String,

@@ -16,6 +16,13 @@ unvollständigen Ausgabedateien zu erzeugen.
 
 ### Beispiele
 
+Das Berechnen der SHA256 Prüfsumme ist mit dem Unterbefehl `sha256sum` auch unter Windows einfach möglich
+und erzeugt eine Ausgabe analog dem Befehl auf Linux-Systemen:
+
+```
+osc-variant sha256sum meine-beispieldatei.osc
+```
+
 Zum Auflisten der Inhalte einer Datei wird folgender Befehl verwendet:
 
 ```

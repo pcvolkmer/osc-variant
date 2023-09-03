@@ -28,12 +28,14 @@ use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
+use std::path::PathBuf;
 use std::str::FromStr;
 
 use clap::Parser;
 use console::style;
 use quick_xml::se::Serializer;
 use serde::Serialize;
+use sha256::digest;
 
 use crate::cli::{Cli, Command};
 use crate::model::onkostar_editor::OnkostarEditor;
@@ -190,6 +192,24 @@ fn main() -> Result<(), Box<dyn Error>> {
             let data_b = &mut read_inputfile(inputfile_b)?;
 
             data_a.print_diff(data_b, strict);
+        }
+        Command::Sha256Sum { inputfile } => {
+            match fs::read_to_string(inputfile.clone()) {
+                Ok(content) => {
+                    println!(
+                        "{}  {}",
+                        digest(content).as_str(),
+                        PathBuf::from(inputfile.clone())
+                            .canonicalize()
+                            .unwrap_or_default()
+                            .to_str()
+                            .unwrap_or_default()
+                    )
+                }
+                Err(err) => {
+                    eprintln!("{}", FileError::Reading(inputfile, err.to_string()));
+                }
+            };
         }
     };
 
