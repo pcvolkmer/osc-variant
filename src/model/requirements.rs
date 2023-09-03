@@ -37,6 +37,7 @@ pub enum Requirement<'a> {
     ExternalDataCatalogue(String),
     DataFormReference(&'a DataForm),
     UnterformularReference(&'a Unterformular),
+    #[allow(dead_code)]
     ExternalDataFormReference(String),
     ExternalUnterformularReference(String),
 }
