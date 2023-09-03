@@ -256,7 +256,7 @@ impl Comparable for DataForm {
 
 impl Requires for DataForm {
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
-        let mut data_catalogues = self
+        let mut result = self
             .data_catalogues
             .data_catalogue
             .iter()
@@ -268,7 +268,7 @@ impl Requires for DataForm {
             })
             .collect::<Vec<_>>();
 
-        let data_forms = &mut self
+        let referenced_forms = &mut self
             .entries
             .entry
             .iter()
@@ -281,30 +281,15 @@ impl Requires for DataForm {
             .into_iter()
             .map(|entry| match all.find_data_form(entry.as_str()) {
                 Some(contained) => Requirement::DataFormReference(contained),
-                None => Requirement::ExternalDataFormReference(entry.to_string()),
+                None => match all.find_unterformular(entry.as_str()) {
+                    Some(contained) => Requirement::UnterformularReference(contained),
+                    None => Requirement::ExternalUnterformularReference(entry.to_string()),
+                },
             })
             .collect::<Vec<_>>();
-        data_catalogues.append(data_forms);
+        result.append(referenced_forms);
 
-        let unterformulare = &mut self
-            .entries
-            .entry
-            .iter()
-            .filter(|&entry| entry.get_type() == "formReference")
-            .filter_map(|entry| match &entry.referenced_data_form {
-                Some(name) => Some(name),
-                None => None,
-            })
-            .collect::<HashSet<_>>()
-            .into_iter()
-            .map(|entry| match all.find_unterformular(entry.as_str()) {
-                Some(contained) => Requirement::UnterformularReference(contained),
-                None => Requirement::ExternalUnterformularReference(entry.to_string()),
-            })
-            .collect::<Vec<_>>();
-        data_catalogues.append(unterformulare);
-
-        data_catalogues
+        result
     }
 
     fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
