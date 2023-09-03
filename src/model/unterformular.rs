@@ -202,26 +202,19 @@ impl FormEntryContainer for Unterformular {
 
 impl Listable for Unterformular {
     fn to_listed_string(&self) -> String {
-        if self.hat_unterformulare {
-            return format!(
-                "Unterformular ({}) '{}' in Revision '{}' {}",
-                match self.is_system_library_content() {
-                    true => style("S").yellow(),
-                    _ => style("u"),
-                },
-                style(&self.name).yellow(),
-                style(&self.revision).yellow(),
-                style("Unterformular mit Markierung 'hat Unterformulare'!").red()
-            );
-        }
         format!(
-            "Unterformular ({}) '{}' in Revision '{}'",
+            "Unterformular ({}) '{}' in Revision '{}' {}",
             match self.is_system_library_content() {
                 true => style("S").yellow(),
                 _ => style("u"),
             },
             style(&self.name).yellow(),
-            style(&self.revision).yellow()
+            style(&self.revision).yellow(),
+            if self.hat_unterformulare {
+                style("Unterformular mit Markierung 'hat Unterformulare'!").red()
+            } else {
+                style("")
+            }
         )
     }
 }
