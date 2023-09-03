@@ -340,10 +340,10 @@ impl Requires for DataForm {
                     Requirement::ExternalDataCatalogue(_) => {
                         Some(format!("  + {}\n", entry.to_string()))
                     }
-                    Requirement::UnterformularReference(_) => {
-                        Some(format!("  > {}\n", entry.to_string()))
-                    }
-                    Requirement::ExternalUnterformularReference(_) => {
+                    Requirement::DataFormReference(_)
+                    | Requirement::ExternalDataFormReference(_)
+                    | Requirement::UnterformularReference(_)
+                    | Requirement::ExternalUnterformularReference(_) => {
                         Some(format!("  > {}\n", entry.to_string()))
                     }
                     _ => None,
