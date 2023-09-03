@@ -23,8 +23,10 @@
  */
 
 use crate::model::data_catalogue::DataCatalogue;
+use crate::model::data_form::DataForm;
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::property_catalogue::PropertyCatalogue;
+use crate::model::unterformular::Unterformular;
 use crate::model::Listable;
 
 #[allow(clippy::enum_variant_names)]
@@ -33,6 +35,10 @@ pub enum Requirement<'a> {
     DataCatalogue(&'a DataCatalogue),
     ExternalPropertyCatalogue(String),
     ExternalDataCatalogue(String),
+    DataFormReference(&'a DataForm),
+    UnterformularReference(&'a Unterformular),
+    ExternalDataFormReference(String),
+    ExternalUnterformularReference(String),
 }
 
 impl ToString for Requirement<'_> {
@@ -45,6 +51,14 @@ impl ToString for Requirement<'_> {
             }
             Requirement::ExternalDataCatalogue(name) => {
                 format!("Datenkatalog (-) '{}' - hier nicht enthalten", name)
+            }
+            Requirement::DataFormReference(item) => item.to_listed_string(),
+            Requirement::UnterformularReference(item) => item.to_listed_string(),
+            Requirement::ExternalDataFormReference(name) => {
+                format!("Formular (-) '{}' - hier nicht enthalten", name)
+            }
+            Requirement::ExternalUnterformularReference(name) => {
+                format!("Unterformular (-) '{}' - hier nicht enthalten", name)
             }
         }
     }

@@ -74,6 +74,32 @@ impl OnkostarEditor {
         }
     }
 
+    pub fn find_data_form<'a>(&'a self, name: &str) -> Option<&'a DataForm> {
+        match self
+            .editor
+            .data_form
+            .iter()
+            .filter(|&item| item.get_name().eq_ignore_ascii_case(name))
+            .nth(0)
+        {
+            Some(x) => Some(x),
+            _ => None,
+        }
+    }
+
+    pub fn find_unterformular<'a>(&'a self, name: &str) -> Option<&'a Unterformular> {
+        match self
+            .editor
+            .unterformular
+            .iter()
+            .filter(|&item| item.get_name().eq_ignore_ascii_case(name))
+            .nth(0)
+        {
+            Some(x) => Some(x),
+            _ => None,
+        }
+    }
+
     pub fn apply_profile(&mut self, profile: &Profile) {
         self.editor
             .data_form

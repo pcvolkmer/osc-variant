@@ -256,7 +256,8 @@ impl Comparable for DataForm {
 
 impl Requires for DataForm {
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
-        self.data_catalogues
+        let mut data_catalogues = self
+            .data_catalogues
             .data_catalogue
             .iter()
             .collect::<HashSet<_>>()
@@ -265,7 +266,45 @@ impl Requires for DataForm {
                 Some(contained) => Requirement::DataCatalogue(contained),
                 None => Requirement::ExternalDataCatalogue(entry.to_string()),
             })
-            .collect::<Vec<_>>()
+            .collect::<Vec<_>>();
+
+        let data_forms = &mut self
+            .entries
+            .entry
+            .iter()
+            .filter(|&entry| entry.get_type() == "formReference")
+            .filter_map(|entry| match &entry.referenced_data_form {
+                Some(name) => Some(name),
+                None => None,
+            })
+            .collect::<HashSet<_>>()
+            .into_iter()
+            .map(|entry| match all.find_data_form(entry.as_str()) {
+                Some(contained) => Requirement::DataFormReference(contained),
+                None => Requirement::ExternalDataFormReference(entry.to_string()),
+            })
+            .collect::<Vec<_>>();
+        data_catalogues.append(data_forms);
+
+        let unterformulare = &mut self
+            .entries
+            .entry
+            .iter()
+            .filter(|&entry| entry.get_type() == "formReference")
+            .filter_map(|entry| match &entry.referenced_data_form {
+                Some(name) => Some(name),
+                None => None,
+            })
+            .collect::<HashSet<_>>()
+            .into_iter()
+            .map(|entry| match all.find_unterformular(entry.as_str()) {
+                Some(contained) => Requirement::UnterformularReference(contained),
+                None => Requirement::ExternalUnterformularReference(entry.to_string()),
+            })
+            .collect::<Vec<_>>();
+        data_catalogues.append(unterformulare);
+
+        data_catalogues
     }
 
     fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
@@ -300,6 +339,12 @@ impl Requires for DataForm {
                     }
                     Requirement::ExternalDataCatalogue(_) => {
                         Some(format!("  + {}\n", entry.to_string()))
+                    }
+                    Requirement::UnterformularReference(_) => {
+                        Some(format!("  > {}\n", entry.to_string()))
+                    }
+                    Requirement::ExternalUnterformularReference(_) => {
+                        Some(format!("  > {}\n", entry.to_string()))
                     }
                     _ => None,
                 })
