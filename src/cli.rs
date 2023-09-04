@@ -67,13 +67,15 @@ pub enum Command {
         #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
         compact: bool,
         #[arg(
-            long = "x-sorted",
-            help = "EXPERIMENTELL: Sortiere Kataloge und Formulare nach Name (Optional).\nKann negative Auswirkungen auf den ordnungsgemäßen Import haben."
+            long = "sorted",
+            alias = "x-sorted",
+            help = "Sortiere Kataloge und Formulare nach Name (Optional)."
         )]
         sorted: bool,
         #[arg(
-            long = "x-strip",
-            help = "EXPERIMENTELL: Entferne Einträge aus der Systembibliothek die nicht importiert werden (Optional).\nKann negative Auswirkungen auf den ordnungsgemäßen Import haben."
+            long = "strip",
+            alias = "x-strip",
+            help = "Entferne Einträge aus der Systembibliothek die nicht importiert werden (Optional)."
         )]
         strip: bool,
     },

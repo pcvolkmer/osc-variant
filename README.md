@@ -74,20 +74,13 @@ Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 
 Bei der Auflistung der Inhalte, kann die Option `--sorted` dazu verwendet werden, die angezeigten Einträge alphabetisch zu sortieren.
 Die Sortierung erfolgt dabei nach Namen des Katalogs oder des Formulars.
 
-#### Experimentelle Funktionen
-
-Neben den gebräuchlichen Funktionen gibt es weitere, derzeit noch experimentelle, Funktionen. 
-
-##### Sortierung bei Modifikation
-
-Beim Modifizieren der Inhalte kann die experimentelle Option `--x-sorted` dazu verwendet werden, die Einträge im Anschluss an die Modifikation
+Beim Modifizieren der Inhalte kann ebenfalls die Option `--sorted` dazu verwendet werden, die Einträge im Anschluss an die Modifikation
 nach Namen zu sortieren.
 Dies erlaubt eine konsistente Reihenfolge der Einträge, wodurch ein direkter Vergleich mit Vorversionen ermöglicht wird.
-ACHTUNG: Es kann sein, dass dadurch ein Import der resultierenden OSC-Datei nicht mehr möglich ist, da das genaue Verhalten des Imports aktuell noch nicht bekannt ist.
 
 ##### Entfernen von Inhalten der Systembibliothek bei Modifikation
 
-Mit der die experimentelle Option `--x-strip` ist es möglich, die in der OSC-Datei enthaltenen und beim Import nicht genutzten Inhalte aus der Systembibliothek zu entfernen.
+Mit der die experimentelle Option `--strip` ist es möglich, die in der OSC-Datei enthaltenen und beim Import nicht genutzten Inhalte aus der Systembibliothek zu entfernen.
 
 Hierbei werden alle Inhalte entfernt, die im Ordner "ONKOSTAR Bibliothek" enthalten sind, beim Import jedoch ignoriert werden.
 
