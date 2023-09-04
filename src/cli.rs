@@ -22,18 +22,23 @@
  * SOFTWARE.
  */
 
-use clap::{Parser, Subcommand};
+use clap::{Command, CommandFactory, Parser, Subcommand};
+
+#[allow(dead_code)]
+fn build_cli() -> Command {
+    Cli::command()
+}
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 #[command(propagate_version = true, arg_required_else_help(true))]
 pub struct Cli {
     #[command(subcommand)]
-    pub command: Command,
+    pub cmd: SubCommand,
 }
 
 #[derive(Subcommand)]
-pub enum Command {
+pub enum SubCommand {
     #[command(
         name = "sha256sum",
         about = "Berechne SHA256 Prüfsumme für die angegebene Datei"

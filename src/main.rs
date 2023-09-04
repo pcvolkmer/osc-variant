@@ -37,7 +37,7 @@ use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha256::digest;
 
-use crate::cli::{Cli, Command};
+use crate::cli::{Cli, SubCommand};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 
@@ -111,8 +111,8 @@ fn read_profile(filename: String) -> Result<Profile, FileError> {
 fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
-    match cli.command {
-        Command::List {
+    match cli.cmd {
+        SubCommand::List {
             inputfile,
             sorted,
             filter,
@@ -127,7 +127,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
             data.print_list();
         }
-        Command::Tree {
+        SubCommand::Tree {
             inputfile,
             sorted,
             filter,
@@ -142,7 +142,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
             OnkostarEditor::print_tree(&data);
         }
-        Command::Modify {
+        SubCommand::Modify {
             inputfile,
             profile,
             outputfile,
@@ -193,7 +193,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
             }
         }
-        Command::Diff {
+        SubCommand::Diff {
             inputfile_a,
             inputfile_b,
             strict,
@@ -209,7 +209,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             data_a.print_diff(data_b, strict);
         }
-        Command::Sha256Sum { inputfile } => {
+        SubCommand::Sha256Sum { inputfile } => {
             match fs::read_to_string(inputfile.clone()) {
                 Ok(content) => {
                     println!(
