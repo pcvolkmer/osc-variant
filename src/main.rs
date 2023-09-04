@@ -112,17 +112,33 @@ fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
 
     match cli.command {
-        Command::List { inputfile, sorted } => {
+        Command::List {
+            inputfile,
+            sorted,
+            filter,
+        } => {
             let mut data = read_inputfile(inputfile)?;
             if sorted {
                 data.sorted()
             }
+            if let Some(name) = filter {
+                OnkostarEditor::print_list_filtered(&mut data, name.as_str());
+                return Ok(());
+            }
             data.print_list();
         }
-        Command::Tree { inputfile, sorted } => {
+        Command::Tree {
+            inputfile,
+            sorted,
+            filter,
+        } => {
             let mut data = read_inputfile(inputfile)?;
             if sorted {
                 data.sorted()
+            }
+            if let Some(name) = filter {
+                OnkostarEditor::print_tree_filtered(&mut data, name.as_str());
+                return Ok(());
             }
             OnkostarEditor::print_tree(&data);
         }

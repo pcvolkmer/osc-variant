@@ -47,6 +47,8 @@ pub enum Command {
             help = "Sortiere Kataloge und Formulare nach Name (Optional)"
         )]
         sorted: bool,
+        #[arg(long = "filter", help = "Filtere Ausgabe nach Name (Optional)")]
+        filter: Option<String>,
     },
     #[command(about = "Zeigt Kataloge und Formulare mit Revision und Abhängigkeiten an.")]
     Tree {
@@ -56,6 +58,8 @@ pub enum Command {
             help = "Sortiere Kataloge und Formulare nach Name (Optional)"
         )]
         sorted: bool,
+        #[arg(long = "filter", help = "Filtere Ausgabe nach Name (Optional)")]
+        filter: Option<String>,
     },
     #[command(about = "Modifiziert die angegebene Datei anhand der Profildatei")]
     Modify {

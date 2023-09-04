@@ -69,6 +69,12 @@ Ohne eine Angabe der Ausgabedatei wird auf die Standardausgabe ausgegeben.
 OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne Zeilenumbrüche.
 Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 30% eingespart werden.
 
+#### Filter
+
+Bei der Auflistung von Inhalten ist es möglich, die Ausgaben anhand des Namens zu filtern.
+Hierzu ist die Option `--filter=` vorgesehen.
+Wird diese angewendet, werden nur Inhalte ausgegeben, deren Name die angegebene Zeichenkette beinhalten.
+
 #### Sortierung
 
 Bei der Auflistung der Inhalte, kann die Option `--sorted` dazu verwendet werden, die angezeigten Einträge alphabetisch zu sortieren.

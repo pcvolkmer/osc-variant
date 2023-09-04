@@ -130,6 +130,37 @@ impl OnkostarEditor {
         Self::print_items("Unterformulare", &self.editor.unterformular);
     }
 
+    fn filter_by_name_contains(&mut self, name: &str) {
+        self.editor
+            .property_catalogue
+            .retain(|e| e.get_name().contains(name));
+        self.editor
+            .data_catalogue
+            .retain(|e| e.get_name().contains(name));
+        self.editor
+            .data_form
+            .retain(|e| e.get_name().contains(name));
+        self.editor
+            .unterformular
+            .retain(|e| e.get_name().contains(name));
+    }
+    pub fn print_list_filtered(&mut self, name: &str) {
+        println!(
+            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte für '{}' sind gespeichert",
+            style(&self.info_xml.datum_xml).yellow(),
+            style(&self.info_xml.name).yellow(),
+            style(&self.info_xml.version).yellow(),
+            name
+        );
+
+        self.filter_by_name_contains(name);
+
+        Self::print_items("Merkmalskataloge", &self.editor.property_catalogue);
+        Self::print_items("Datenkataloge", &self.editor.data_catalogue);
+        Self::print_items("Formulare", &self.editor.data_form);
+        Self::print_items("Unterformulare", &self.editor.unterformular);
+    }
+
     fn print_items(title: &str, list: &[impl Listable]) {
         print!("\n{} {}", list.len(), style(title).underlined());
         println!(
@@ -147,6 +178,23 @@ impl OnkostarEditor {
             style(&self.info_xml.name).yellow(),
             style(&self.info_xml.version).yellow()
         );
+
+        Self::print_items("Merkmalskataloge", &self.editor.property_catalogue);
+        self.print_items_tree("Datenkataloge", &self.editor.data_catalogue);
+        self.print_items_tree("Formulare", &self.editor.data_form);
+        self.print_items_tree("Unterformulare", &self.editor.unterformular);
+    }
+
+    pub fn print_tree_filtered(&mut self, name: &str) {
+        println!(
+            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte für '{}' sind gespeichert",
+            style(&self.info_xml.datum_xml).yellow(),
+            style(&self.info_xml.name).yellow(),
+            style(&self.info_xml.version).yellow(),
+            name
+        );
+
+        self.filter_by_name_contains(name);
 
         Self::print_items("Merkmalskataloge", &self.editor.property_catalogue);
         self.print_items_tree("Datenkataloge", &self.editor.data_catalogue);
