@@ -35,7 +35,7 @@ fn main() -> Result<(), Error> {
 
     let package_name = std::env::var("CARGO_CRATE_NAME").unwrap_or("osc-variant".to_string());
 
-    fs::remove_dir_all("completion")?;
+    fs::remove_dir_all("completion").unwrap_or_default();
     fs::create_dir("completion")?;
 
     generate_to(Bash, &mut cmd, package_name.as_str(), "completion")?;
