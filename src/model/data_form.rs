@@ -528,6 +528,8 @@ pub struct Entry {
     direction_pat_modul: String,
     #[serde(rename = "SeitenumbruchPatModul")]
     seitenumbruch_pat_modul: bool,
+    #[serde(rename = "Kontaktliste")]
+    kontaktliste: Option<String>,
     #[serde(rename = "MarkierungIgnorieren")]
     markierung_ignorieren: bool,
     #[serde(rename = "SucheArt")]
