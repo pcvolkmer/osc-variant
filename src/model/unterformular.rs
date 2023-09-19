@@ -533,6 +533,7 @@ pub struct Entry {
     #[serde(rename = "SeitenumbruchPatModul")]
     seitenumbruch_pat_modul: bool,
     #[serde(rename = "Kontaktliste")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     kontaktliste: Option<String>,
     #[serde(rename = "MarkierungIgnorieren")]
     markierung_ignorieren: bool,
