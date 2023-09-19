@@ -30,6 +30,7 @@ panic = "abort"
 
 [package.metadata.deb]
 copyright = "Copyright (c) 2023 Comprehensive Cancer Center Mainfranken"
+extended-description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort."
 assets = [
     ["completion/osc-variant.bash", "etc/bash_completion.d/", "644"]
 ]
