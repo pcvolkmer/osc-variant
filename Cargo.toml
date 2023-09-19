@@ -32,5 +32,6 @@ panic = "abort"
 copyright = "Copyright (c) 2023 Comprehensive Cancer Center Mainfranken"
 extended-description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort."
 assets = [
+    ["target/release/osc-variant", "usr/bin/", "755"],
     ["completion/osc-variant.bash", "etc/bash_completion.d/", "644"]
 ]
