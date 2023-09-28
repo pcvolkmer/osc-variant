@@ -4,6 +4,9 @@ forms:
       - name: MTB
         referenced_data_form: 'MR.MTB_Anmeldung'
         anzeige_auswahl: 'MTB Anmeldung vom {Anmeldedatum}'
+        scripts_code: |
+          setFieldValue('AnmeldedatumMTB', getFieldValue('MTB').MTBTermin);
+          setFieldValue('WHOGrad', getFieldValue('MTB').WHOGrad);
   - name: 'DNPM Therapieplan'
     form_references:
       - name: referstemtb
