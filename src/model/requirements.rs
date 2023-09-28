@@ -40,6 +40,12 @@ pub enum Requirement<'a> {
     #[allow(dead_code)]
     ExternalDataFormReference(String),
     ExternalUnterformularReference(String),
+
+    DataFormSubform(&'a DataForm),
+    UnterformularSubform(&'a Unterformular),
+    #[allow(dead_code)]
+    ExternalDataFormSubform(String),
+    ExternalUnterformularSubform(String),
 }
 
 impl ToString for Requirement<'_> {
@@ -59,6 +65,14 @@ impl ToString for Requirement<'_> {
                 format!("Formular (-) '{}' - hier nicht enthalten", name)
             }
             Requirement::ExternalUnterformularReference(name) => {
+                format!("Unterformular (-) '{}' - hier nicht enthalten", name)
+            }
+            Requirement::DataFormSubform(item) => item.to_listed_string(),
+            Requirement::UnterformularSubform(item) => item.to_listed_string(),
+            Requirement::ExternalDataFormSubform(name) => {
+                format!("Formular (-) '{}' - hier nicht enthalten", name)
+            }
+            Requirement::ExternalUnterformularSubform(name) => {
                 format!("Unterformular (-) '{}' - hier nicht enthalten", name)
             }
         }

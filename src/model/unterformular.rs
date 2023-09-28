@@ -293,6 +293,27 @@ impl Requires for Unterformular {
             .collect::<Vec<_>>();
         result.append(referenced_forms);
 
+        let sub_forms = &mut self
+            .entries
+            .entry
+            .iter()
+            .filter(|&entry| entry.get_type() == "subform")
+            .filter_map(|entry| match &entry.referenced_data_form {
+                Some(name) => Some(name),
+                None => None,
+            })
+            .collect::<HashSet<_>>()
+            .into_iter()
+            .map(|entry| match all.find_data_form(entry.as_str()) {
+                Some(contained) => Requirement::DataFormSubform(contained),
+                None => match all.find_unterformular(entry.as_str()) {
+                    Some(contained) => Requirement::UnterformularSubform(contained),
+                    None => Requirement::ExternalUnterformularSubform(entry.to_string()),
+                },
+            })
+            .collect::<Vec<_>>();
+        result.append(sub_forms);
+
         result
     }
 
@@ -333,6 +354,12 @@ impl Requires for Unterformular {
                     | Requirement::UnterformularReference(_)
                     | Requirement::ExternalUnterformularReference(_) => {
                         Some(format!("  > {}\n", entry.to_string()))
+                    }
+                    Requirement::DataFormSubform(_)
+                    | Requirement::ExternalDataFormSubform(_)
+                    | Requirement::UnterformularSubform(_)
+                    | Requirement::ExternalUnterformularSubform(_) => {
+                        Some(format!("  $ {}\n", entry.to_string()))
                     }
                     _ => None,
                 })
