@@ -356,7 +356,7 @@ impl Requires for DataForm {
                     | Requirement::ExternalDataFormSubform(_)
                     | Requirement::UnterformularSubform(_)
                     | Requirement::ExternalUnterformularSubform(_) => {
-                        Some(format!("  $ {}\n", entry.to_string()))
+                        Some(format!("  * {}\n", entry.to_string()))
                     }
                     _ => None,
                 })
