@@ -316,59 +316,6 @@ impl Requires for Unterformular {
 
         result
     }
-
-    fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
-        format!(
-            "{}\n{}",
-            self.to_listed_string(),
-            self.get_required_entries(all)
-                .iter()
-                .map(|entry| match entry {
-                    Requirement::DataCatalogue(x) => {
-                        let inner = x
-                            .get_required_entries(all)
-                            .iter()
-                            .map(|inner_entry| match inner_entry {
-                                Requirement::PropertyCatalogue(_) => Some(inner_entry.to_string()),
-                                Requirement::ExternalPropertyCatalogue(_) => {
-                                    Some(inner_entry.to_string())
-                                }
-                                _ => None,
-                            })
-                            .filter(Option::is_some)
-                            .map(|item| format!("    - {}\n", item.unwrap()))
-                            .collect::<Vec<_>>()
-                            .join("");
-
-                        if inner.is_empty() {
-                            Some(format!("  + {}\n", x.to_listed_string()))
-                        } else {
-                            Some(format!("  + {}\n{}", x.to_listed_string(), inner))
-                        }
-                    }
-                    Requirement::ExternalDataCatalogue(_) => {
-                        Some(format!("  + {}\n", entry.to_string()))
-                    }
-                    Requirement::DataFormReference(_)
-                    | Requirement::ExternalDataFormReference(_)
-                    | Requirement::UnterformularReference(_)
-                    | Requirement::ExternalUnterformularReference(_) => {
-                        Some(format!("  > {}\n", entry.to_string()))
-                    }
-                    Requirement::DataFormSubform(_)
-                    | Requirement::ExternalDataFormSubform(_)
-                    | Requirement::UnterformularSubform(_)
-                    | Requirement::ExternalUnterformularSubform(_) => {
-                        Some(format!("  * {}\n", entry.to_string()))
-                    }
-                    _ => None,
-                })
-                .filter(Option::is_some)
-                .flatten()
-                .collect::<Vec<_>>()
-                .join("")
-        )
-    }
 }
 
 impl FolderContent for Unterformular {
