@@ -325,11 +325,10 @@ impl Requires for DataForm {
                             .get_required_entries(all)
                             .iter()
                             .map(|inner_entry| match inner_entry {
-                                Requirement::PropertyCatalogue(y) => Some(y.to_listed_string()),
-                                Requirement::ExternalPropertyCatalogue(name) => Some(format!(
-                                    "Merkmalskatalog (-) '{}' - hier nicht enthalten",
-                                    style(name).yellow()
-                                )),
+                                Requirement::PropertyCatalogue(_) => Some(inner_entry.to_string()),
+                                Requirement::ExternalPropertyCatalogue(_) => {
+                                    Some(inner_entry.to_string())
+                                }
                                 _ => None,
                             })
                             .filter(Option::is_some)
