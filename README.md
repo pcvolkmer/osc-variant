@@ -16,6 +16,10 @@ unvollständigen Ausgabedateien zu erzeugen.
 
 ### Beispiele
 
+Die folgenden Unterbefehle sind verfügbar
+
+#### `sha256sum`
+
 Das Berechnen der SHA256 Prüfsumme ist mit dem Unterbefehl `sha256sum` auch unter Windows einfach möglich
 und erzeugt eine Ausgabe analog dem Befehl auf Linux-Systemen:
 
@@ -23,11 +27,17 @@ und erzeugt eine Ausgabe analog dem Befehl auf Linux-Systemen:
 osc-variant sha256sum meine-beispieldatei.osc
 ```
 
+#### `list`
+
 Zum Auflisten der Inhalte einer Datei wird folgender Befehl verwendet:
 
 ```
 osc-variant list meine-beispieldatei.osc
 ```
+
+Mit der Option `--filter` kann die Ausgabe eingeschränkt werden. 
+
+#### `tree`
 
 Zum Auflisten der Inhalte mit allen Abhängigkeiten, z.B. Daten- und Merkmalskataloge und bei Formularen wird der Befehl
 `tree` verwendet:
@@ -47,6 +57,10 @@ Für Formularverweise und Unterformulare werden dabei die verwendeten Datenkatal
 
 Achtung! Dies erzeugt eine sehr umfangreiche Ausgabe.
 
+Mit der Option `--filter` kann auch hier die Ausgabe eingeschränkt werden.
+
+#### `diff`
+
 Zum Vergleich zweier OSC-Dateien wird der Unterbefehl `diff` verwendet.
 Der optionale Parameter `--strict` vergleicht auch den Inhalt der OSC-Datei.
 Ohne diesen wird nur das Vorhandensein von Inhalten und die Revision verglichen. 
@@ -60,6 +74,8 @@ bzw.
 ```
 osc-variant diff meine-beispieldatei.osc andere-beispieldatei.osc --strict
 ```
+
+#### `modify`
 
 Zum Anpassen des Inhalts einer Datei:
 
@@ -80,9 +96,9 @@ Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 
 
 #### Filter
 
-Bei der Auflistung von Inhalten ist es möglich, die Ausgaben anhand des Namens zu filtern.
+Bei der Auflistung von Inhalten ist es möglich, die Anzeige für die Unterbefehle `list` und `tree` anhand des Namens zu filtern.
 Hierzu ist die Option `--filter=` vorgesehen.
-Wird diese angewendet, werden nur Inhalte ausgegeben, deren Name die angegebene Zeichenkette beinhalten.
+Wird diese angewendet, werden nur Inhalte angezeigt, deren Name die angegebene Zeichenkette beinhalten.
 
 #### Sortierung
 
