@@ -53,26 +53,22 @@ impl ToString for Requirement<'_> {
         match self {
             Requirement::PropertyCatalogue(item) => item.to_listed_string(),
             Requirement::DataCatalogue(item) => item.to_listed_string(),
+            Requirement::DataFormReference(item) => item.to_listed_string(),
+            Requirement::UnterformularReference(item) => item.to_listed_string(),
+            Requirement::DataFormSubform(item) => item.to_listed_string(),
+            Requirement::UnterformularSubform(item) => item.to_listed_string(),
             Requirement::ExternalPropertyCatalogue(name) => {
                 format!("Merkmalskatalog (-) '{}' - hier nicht enthalten", name)
             }
             Requirement::ExternalDataCatalogue(name) => {
                 format!("Datenkatalog (-) '{}' - hier nicht enthalten", name)
             }
-            Requirement::DataFormReference(item) => item.to_listed_string(),
-            Requirement::UnterformularReference(item) => item.to_listed_string(),
-            Requirement::ExternalDataFormReference(name) => {
+            Requirement::ExternalDataFormReference(name)
+            | Requirement::ExternalDataFormSubform(name) => {
                 format!("Formular (-) '{}' - hier nicht enthalten", name)
             }
-            Requirement::ExternalUnterformularReference(name) => {
-                format!("Unterformular (-) '{}' - hier nicht enthalten", name)
-            }
-            Requirement::DataFormSubform(item) => item.to_listed_string(),
-            Requirement::UnterformularSubform(item) => item.to_listed_string(),
-            Requirement::ExternalDataFormSubform(name) => {
-                format!("Formular (-) '{}' - hier nicht enthalten", name)
-            }
-            Requirement::ExternalUnterformularSubform(name) => {
+            Requirement::ExternalUnterformularReference(name)
+            | Requirement::ExternalUnterformularSubform(name) => {
                 format!("Unterformular (-) '{}' - hier nicht enthalten", name)
             }
         }
