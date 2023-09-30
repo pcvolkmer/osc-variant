@@ -272,7 +272,13 @@ impl Requires for DataForm {
         self.entries
             .entry
             .iter()
-            .map(|item| item.type_ == "formReference" && item.name == name)
+            .map(|item| {
+                item.type_ == "formReference"
+                    && match item.referenced_data_form.as_ref() {
+                        Some(refname) => refname == name,
+                        _ => false,
+                    }
+            })
             .filter(|&it| it)
             .last()
             .unwrap_or_default()
@@ -281,7 +287,13 @@ impl Requires for DataForm {
         self.entries
             .entry
             .iter()
-            .map(|item| item.type_ == "subform" && item.name == name)
+            .map(|item| {
+                item.type_ == "subform"
+                    && match item.referenced_data_form.as_ref() {
+                        Some(refname) => refname == name,
+                        _ => false,
+                    }
+            })
             .filter(|&it| it)
             .last()
             .unwrap_or_default()
