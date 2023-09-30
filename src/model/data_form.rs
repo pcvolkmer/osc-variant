@@ -255,7 +255,10 @@ impl Comparable for DataForm {
     }
 
     fn compare_by_requirement(a: &Self, b: &Self) -> Ordering {
-        if a.get_name() == b.get_name() {
+        if a.get_name() == b.get_name()
+            || a.is_system_library_content()
+            || b.is_system_library_content()
+        {
             return Ordering::Equal;
         }
 
