@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+use std::cmp::Ordering;
 use std::collections::HashSet;
 
 use console::style;
@@ -252,9 +253,54 @@ impl Comparable for DataForm {
     fn get_revision(&self) -> u16 {
         self.revision
     }
+
+    fn compare_by_requirement(a: &Self, b: &Self) -> Ordering {
+        if a.get_name() == b.get_name()
+            || a.is_system_library_content()
+            || b.is_system_library_content()
+        {
+            return Ordering::Equal;
+        }
+
+        if a.requires_form_reference(&b.get_name()) || a.requires_subform(&b.get_name()) {
+            return Ordering::Greater;
+        }
+
+        Ordering::Less
+    }
 }
 
 impl Requires for DataForm {
+    fn requires_form_reference(&self, name: &str) -> bool {
+        self.entries
+            .entry
+            .iter()
+            .map(|item| {
+                item.type_ == "formReference"
+                    && match item.referenced_data_form.as_ref() {
+                        Some(refname) => refname == name,
+                        _ => false,
+                    }
+            })
+            .filter(|&it| it)
+            .last()
+            .unwrap_or_default()
+    }
+    fn requires_subform(&self, name: &str) -> bool {
+        self.entries
+            .entry
+            .iter()
+            .map(|item| {
+                item.type_ == "subform"
+                    && match item.referenced_data_form.as_ref() {
+                        Some(refname) => refname == name,
+                        _ => false,
+                    }
+            })
+            .filter(|&it| it)
+            .last()
+            .unwrap_or_default()
+    }
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
         let mut result = self
             .data_catalogues
