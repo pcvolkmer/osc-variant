@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+use std::cmp::Ordering;
 use std::collections::HashSet;
 
 use console::style;
@@ -256,9 +257,40 @@ impl Comparable for Unterformular {
     fn get_revision(&self) -> u16 {
         self.revision
     }
+
+    fn compare_by_requirement(a: &Self, b: &Self) -> Ordering {
+        if a.get_name() == b.get_name() {
+            return Ordering::Equal;
+        }
+
+        if a.requires_form_reference(&b.get_name()) || a.requires_subform(&b.get_name()) {
+            return Ordering::Greater;
+        }
+
+        Ordering::Less
+    }
 }
 
 impl Requires for Unterformular {
+    fn requires_form_reference(&self, name: &str) -> bool {
+        self.entries
+            .entry
+            .iter()
+            .map(|item| item.type_ == "formReference" && item.name == name)
+            .filter(|&it| it)
+            .last()
+            .unwrap_or_default()
+    }
+    fn requires_subform(&self, name: &str) -> bool {
+        self.entries
+            .entry
+            .iter()
+            .map(|item| item.type_ == "subform" && item.name == name)
+            .filter(|&it| it)
+            .last()
+            .unwrap_or_default()
+    }
+
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
         let mut result = self
             .data_catalogues

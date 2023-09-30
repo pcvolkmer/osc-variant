@@ -22,10 +22,12 @@
  * SOFTWARE.
  */
 
+use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 
+use crate::model::requirements::Requires;
 use serde::{Deserialize, Serialize};
 
 use crate::profile::{FormField, FormReference, Profile};
@@ -251,6 +253,7 @@ pub trait Listable {
 
 pub trait Sortable {
     fn sorting_key(&self) -> String;
+
     fn sorted(&mut self) -> &Self
     where
         Self: Sized,
@@ -266,6 +269,12 @@ pub trait Comparable: Debug {
         let mut h = DefaultHasher::new();
         format!("{:?}", self).hash(&mut h);
         h.finish().to_string()
+    }
+    fn compare_by_requirement(_: &Self, _: &Self) -> Ordering
+    where
+        Self: Requires,
+    {
+        Ordering::Equal
     }
 }
 

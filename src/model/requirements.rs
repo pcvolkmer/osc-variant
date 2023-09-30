@@ -98,6 +98,14 @@ pub trait Requires
 where
     Self: Listable,
 {
+    fn requires_form_reference(&self, _: &str) -> bool {
+        false
+    }
+
+    fn requires_subform(&self, _: &str) -> bool {
+        false
+    }
+
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement>;
 
     fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {

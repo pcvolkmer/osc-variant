@@ -233,6 +233,10 @@ impl OnkostarEditor {
             .data_form
             .sort_unstable_by_key(|e| e.sorting_key());
 
+        self.editor
+            .data_form
+            .sort_unstable_by(DataForm::compare_by_requirement);
+
         self.editor.data_form.iter_mut().for_each(|item| {
             item.sorted();
         });
@@ -240,6 +244,10 @@ impl OnkostarEditor {
         self.editor
             .unterformular
             .sort_unstable_by_key(|e| e.sorting_key());
+
+        self.editor
+            .unterformular
+            .sort_unstable_by(Unterformular::compare_by_requirement);
 
         self.editor.unterformular.iter_mut().for_each(|item| {
             item.sorted();
