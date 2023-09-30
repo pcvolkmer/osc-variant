@@ -29,12 +29,21 @@ Zum Auflisten der Inhalte einer Datei wird folgender Befehl verwendet:
 osc-variant list meine-beispieldatei.osc
 ```
 
-Zum Auflisten der Inhalte mit allen Abhängigkeiten, z.B. Daten- und Merkmalkataloge und bei Formularen wird der Befehl
+Zum Auflisten der Inhalte mit allen Abhängigkeiten, z.B. Daten- und Merkmalskataloge und bei Formularen wird der Befehl
 `tree` verwendet:
 
 ```
 osc-variant tree meine-beispieldatei.osc
 ```
+
+Abhängigkeiten werden je nach Art gekennzeichnet:
+
+* `+`: Datenkatalog
+* `-`: Merkmalskatalog
+* `>`: Formularverweis
+* `*`: Unterformular
+
+Für Formularverweise und Unterformulare werden dabei die verwendeten Datenkataloge nicht erneut ausgegeben.
 
 Achtung! Dies erzeugt eine sehr umfangreiche Ausgabe.
 
