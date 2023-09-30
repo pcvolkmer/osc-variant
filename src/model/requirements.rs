@@ -27,7 +27,7 @@ use crate::model::data_form::DataForm;
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::unterformular::Unterformular;
-use crate::model::Listable;
+use crate::model::{Comparable, Listable, Sortable};
 
 #[allow(clippy::enum_variant_names)]
 pub enum Requirement<'a> {
@@ -46,6 +46,25 @@ pub enum Requirement<'a> {
     #[allow(dead_code)]
     ExternalDataFormSubform(String),
     ExternalUnterformularSubform(String),
+}
+
+impl Sortable for Requirement<'_> {
+    fn sorting_key(&self) -> String {
+        match self {
+            Requirement::PropertyCatalogue(item) => item.get_name(),
+            Requirement::DataCatalogue(item) => item.get_name(),
+            Requirement::DataFormReference(item) => item.get_name(),
+            Requirement::UnterformularReference(item) => item.get_name(),
+            Requirement::DataFormSubform(item) => item.get_name(),
+            Requirement::UnterformularSubform(item) => item.get_name(),
+            Requirement::ExternalPropertyCatalogue(name)
+            | Requirement::ExternalDataCatalogue(name)
+            | Requirement::ExternalDataFormReference(name)
+            | Requirement::ExternalDataFormSubform(name)
+            | Requirement::ExternalUnterformularReference(name)
+            | Requirement::ExternalUnterformularSubform(name) => name.to_string(),
+        }
+    }
 }
 
 impl ToString for Requirement<'_> {

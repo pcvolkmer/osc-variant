@@ -102,7 +102,8 @@ impl Comparable for DataCatalogue {
 
 impl Requires for DataCatalogue {
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
-        self.entries
+        let mut result = self
+            .entries
             .entry
             .iter()
             .filter(|&entry| entry.property_catalogue.is_some())
@@ -116,7 +117,10 @@ impl Requires for DataCatalogue {
                 Some(contained) => Requirement::PropertyCatalogue(contained),
                 None => Requirement::ExternalPropertyCatalogue(entry),
             })
-            .collect::<Vec<_>>()
+            .collect::<Vec<_>>();
+        result.sort_unstable_by_key(|item| item.sorting_key());
+
+        result
     }
 
     fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {

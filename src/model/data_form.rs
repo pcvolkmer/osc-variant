@@ -267,6 +267,7 @@ impl Requires for DataForm {
                 None => Requirement::ExternalDataCatalogue(entry.to_string()),
             })
             .collect::<Vec<_>>();
+        result.sort_unstable_by_key(|item| item.sorting_key());
 
         let referenced_forms = &mut self
             .entries
@@ -287,6 +288,7 @@ impl Requires for DataForm {
                 },
             })
             .collect::<Vec<_>>();
+        referenced_forms.sort_unstable_by_key(|item| item.sorting_key());
         result.append(referenced_forms);
 
         let sub_forms = &mut self
@@ -308,6 +310,7 @@ impl Requires for DataForm {
                 },
             })
             .collect::<Vec<_>>();
+        sub_forms.sort_unstable_by_key(|item| item.sorting_key());
         result.append(sub_forms);
 
         result
