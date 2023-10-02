@@ -229,9 +229,9 @@ impl OnkostarEditor {
             item.sorted();
         });
 
-        self.editor
-            .data_form
-            .sort_unstable_by_key(|e| e.sorting_key());
+        /*self.editor
+        .data_form
+        .sort_unstable_by_key(|e| e.sorting_key());*/
 
         self.editor
             .data_form
@@ -241,9 +241,9 @@ impl OnkostarEditor {
             item.sorted();
         });
 
-        self.editor
-            .unterformular
-            .sort_unstable_by_key(|e| e.sorting_key());
+        /*self.editor
+        .unterformular
+        .sort_unstable_by_key(|e| e.sorting_key());*/
 
         self.editor
             .unterformular

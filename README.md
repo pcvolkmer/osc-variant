@@ -106,7 +106,7 @@ Bei der Auflistung der Inhalte, kann die Option `--sorted` dazu verwendet werden
 Die Sortierung erfolgt dabei nach Namen des Katalogs oder des Formulars.
 
 Beim Modifizieren der Inhalte kann ebenfalls die Option `--sorted` dazu verwendet werden, die Einträge im Anschluss an die Modifikation
-nach Namen und der Abhängigkeit von Formularverweisen und Unterformularen zu sortieren.
+nach Namen und für Formulare der Abhängigkeit von Formularverweisen und Unterformularen zu sortieren.
 
 Formulare, die von anderen Formularen in einem Formularverweis oder als Unterformular verwendet werden, werden dabei weiter oben angeordnet,
 da Onkostar einen Formularimport sequenziell, ohne Berücksichtigung von Abhängigkeiten, durchführt.
