@@ -78,7 +78,7 @@ pub enum SubCommand {
         #[arg(
             long = "sorted",
             alias = "x-sorted",
-            help = "Sortiere Kataloge und Formulare nach Name (Optional)."
+            help = "Sortiere Kataloge und Formulare nach Name und Abhängigkeiten (Optional)."
         )]
         sorted: bool,
         #[arg(
@@ -87,6 +87,12 @@ pub enum SubCommand {
             help = "Entferne Einträge aus der Systembibliothek die nicht importiert werden (Optional)."
         )]
         strip: bool,
+        #[arg(
+            short = 'i',
+            long = "interactive",
+            help = "Starte interaktiven Dialog zum Modifizieren von OSC-Dateien"
+        )]
+        interactive: bool,
     },
     #[command(about = "Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte")]
     Diff {

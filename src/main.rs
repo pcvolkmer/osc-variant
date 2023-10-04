@@ -33,6 +33,7 @@ use std::str::FromStr;
 
 use clap::Parser;
 use console::style;
+use dialoguer::Confirm;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha256::digest;
@@ -149,6 +150,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             compact,
             sorted,
             strip,
+            interactive,
         } => {
             let data = &mut read_inputfile(inputfile)?;
 
@@ -157,6 +159,32 @@ fn main() -> Result<(), Box<dyn Error>> {
                     FileError::Reading(profile, "Kann Profildatei nicht lesen!".into())
                 })?;
                 data.apply_profile(&profile);
+            }
+
+            let mut compact = compact;
+            let mut sorted = sorted;
+            let mut strip = strip;
+
+            if interactive {
+                compact = Confirm::new()
+                    .with_prompt("Kompakte Ausgabe, ohne Einrücken?")
+                    .default(compact)
+                    .interact()
+                    .unwrap();
+
+                sorted = Confirm::new()
+                    .with_prompt("Sortiere Kataloge und Formulare nach Name und Abhängigkeiten?")
+                    .default(sorted)
+                    .interact()
+                    .unwrap();
+
+                strip = Confirm::new()
+                    .with_prompt(
+                        "Entferne Einträge aus der Systembibliothek die nicht importiert werden?",
+                    )
+                    .default(strip)
+                    .interact()
+                    .unwrap();
             }
 
             if sorted {
