@@ -84,6 +84,8 @@ osc-variant modify meine-beispieldatei.osc --profile ukw-profil.yml --output ukw
 ```
 
 Die Parameter `--profile` und `--output` sind optional.
+Mit dem ebenfalls optionalen Parameter `--interactve` oder `-i` können die Parameter zur kompakten Ausgabe, zum Sortieren
+und dem Entfernen von Inhalten der Systembibliothek interaktiv gesetzt werden.
 
 Ohne Profildatei wird die Datei lediglich eingelesen, Leerzeichen am Ende eines XML-Tags entfernt und wieder ausgegeben.
 
