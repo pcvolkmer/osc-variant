@@ -45,6 +45,8 @@ use crate::profile::Profile;
 mod cli;
 mod model;
 mod profile;
+#[cfg(feature = "unzip-osb")]
+mod unzip_osb;
 
 enum FileError {
     Reading(String, String),
@@ -254,6 +256,11 @@ fn main() -> Result<(), Box<dyn Error>> {
                     eprintln!("{}", FileError::Reading(inputfile, err.to_string()));
                 }
             };
+        }
+        #[cfg(feature = "unzip-osb")]
+        SubCommand::UnzipOsb { file } => {
+            use crate::unzip_osb::unzip_osb;
+            unzip_osb(file.as_str())
         }
     };
 

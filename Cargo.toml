@@ -9,6 +9,9 @@ readme = "README.md"
 
 build = "build.rs"
 
+[workspace]
+members = ["libs/deob"]
+
 [dependencies]
 clap = { version = "4.4", features = ["std", "help", "usage", "derive", "error-context"], default-features = false }
 serde = { version = "1.0", features = ["derive"] }
@@ -17,6 +20,13 @@ quick-xml = { version = "0.30", features = ["escape-html", "serialize"], default
 console = "0.15"
 sha256 = "1.4"
 dialoguer = "0.11"
+
+deob = { path = "./libs/deob", optional = true }
+zip = { version = "0.6", optional = true }
+
+[features]
+# Requires env var OSB_KEY to be present at build time
+unzip-osb = ["dep:deob", "dep:zip"]
 
 [build-dependencies]
 clap = { version = "4.4", features = ["std", "help", "usage", "derive", "error-context"], default-features = false }
