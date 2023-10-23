@@ -18,7 +18,7 @@ unvollständigen Ausgabedateien zu erzeugen.
 
 Die folgenden Unterbefehle sind verfügbar
 
-#### `sha256sum`
+#### Unterbefehl `sha256sum`
 
 Das Berechnen der SHA256 Prüfsumme ist mit dem Unterbefehl `sha256sum` auch unter Windows einfach möglich
 und erzeugt eine Ausgabe analog dem Befehl auf Linux-Systemen:
@@ -27,7 +27,7 @@ und erzeugt eine Ausgabe analog dem Befehl auf Linux-Systemen:
 osc-variant sha256sum meine-beispieldatei.osc
 ```
 
-#### `list`
+#### Unterbefehl `list`
 
 Zum Auflisten der Inhalte einer Datei wird folgender Befehl verwendet:
 
@@ -37,7 +37,7 @@ osc-variant list meine-beispieldatei.osc
 
 Mit der Option `--filter` kann die Ausgabe eingeschränkt werden. 
 
-#### `tree`
+#### Unterbefehl `tree`
 
 Zum Auflisten der Inhalte mit allen Abhängigkeiten, z.B. Daten- und Merkmalskataloge und bei Formularen wird der Befehl
 `tree` verwendet:
@@ -59,7 +59,7 @@ Achtung! Dies erzeugt eine sehr umfangreiche Ausgabe.
 
 Mit der Option `--filter` kann auch hier die Ausgabe eingeschränkt werden.
 
-#### `diff`
+#### Unterbefehl `diff`
 
 Zum Vergleich zweier OSC-Dateien wird der Unterbefehl `diff` verwendet.
 Der optionale Parameter `--strict` vergleicht auch den Inhalt der OSC-Datei.
@@ -75,7 +75,7 @@ bzw.
 osc-variant diff meine-beispieldatei.osc andere-beispieldatei.osc --strict
 ```
 
-#### `modify`
+#### Unterbefehl `modify`
 
 Zum Anpassen des Inhalts einer Datei:
 
@@ -90,6 +90,14 @@ und dem Entfernen von Inhalten der Systembibliothek interaktiv gesetzt werden.
 Ohne Profildatei wird die Datei lediglich eingelesen, Leerzeichen am Ende eines XML-Tags entfernt und wieder ausgegeben.
 
 Ohne eine Angabe der Ausgabedatei wird auf die Standardausgabe ausgegeben.
+
+#### Unterbefehl `unzip-osb`
+
+Ab Version 0.6.0 ist die Anwendung zudem in der Lage, die für eine Aktualisierung der OS-Bibliothek genutzten OSB-Dateien zu entpacken:
+
+```
+osc-variant unzip-osb OSBIB-6.10.osb
+```
 
 #### Kompakte Ausgabe
 
