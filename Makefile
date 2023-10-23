@@ -32,11 +32,11 @@ binary-all: win-binary-x86_64 linux-binary-x86_64
 
 .PHONY: win-binary-x86_64
 win-binary-x86_64:
-	cargo build --release --target=x86_64-pc-windows-gnu
+	cargo build --release --target=x86_64-pc-windows-gnu --features unzip-osb
 
 .PHONY: linux-binary-x86_64
 linux-binary-x86_64:
-	cargo build --release --target=x86_64-unknown-linux-gnu
+	cargo build --release --target=x86_64-unknown-linux-gnu --features unzip-osb
 
 .PHONY: install
 install:
