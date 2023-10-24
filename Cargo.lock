@@ -448,7 +448,7 @@ dependencies = [
 
 [[package]]
 name = "osc-variant"
-version = "0.5.0"
+version = "0.6.0"
 dependencies = [
  "clap",
  "clap_complete",
