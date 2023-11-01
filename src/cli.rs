@@ -103,5 +103,13 @@ pub enum SubCommand {
     },
     #[cfg(feature = "unzip-osb")]
     #[command(about = "Entpackt eine OSB-Datei")]
-    UnzipOsb { file: String },
+    UnzipOsb {
+        file: String,
+        #[arg(
+            short = 'p',
+            long = "password",
+            help = "Passwort der OSB-Datei (Optional)"
+        )]
+        password: Option<String>,
+    },
 }

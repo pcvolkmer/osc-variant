@@ -48,10 +48,8 @@ macro_rules! error {
     };
 }
 
-pub fn unzip_osb(path: &str) {
+pub fn unzip_osb_using_password(path: &str, password: &str) {
     println!("Entpacke OSB-Datei {}\n", style(path).yellow());
-
-    let pw = deobfuscate(env!("OSB_KEY").trim());
 
     let file = match fs::File::open(path) {
         Ok(file) => file,
@@ -78,7 +76,7 @@ pub fn unzip_osb(path: &str) {
     };
 
     for i in 0..archive.len() {
-        let mut file = if let Ok(Ok(file)) = archive.by_index_decrypt(i, pw.as_bytes()) {
+        let mut file = if let Ok(Ok(file)) = archive.by_index_decrypt(i, password.as_bytes()) {
             file
         } else {
             println!(
@@ -129,4 +127,8 @@ pub fn unzip_osb(path: &str) {
             ok!(outpath.display());
         }
     }
+}
+
+pub fn unzip_osb(path: &str) {
+    unzip_osb_using_password(path, deobfuscate(env!("OSB_KEY").trim()).as_str());
 }
