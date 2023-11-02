@@ -99,6 +99,11 @@ Ab Version 0.6.0 ist die Anwendung zudem in der Lage, die für eine Aktualisieru
 osc-variant unzip-osb OSBIB-6.10.osb
 ```
 
+Dieser Befehl kennt die beiden optionalen Parameter
+
+* `-d`: Optionale Angabe des Zielverzeichnisses. Wenn keine Angabe vorhanden ist, wird das aktuelle Verzeichnis verwendet.
+* `-p`/`--password`: Optionale Angabe des Passworts zum Entpacken der OSB-Datei.
+
 #### Kompakte Ausgabe
 
 OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne Zeilenumbrüche.
