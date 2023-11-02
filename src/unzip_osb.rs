@@ -24,6 +24,7 @@
 
 use console::style;
 use deob::deobfuscate;
+use std::path::Path;
 use std::{fs, io};
 
 macro_rules! started {
@@ -48,7 +49,7 @@ macro_rules! error {
     };
 }
 
-pub fn unzip_osb_using_password(path: &str, password: &str) {
+pub fn unzip_osb_using_password(path: &str, dir: &str, password: &str) {
     println!("Entpacke OSB-Datei {}\n", style(path).yellow());
 
     let file = match fs::File::open(path) {
@@ -87,7 +88,7 @@ pub fn unzip_osb_using_password(path: &str, password: &str) {
         };
 
         let outpath = match file.enclosed_name() {
-            Some(path) => path.to_owned(),
+            Some(path) => Path::new(dir).join(path.to_owned()),
             None => continue,
         };
 
@@ -129,6 +130,6 @@ pub fn unzip_osb_using_password(path: &str, password: &str) {
     }
 }
 
-pub fn unzip_osb(path: &str) {
-    unzip_osb_using_password(path, deobfuscate(env!("OSB_KEY").trim()).as_str());
+pub fn unzip_osb(path: &str, dir: &str) {
+    unzip_osb_using_password(path, dir, deobfuscate(env!("OSB_KEY").trim()).as_str());
 }

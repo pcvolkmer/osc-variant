@@ -111,5 +111,7 @@ pub enum SubCommand {
             help = "Passwort der OSB-Datei (Optional)"
         )]
         password: Option<String>,
+        #[arg(short = 'd', help = "Zielverzeichnis (Optional)")]
+        dir: Option<String>,
     },
 }

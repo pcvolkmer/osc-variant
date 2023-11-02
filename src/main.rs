@@ -259,11 +259,19 @@ fn main() -> Result<(), Box<dyn Error>> {
             };
         }
         #[cfg(feature = "unzip-osb")]
-        SubCommand::UnzipOsb { file, password } => {
+        SubCommand::UnzipOsb {
+            file,
+            password,
+            dir,
+        } => {
             use crate::unzip_osb::unzip_osb;
             match password {
-                Some(password) => unzip_osb_using_password(file.as_str(), password.as_str()),
-                None => unzip_osb(file.as_str()),
+                Some(password) => unzip_osb_using_password(
+                    file.as_str(),
+                    dir.unwrap_or_default().as_str(),
+                    password.as_str(),
+                ),
+                None => unzip_osb(file.as_str(), dir.unwrap_or_default().as_str()),
             }
         }
     };
