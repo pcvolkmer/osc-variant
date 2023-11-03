@@ -41,7 +41,6 @@ use sha256::digest;
 use crate::cli::{Cli, SubCommand};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
-use crate::unzip_osb::unzip_osb_using_password;
 
 mod cli;
 mod model;
@@ -264,7 +263,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             password,
             dir,
         } => {
-            use crate::unzip_osb::unzip_osb;
+            use crate::unzip_osb::{unzip_osb, unzip_osb_using_password};
             match password {
                 Some(password) => unzip_osb_using_password(
                     file.as_str(),
