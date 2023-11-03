@@ -27,5 +27,6 @@ use std::io::Error;
 fn main() -> Result<(), Error> {
     cc::Build::new().file("src/deob.c").compile("deob");
     println!("cargo:rerun-if-changed=src/deob.c");
+    println!("cargo:rerun-if-changed=src/deob.h");
     Ok(())
 }
