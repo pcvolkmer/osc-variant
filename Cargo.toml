@@ -46,3 +46,9 @@ assets = [
     ["target/release/osc-variant", "usr/bin/", "755"],
     ["completion/osc-variant.bash", "etc/bash_completion.d/", "644"]
 ]
+
+[package.metadata.generate-rpm]
+assets = [
+    { source = "target/release/osc-variant", dest = "/usr/bin/", mode = "755" },
+    { source = "completion/osc-variant.bash", dest = "/etc/bash_completion.d/", mode = "644" }
+]
