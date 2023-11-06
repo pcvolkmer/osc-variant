@@ -96,11 +96,15 @@ pub struct Ansicht {
     #[serde(rename = "Konfiguration")]
     konfiguration: String,
     #[serde(rename = "DataForm")]
-    data_form: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    data_form: Option<String>,
     #[serde(rename = "DataCatalogue")]
     data_catalogue: String,
     #[serde(rename = "TypAuswahl")]
     typ_auswahl: String,
+    #[serde(rename = "PersonenstammKontext", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    personenstamm_kontext: Option<String>,
     #[serde(rename = "Suche")]
     suche: bool,
     #[serde(rename = "SID")]
@@ -189,8 +193,12 @@ pub struct Haeufigkeit {
     taeglich_aktualisieren: bool,
     #[serde(rename = "Typ")]
     typ: String,
+    #[serde(rename = "NichtBerechnen")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    nicht_berechnen: Option<String>,
     #[serde(rename = "TabellenName")]
-    tabellen_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    tabellen_name: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -212,6 +220,32 @@ pub struct Ordner {
     #[serde(rename = "ParentOrdner", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     parent_order: Option<Box<Ordner>>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct Kennzahlen {
+    #[serde(rename = "Kennzahl", default)]
+    kennzahl: Vec<Kennzahl>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct Kennzahl {
+    #[serde(rename = "Name")]
+    name: String,
+    #[serde(rename = "Nummer")]
+    nummer: String,
+    #[serde(rename = "Beschreibung")]
+    beschreibung: String,
+    #[serde(rename = "Notiz")]
+    notiz: String,
+    #[serde(rename = "Vorgabe")]
+    vorgabe: String,
+    #[serde(rename = "Haeufigkeitenzaehler")]
+    haeufigkeitenzaehler: String,
+    #[serde(rename = "Haeufigkeitennenner")]
+    haeufigkeitennenner: String,
 }
 
 fn apply_profile_to_form_entry<E>(entry: &mut E, form_reference: &FormReference)
