@@ -32,6 +32,7 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 use crate::checks::osc::check;
+use crate::checks::print_checks;
 use clap::Parser;
 use console::style;
 use dialoguer::Confirm;
@@ -259,10 +260,14 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
             };
         }
-        SubCommand::Check { file } => {
-            check(Path::new(file.as_str()))
-                .iter()
-                .for_each(|check_notice| println!("{}", check_notice));
+        SubCommand::Check { file, list } => {
+            if list {
+                print_checks();
+            } else {
+                check(Path::new(file.as_str()))
+                    .iter()
+                    .for_each(|check_notice| println!("{}", check_notice));
+            }
         }
         #[cfg(feature = "unzip-osb")]
         SubCommand::UnzipOsb {

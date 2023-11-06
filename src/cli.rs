@@ -101,8 +101,15 @@ pub enum SubCommand {
         #[arg(long = "strict", help = "Strikter Vergleich des Inhalts")]
         strict: bool,
     },
-    #[command(about = "Überprüfe OSC-Datei auf bekannte Fehler")]
-    Check { file: String },
+    #[command(about = "Überprüfe OSC-Datei auf bekannte Problemen")]
+    Check {
+        file: String,
+        #[arg(
+            long = "list",
+            help = "Prüfe nicht und zeige Liste mit Checks auf bekannte Problemen"
+        )]
+        list: bool,
+    },
     #[cfg(feature = "unzip-osb")]
     #[command(about = "Entpackt eine OSB-Datei")]
     UnzipOsb {

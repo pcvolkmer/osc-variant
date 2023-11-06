@@ -112,3 +112,49 @@ pub trait Checkable {
 pub trait Fixable {
     fn fix(&mut self) -> bool;
 }
+
+pub fn print_checks() {
+    println!(
+        "{}",
+        style("Die folgenden Probleme sind bekannt\n")
+            .yellow()
+            .bold()
+    );
+
+    struct Problem<'a> {
+        code: &'a str,
+        name: &'a str,
+        description: &'a str,
+        fixable: bool,
+    }
+
+    impl<'a> Display for Problem<'a> {
+        fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+            write!(
+                f,
+                "{} {} {}\n\n{}",
+                style(self.code).bold(),
+                style(self.name).underlined(),
+                match self.fixable {
+                    true => style("(Behebbar)").green(),
+                    false => style("(Nicht behebbar)").red(),
+                },
+                self.description
+            )
+        }
+    }
+
+    vec![Problem {
+        code: "2023-0001",
+        name: "Leerzeichen am Ende der Plausibilitätsregel-Bezeichnung (OSTARSUPP-13334)",
+        description: "Treten Leerzeichen am Ende der Plausibilitätsregel-Bezeichnung auf,\n\
+        führt dies zu Fehlern beim Import der OSC-Datei.\n\
+        \n\
+        Das Problem wird beim Verwenden des Unterbefehls 'modify' automatisch\n\
+        behoben und Leerzeichen entfernt. 
+        ",
+        fixable: true,
+    }]
+    .iter()
+    .for_each(|problem| println!("{}\n", problem))
+}
