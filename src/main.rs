@@ -28,9 +28,11 @@ use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
+use crate::checks::osc::check;
+use crate::checks::print_checks;
 use clap::Parser;
 use console::style;
 use dialoguer::Confirm;
@@ -42,6 +44,7 @@ use crate::cli::{Cli, SubCommand};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 
+mod checks;
 mod cli;
 mod model;
 mod profile;
@@ -153,6 +156,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             sorted,
             strip,
             interactive,
+            fix,
         } => {
             let data = &mut read_inputfile(inputfile)?;
 
@@ -187,6 +191,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                     .default(strip)
                     .interact()
                     .unwrap();
+            }
+
+            if fix {
+                // No operation as of now
             }
 
             if sorted {
@@ -256,6 +264,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                     eprintln!("{}", FileError::Reading(inputfile, err.to_string()));
                 }
             };
+        }
+        SubCommand::Check { file, list } => {
+            if list {
+                print_checks();
+            } else {
+                check(Path::new(file.as_str()))
+                    .iter()
+                    .for_each(|check_notice| println!("{}", check_notice));
+            }
         }
         #[cfg(feature = "unzip-osb")]
         SubCommand::UnzipOsb {

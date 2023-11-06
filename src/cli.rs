@@ -93,6 +93,11 @@ pub enum SubCommand {
             help = "Starte interaktiven Dialog zum Modifizieren von OSC-Dateien"
         )]
         interactive: bool,
+        #[arg(
+            long = "fix",
+            help = "Erweiterte Problembehandlung und Reparatur der OSC-Datei"
+        )]
+        fix: bool,
     },
     #[command(about = "Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte")]
     Diff {
@@ -100,6 +105,15 @@ pub enum SubCommand {
         inputfile_b: String,
         #[arg(long = "strict", help = "Strikter Vergleich des Inhalts")]
         strict: bool,
+    },
+    #[command(about = "Überprüfe OSC-Datei auf bekannte Problemen")]
+    Check {
+        file: String,
+        #[arg(
+            long = "list",
+            help = "Prüfe nicht und zeige Liste mit Checks auf bekannte Problemen"
+        )]
+        list: bool,
     },
     #[cfg(feature = "unzip-osb")]
     #[command(about = "Entpackt eine OSB-Datei")]

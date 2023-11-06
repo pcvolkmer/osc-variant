@@ -27,9 +27,9 @@ use std::collections::hash_map::DefaultHasher;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 
-use crate::model::requirements::Requires;
 use serde::{Deserialize, Serialize};
 
+use crate::model::requirements::Requires;
 use crate::profile::{FormField, FormReference, Profile};
 
 pub mod data_catalogue;
