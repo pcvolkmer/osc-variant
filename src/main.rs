@@ -156,6 +156,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             sorted,
             strip,
             interactive,
+            fix,
         } => {
             let data = &mut read_inputfile(inputfile)?;
 
@@ -190,6 +191,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                     .default(strip)
                     .interact()
                     .unwrap();
+            }
+
+            if fix {
+                // No operation as of now
             }
 
             if sorted {

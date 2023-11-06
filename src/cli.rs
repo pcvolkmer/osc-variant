@@ -93,6 +93,11 @@ pub enum SubCommand {
             help = "Starte interaktiven Dialog zum Modifizieren von OSC-Dateien"
         )]
         interactive: bool,
+        #[arg(
+            long = "fix",
+            help = "Erweiterte Problembehandlung und Reparatur der OSC-Datei"
+        )]
+        fix: bool,
     },
     #[command(about = "Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte")]
     Diff {
