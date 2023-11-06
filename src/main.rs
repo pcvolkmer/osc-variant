@@ -40,6 +40,7 @@ use sha256::digest;
 
 use crate::cli::{Cli, SubCommand};
 use crate::model::onkostar_editor::OnkostarEditor;
+use crate::model::Checkable;
 use crate::profile::Profile;
 
 mod cli;
@@ -256,6 +257,12 @@ fn main() -> Result<(), Box<dyn Error>> {
                     eprintln!("{}", FileError::Reading(inputfile, err.to_string()));
                 }
             };
+        }
+        SubCommand::Check { file } => {
+            read_inputfile(file)?
+                .check()
+                .iter()
+                .for_each(|check_notice| println!("{}", check_notice));
         }
         #[cfg(feature = "unzip-osb")]
         SubCommand::UnzipOsb {

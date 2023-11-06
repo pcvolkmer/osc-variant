@@ -35,7 +35,9 @@ use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::requirements::Requires;
 use crate::model::unterformular::Unterformular;
-use crate::model::{Comparable, FolderContent, FormEntryContainer, Listable, Sortable};
+use crate::model::{
+    CheckNotice, Checkable, Comparable, FolderContent, FormEntryContainer, Listable, Sortable,
+};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -406,6 +408,12 @@ impl FromStr for OnkostarEditor {
             Ok(profile) => Ok(profile),
             Err(err) => Err(err.to_string()),
         }
+    }
+}
+
+impl Checkable for OnkostarEditor {
+    fn check(&self) -> Vec<CheckNotice> {
+        vec![]
     }
 }
 

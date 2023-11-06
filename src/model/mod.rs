@@ -24,7 +24,7 @@
 
 use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
-use std::fmt::Debug;
+use std::fmt::{Debug, Display, Formatter};
 use std::hash::{Hash, Hasher};
 
 use crate::model::requirements::Requires;
@@ -328,4 +328,26 @@ pub trait FolderContent {
     fn is_system_library_content(&self) -> bool {
         "ONKOSTAR Bibliothek" == self.get_library_folder()
     }
+}
+
+pub enum CheckNotice {
+    /// This will result in Error if importing file
+    Error { code: String, description: String },
+    /// Other known issues
+    Warning { description: String },
+}
+
+impl Display for CheckNotice {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CheckNotice::Error { code, description } => {
+                write!(f, "[ERROR] ({}) {}", code, description)
+            }
+            CheckNotice::Warning { description } => write!(f, "[WARNING] {}", description),
+        }
+    }
+}
+
+pub trait Checkable {
+    fn check(&self) -> Vec<CheckNotice>;
 }
