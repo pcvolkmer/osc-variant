@@ -30,14 +30,13 @@ use console::style;
 use quick_xml::de::from_str;
 use serde::{Deserialize, Serialize};
 
+use crate::checks::{CheckNotice, Checkable};
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::requirements::Requires;
 use crate::model::unterformular::Unterformular;
-use crate::model::{
-    CheckNotice, Checkable, Comparable, FolderContent, FormEntryContainer, Listable, Sortable,
-};
+use crate::model::{Comparable, FolderContent, FormEntryContainer, Listable, Sortable};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -413,7 +412,23 @@ impl FromStr for OnkostarEditor {
 
 impl Checkable for OnkostarEditor {
     fn check(&self) -> Vec<CheckNotice> {
-        vec![]
+        let mut result = self
+            .editor
+            .data_form
+            .iter()
+            .flat_map(|entity| entity.check())
+            .collect::<Vec<_>>();
+
+        let other = &mut self
+            .editor
+            .unterformular
+            .iter()
+            .flat_map(|entity| entity.check())
+            .collect::<Vec<_>>();
+
+        result.append(other);
+
+        result
     }
 }
 

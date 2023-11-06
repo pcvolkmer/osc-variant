@@ -28,6 +28,7 @@ use std::collections::HashSet;
 use console::style;
 use serde::{Deserialize, Serialize};
 
+use crate::checks::{CheckNotice, Checkable};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
@@ -377,6 +378,12 @@ impl Requires for DataForm {
 impl FolderContent for DataForm {
     fn get_library_folder(&self) -> String {
         self.ordner.bibliothek.name.to_string()
+    }
+}
+
+impl Checkable for DataForm {
+    fn check(&self) -> Vec<CheckNotice> {
+        vec![]
     }
 }
 

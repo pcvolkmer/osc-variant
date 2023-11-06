@@ -25,6 +25,7 @@
 use std::cmp::Ordering;
 use std::collections::HashSet;
 
+use crate::checks::{CheckNotice, Checkable};
 use console::style;
 use serde::{Deserialize, Serialize};
 
@@ -374,6 +375,12 @@ impl Requires for Unterformular {
 impl FolderContent for Unterformular {
     fn get_library_folder(&self) -> String {
         self.ordner.bibliothek.name.to_string()
+    }
+}
+
+impl Checkable for Unterformular {
+    fn check(&self) -> Vec<CheckNotice> {
+        vec![]
     }
 }
 

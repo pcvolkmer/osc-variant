@@ -28,9 +28,10 @@ use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
+use crate::checks::osc::check;
 use clap::Parser;
 use console::style;
 use dialoguer::Confirm;
@@ -40,9 +41,9 @@ use sha256::digest;
 
 use crate::cli::{Cli, SubCommand};
 use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::Checkable;
 use crate::profile::Profile;
 
+mod checks;
 mod cli;
 mod model;
 mod profile;
@@ -259,8 +260,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             };
         }
         SubCommand::Check { file } => {
-            read_inputfile(file)?
-                .check()
+            check(Path::new(file.as_str()))
                 .iter()
                 .for_each(|check_notice| println!("{}", check_notice));
         }
