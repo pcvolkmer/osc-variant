@@ -32,7 +32,7 @@ use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
     apply_profile_to_form_entry, apply_profile_to_form_field, Ansichten, Comparable, Entries,
-    Filter, FolderContent, FormEntry, FormEntryContainer, Listable, MenuCategory,
+    Filter, FolderContent, FormEntry, FormEntryContainer, Kennzahlen, Listable, MenuCategory,
     PlausibilityRules, RefEntries, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
@@ -80,7 +80,7 @@ pub struct Unterformular {
     #[serde(rename = "EmailTemplate")]
     #[serde(skip_serializing_if = "Option::is_none")]
     mail_template: Option<String>,
-    #[serde(rename = "ErkrankungText")]
+    #[serde(rename = "ErkrankungText", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     erkrankung_text: Option<String>,
     #[serde(rename = "ErkrankungTextLong")]
@@ -97,6 +97,9 @@ pub struct Unterformular {
     erkrankung_big_summary: Option<String>,
     #[serde(rename = "Kontext")]
     kontext: String,
+    #[serde(rename = "Datenart")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    datenart: Option<String>,
     #[serde(rename = "TudokReadonly")]
     tudok_readonly: bool,
     #[serde(rename = "VitalstatusRelevant")]
@@ -159,7 +162,7 @@ pub struct Unterformular {
     #[serde(rename = "Haeufigkeiten")]
     haeufigkeiten: Haeufigkeiten,
     #[serde(rename = "Kennzahlen")]
-    kennzahlen: String,
+    kennzahlen: Kennzahlen,
     #[serde(rename = "Ordner")]
     ordner: Ordner,
     #[serde(rename = "MenuCategory")]
@@ -442,6 +445,9 @@ pub struct Entry {
     grafik_ausrichtung: Option<String>,
     #[serde(rename = "Mandatory")]
     mandatory: String,
+    #[serde(rename = "Datenart", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    datenart: Option<String>,
     #[serde(rename = "Filter")]
     #[serde(skip_serializing_if = "Option::is_none")]
     filter: Option<Filter>,
@@ -461,6 +467,9 @@ pub struct Entry {
     #[serde(rename = "AnzeigeAuswahl")]
     #[serde(skip_serializing_if = "Option::is_none")]
     anzeige_auswahl: Option<String>,
+    #[serde(rename = "Druckvorlage")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    druckvorlage: Option<String>,
     #[serde(rename = "VersionFrom")]
     #[serde(skip_serializing_if = "Option::is_none")]
     version_from: Option<String>,
@@ -468,6 +477,9 @@ pub struct Entry {
     speichern: String,
     #[serde(rename = "LeerAusblenden")]
     leer_ausblenden: bool,
+    #[serde(rename = "Inhalt")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    inhalt: Option<String>,
     #[serde(rename = "GeschlossenAnzeigen")]
     geschlossen_anzeigen: bool,
     #[serde(rename = "Min")]
@@ -550,6 +562,12 @@ pub struct Entry {
     in_auswertung: bool,
     #[serde(rename = "InAuswertungGraph")]
     in_auswertung_graph: bool,
+    #[serde(rename = "FragebogenItemNummer")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    fragebogen_item_nummer: Option<u8>,
+    #[serde(rename = "Score")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    score: Option<String>,
     #[serde(rename = "AlignmentPatModul")]
     alignment_pat_modul: String,
     #[serde(rename = "DirectionPatModul")]

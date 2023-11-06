@@ -29,7 +29,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
-use crate::model::{Comparable, FolderContent, Listable, Ordner, Sortable};
+use crate::model::{Ansichten, Comparable, FolderContent, Listable, Ordner, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -58,6 +58,9 @@ pub struct DataCatalogue {
     entries: Entries,
     #[serde(rename = "Ordner")]
     ordner: Ordner,
+    #[serde(rename = "Ansichten", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ansichten: Option<Ansichten>,
 }
 
 impl Listable for DataCatalogue {

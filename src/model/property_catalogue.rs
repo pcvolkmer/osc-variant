@@ -191,6 +191,9 @@ pub struct VersionEntry {
     #[serde(rename = "Note", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     note: Option<String>,
+    #[serde(rename = "Type", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    type_: Option<String>,
     #[serde(rename = "Position")]
     position: String,
 }
@@ -331,8 +334,9 @@ pub struct AbbildungEntry {
     #[serde(rename = "Synonyms")]
     #[serde(skip_serializing_if = "Option::is_none")]
     synonyms: Option<String>,
-    #[serde(rename = "Note")]
-    note: String,
+    #[serde(rename = "Note", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    note: Option<String>,
     #[serde(rename = "Position")]
     position: String,
 }
