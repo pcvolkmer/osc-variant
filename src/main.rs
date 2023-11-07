@@ -32,7 +32,7 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 use crate::checks::osc::check;
-use crate::checks::{print_checks, CheckNotice};
+use crate::checks::print_checks;
 use clap::Parser;
 use console::style;
 use dialoguer::Confirm;
