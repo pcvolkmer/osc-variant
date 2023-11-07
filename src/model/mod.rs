@@ -137,6 +137,66 @@ pub struct MenuCategory {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
+pub struct PunkteKategorien {
+    #[serde(rename = "PunkteKategorie", default)]
+    punkte_kategorie: Vec<PunkteKategorie>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct PunkteKategorie {
+    #[serde(rename = "Name")]
+    name: String,
+    #[serde(rename = "Beschreibung")]
+    beschreibung: String,
+    #[serde(rename = "MaxLeerwerte")]
+    max_leerwerte: u16,
+    #[serde(rename = "Berechnung")]
+    berechnung: String,
+    #[serde(rename = "Felder")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    felder: Option<Felder>,
+    #[serde(rename = "Vergleichswerttabellen")]
+    vergleichswerttabellen: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct Felder {
+    #[serde(rename = "Feld", default)]
+    feld: Vec<Feld>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct Feld {
+    #[serde(rename = "DataFormEntryName")]
+    data_form_entry_name: String,
+    #[serde(rename = "ManuellePunkte")]
+    manuelle_punkte: bool,
+    #[serde(rename = "Werte")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    werte: Option<FeldWerte>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct FeldWerte {
+    #[serde(rename = "Wert", default)]
+    wert: Vec<FeldWert>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct FeldWert {
+    #[serde(rename = "Wert")]
+    wert: String,
+    #[serde(rename = "Punkte")]
+    punkte: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct Filter {
     #[serde(rename = "Condition")]
     condition: String,

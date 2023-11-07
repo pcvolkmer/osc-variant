@@ -34,7 +34,7 @@ use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
     apply_profile_to_form_entry, apply_profile_to_form_field, Ansichten, Comparable, Entries,
     Filter, FolderContent, FormEntry, FormEntryContainer, Kennzahlen, Listable, MenuCategory,
-    PlausibilityRules, RefEntries, Script, Sortable,
+    PlausibilityRules, PunkteKategorien, RefEntries, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
@@ -169,6 +169,9 @@ pub struct Unterformular {
     #[serde(rename = "MenuCategory")]
     #[serde(skip_serializing_if = "Option::is_none")]
     menu_category: Option<MenuCategory>,
+    #[serde(rename = "PunkteKategorien")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    punkte_kategorien: Option<PunkteKategorien>,
     #[serde(rename = "Ansichten")]
     #[serde(skip_serializing_if = "Option::is_none")]
     ansichten: Option<Ansichten>,
