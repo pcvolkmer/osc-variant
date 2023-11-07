@@ -104,6 +104,12 @@ Dieser Befehl kennt die beiden optionalen Parameter
 * `-d`: Optionale Angabe des Zielverzeichnisses. Wenn keine Angabe vorhanden ist, wird das aktuelle Verzeichnis verwendet.
 * `-p`/`--password`: Optionale Angabe des Passworts zum Entpacken der OSB-Datei.
 
+#### Unterbefehl `check`
+
+Der Unterbefehl `check` prüft eine OSC-Datei auf bekannte Probleme und gibt eine Liste mit erkannten Problemen aus.
+
+Eine Liste mit bekannten Problemen wird mit `check --list` ausgegeben.
+
 #### Kompakte Ausgabe
 
 OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne Zeilenumbrüche.
