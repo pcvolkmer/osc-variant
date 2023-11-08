@@ -107,12 +107,15 @@ pub enum SubCommand {
         strict: bool,
     },
     #[command(about = "Überprüfe OSC-Datei auf bekannte Problemen")]
+    #[group(multiple = false)]
     Check {
-        file: String,
+        #[arg(help = "Die zu prüfende Datei", group = "check-file", required = true)]
+        file: Option<String>,
         #[arg(
             short = 'p',
             long = "password",
-            help = "Passwort der OSB-Datei (Optional - für OSB-Dateien)"
+            help = "Passwort der OSB-Datei (Optional - für OSB-Dateien)",
+            requires = "check-file"
         )]
         password: Option<String>,
         #[arg(
