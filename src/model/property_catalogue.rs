@@ -127,12 +127,12 @@ pub struct Version {
     #[serde(rename = "Revision")]
     revision: u16,
     #[serde(rename = "Entries")]
-    entries: VersionEntries,
+    entries: Option<VersionEntries>,
     #[serde(rename = "Abbildung")]
     #[serde(skip_serializing_if = "Option::is_none")]
     abbildung: Option<Vec<Abbildung>>,
     #[serde(rename = "Categories")]
-    categories: Categories,
+    categories: Option<Categories>,
 }
 
 impl Sortable for Version {
@@ -151,19 +151,23 @@ impl Sortable for Version {
             });
         }
 
-        self.entries
-            .content
-            .sort_unstable_by_key(|item| item.sorting_key());
-        self.entries.content.iter_mut().for_each(|item| {
-            item.sorted();
-        });
+        if let Some(ref mut entries) = self.entries {
+            entries
+                .content
+                .sort_unstable_by_key(|item| item.sorting_key());
+            entries.content.iter_mut().for_each(|item| {
+                item.sorted();
+            });
+        }
 
-        self.categories
-            .content
-            .sort_unstable_by_key(|item| item.sorting_key());
-        self.categories.content.iter_mut().for_each(|item| {
-            item.sorted();
-        });
+        if let Some(ref mut categories) = self.categories {
+            categories
+                .content
+                .sort_unstable_by_key(|item| item.sorting_key());
+            categories.content.iter_mut().for_each(|item| {
+                item.sorted();
+            });
+        }
 
         self
     }
@@ -184,7 +188,7 @@ pub struct VersionEntry {
     #[serde(rename = "ShortDescription")]
     short_description: String,
     #[serde(rename = "Description")]
-    description: String,
+    description: Option<String>,
     #[serde(rename = "Synonyms", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     synonyms: Option<String>,
