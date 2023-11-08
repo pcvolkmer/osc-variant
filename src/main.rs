@@ -32,7 +32,7 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 use crate::checks::osc::check;
-use crate::checks::print_checks;
+use crate::checks::{print_checks, CheckNotice};
 use clap::Parser;
 use console::style;
 use dialoguer::Confirm;
@@ -269,7 +269,18 @@ fn main() -> Result<(), Box<dyn Error>> {
             if list {
                 print_checks();
             } else {
-                check(Path::new(file.as_str()))
+                let notices = check(Path::new(file.as_str()));
+                println!(
+                    "Es wurden {} Probleme gefunden\n",
+                    notices
+                        .iter()
+                        .filter(|notice| match notice {
+                            CheckNotice::ErrorWithCode { .. } | CheckNotice::Error { .. } => true,
+                            _ => false,
+                        })
+                        .count()
+                );
+                notices
                     .iter()
                     .for_each(|check_notice| println!("{}", check_notice));
             }
