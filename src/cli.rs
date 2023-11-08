@@ -110,6 +110,12 @@ pub enum SubCommand {
     Check {
         file: String,
         #[arg(
+            short = 'p',
+            long = "password",
+            help = "Passwort der OSB-Datei (Optional - für OSB-Dateien)"
+        )]
+        password: Option<String>,
+        #[arg(
             long = "list",
             help = "Prüfe nicht und zeige Liste mit Checks auf bekannte Problemen"
         )]

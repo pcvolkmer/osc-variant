@@ -22,10 +22,15 @@
  * SOFTWARE.
  */
 
-pub mod osc;
+use std::fmt::{Display, Formatter};
+use std::path::Path;
 
 use console::style;
-use std::fmt::{Display, Formatter};
+use deob::deobfuscate;
+
+#[cfg(feature = "unzip-osb")]
+pub mod osb;
+pub mod osc;
 
 pub enum CheckNotice {
     /// This will result in Error if importing file and has a support code
@@ -40,9 +45,13 @@ pub enum CheckNotice {
         description: String,
         line: Option<usize>,
     },
-    #[allow(dead_code)]
     /// Other known issues
     Warning {
+        description: String,
+        line: Option<usize>,
+    },
+    /// Other known issues
+    Info {
         description: String,
         line: Option<usize>,
     },
@@ -59,7 +68,7 @@ impl Display for CheckNotice {
             } => match line {
                 Some(line) => write!(
                     f,
-                    "{} ({}) at Line {}: {}{}",
+                    "{: <7} ({}) at Line {}: {}{}",
                     style("ERROR").red().bold(),
                     code,
                     line,
@@ -71,7 +80,7 @@ impl Display for CheckNotice {
                 ),
                 None => write!(
                     f,
-                    "{} ({}): {}{}",
+                    "{: <7} ({}): {}{}",
                     style("ERROR").red().bold(),
                     code,
                     description,
@@ -84,22 +93,37 @@ impl Display for CheckNotice {
             CheckNotice::Error { description, line } => match line {
                 Some(line) => write!(
                     f,
-                    "{} at Line {}: {}",
+                    "{: <7} at Line {}: {}",
                     style("ERROR").red().bold(),
                     line,
                     description
                 ),
-                None => write!(f, "{}: {}", style("ERROR").red().bold(), description),
+                None => write!(f, "{: <7} {}", style("ERROR").red().bold(), description),
             },
             CheckNotice::Warning { description, line } => match line {
                 Some(line) => write!(
                     f,
-                    "{} at Line {}: {}",
+                    "{: <7} at Line {}: {}",
                     style("WARNING").yellow().bold(),
                     line,
                     description
                 ),
-                None => write!(f, "{}: {}", style("WARNING").yellow().bold(), description),
+                None => write!(
+                    f,
+                    "{: <7} {}",
+                    style("WARNING").yellow().bold(),
+                    description
+                ),
+            },
+            CheckNotice::Info { description, line } => match line {
+                Some(line) => write!(
+                    f,
+                    "{: <7} at Line {}: {}",
+                    style("INFO").blue().bold(),
+                    line,
+                    description
+                ),
+                None => write!(f, "{: <7} {}", style("INFO").blue().bold(), description),
             },
         }
     }
@@ -111,6 +135,27 @@ pub trait Checkable {
 
 pub trait Fixable {
     fn fix(&mut self) -> bool;
+}
+
+pub fn check_file(file: &Path, password: Option<String>) -> Vec<CheckNotice> {
+    match file.extension() {
+        Some(ex) => match ex.to_str() {
+            #[cfg(feature = "unzip-osb")]
+            Some("osb") => match password {
+                Some(password) => osb::check_file(file, password.as_str()),
+                None => osb::check_file(file, deobfuscate(env!("OSB_KEY").trim()).as_str()),
+            },
+            Some("osc") => osc::check_file(file),
+            _ => vec![CheckNotice::Error {
+                description: "Keine prüfbare Datei".to_string(),
+                line: None,
+            }],
+        },
+        _ => vec![CheckNotice::Error {
+            description: "Keine prüfbare Datei".to_string(),
+            line: None,
+        }],
+    }
 }
 
 pub fn print_checks() {
@@ -144,17 +189,34 @@ pub fn print_checks() {
         }
     }
 
-    vec![Problem {
-        code: "2023-0001",
-        name: "Leerzeichen am Ende der Plausibilitätsregel-Bezeichnung (OSTARSUPP-13334)",
-        description: "Treten Leerzeichen am Ende der Plausibilitätsregel-Bezeichnung auf,\n\
-        führt dies zu Fehlern beim Import der OSC-Datei.\n\
-        \n\
-        Das Problem wird beim Verwenden des Unterbefehls 'modify' automatisch\n\
-        behoben und Leerzeichen entfernt. 
-        ",
-        fixable: true,
-    }]
+    vec![
+        Problem {
+            code: "2023-0001",
+            name: "Unterformular mit Markierung 'hat Unterformulare'",
+            description: "  Aktuell gibt es keine Unterformulare in Unterformularen, daher\n  \
+            sollte dies nicht vorkommen.",
+            fixable: false,
+        },
+        Problem {
+            code: "2023-0002",
+            name: "Formular hat keine Angabe zum Prozedurdatum",
+            description: "  Formulare benötigen die Angabe des Prozedurdatums, anderenfalls\n  \
+            führt dies zu Problemen in Onkostar.\n\n  \
+            Unterformulare können ein Prozedurdatum haben, müssen es aber nicht.",
+            fixable: false,
+        },
+        Problem {
+            code: "2023-0003",
+            name: "Leerzeichen am Ende der Plausibilitätsregel-Bezeichnung (OSTARSUPP-13334)",
+            description:
+                "  Treten Leerzeichen am Ende der Plausibilitätsregel-Bezeichnung auf,\n  \
+            führt dies zu Fehlern beim Import der OSC-Datei.\n\n  \
+            Das Problem wird beim Verwenden des Unterbefehls 'modify' automatisch\n  \
+            behoben und Leerzeichen entfernt. 
+            ",
+            fixable: true,
+        },
+    ]
     .iter()
     .for_each(|problem| println!("{}\n", problem))
 }

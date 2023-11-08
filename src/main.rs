@@ -31,8 +31,7 @@ use std::ops::Add;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
-use crate::checks::osc::check;
-use crate::checks::print_checks;
+use crate::checks::{check_file, print_checks, CheckNotice};
 use clap::Parser;
 use console::style;
 use dialoguer::Confirm;
@@ -265,11 +264,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
             };
         }
-        SubCommand::Check { file, list } => {
+        SubCommand::Check {
+            file,
+            list,
+            password,
+        } => {
             if list {
                 print_checks();
             } else {
-                let notices = check(Path::new(file.as_str()));
+                let notices = check_file(Path::new(file.as_str()), password);
                 println!(
                     "Es wurden {} Probleme gefunden\n",
                     notices
