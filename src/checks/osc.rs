@@ -76,7 +76,7 @@ fn check_line(line: usize, content: String) -> Vec<CheckNotice> {
 
     if content.contains(" </Bezeichnung>") {
         result.append(&mut vec![CheckNotice::ErrorWithCode {
-            code: "2023-0001".to_string(),
+            code: "2023-0003".to_string(),
             description:
                 "Leerzeichen am Ende der Plausibilitätsregel-Bezeichnung (OSTARSUPP-13334)"
                     .to_string(),

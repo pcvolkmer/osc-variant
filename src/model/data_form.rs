@@ -28,6 +28,7 @@ use std::collections::HashSet;
 use console::style;
 use serde::{Deserialize, Serialize};
 
+use crate::checks::CheckNotice::ErrorWithCode;
 use crate::checks::{CheckNotice, Checkable};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
@@ -386,6 +387,24 @@ impl FolderContent for DataForm {
 
 impl Checkable for DataForm {
     fn check(&self) -> Vec<CheckNotice> {
+        if self
+            .entries
+            .entry
+            .iter()
+            .filter(|entry| entry.procedure_date_status != "none")
+            .count()
+            == 0
+        {
+            return vec![ErrorWithCode {
+                code: "2023-0002".to_string(),
+                description: format!(
+                    "Formular '{}' hat keine Angabe zum Prozedurdatum",
+                    self.name
+                ),
+                line: None,
+                example: None,
+            }];
+        }
         vec![]
     }
 }

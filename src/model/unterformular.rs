@@ -25,6 +25,7 @@
 use std::cmp::Ordering;
 use std::collections::HashSet;
 
+use crate::checks::CheckNotice::ErrorWithCode;
 use crate::checks::{CheckNotice, Checkable};
 use console::style;
 use serde::{Deserialize, Serialize};
@@ -383,6 +384,18 @@ impl FolderContent for Unterformular {
 
 impl Checkable for Unterformular {
     fn check(&self) -> Vec<CheckNotice> {
+        if self.hat_unterformulare {
+            return vec![ErrorWithCode {
+                code: "2023-0001".to_string(),
+                description: format!(
+                    "Unterformular '{}' mit Markierung 'hat Unterformulare'",
+                    self.name
+                ),
+                line: None,
+                example: None,
+            }];
+        }
+
         vec![]
     }
 }
