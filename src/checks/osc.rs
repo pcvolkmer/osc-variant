@@ -22,23 +22,24 @@
  * SOFTWARE.
  */
 
-use crate::checks::{CheckNotice, Checkable};
-use crate::model::onkostar_editor::OnkostarEditor;
 use std::fs;
 use std::path::Path;
 use std::str::FromStr;
 
-pub fn check_file(file: &Path) -> Vec<CheckNotice> {
+use crate::checks::{CheckNotice, Checkable};
+use crate::model::onkostar_editor::OnkostarEditor;
+
+pub fn check_file(file: &Path) -> Result<Vec<CheckNotice>, CheckNotice> {
     match fs::read_to_string(file) {
         Ok(content) => check(content),
-        _ => vec![CheckNotice::Error {
+        _ => Err(CheckNotice::Error {
             description: "Kann Datei nicht lesen".to_string(),
             line: None,
-        }],
+        }),
     }
 }
 
-pub fn check(content: String) -> Vec<CheckNotice> {
+pub fn check(content: String) -> Result<Vec<CheckNotice>, CheckNotice> {
     let mut result = content
         .lines()
         .enumerate()
@@ -47,14 +48,16 @@ pub fn check(content: String) -> Vec<CheckNotice> {
 
     let inner_checks = &mut match OnkostarEditor::from_str(content.as_str()) {
         Ok(data) => data.check(),
-        Err(err) => vec![CheckNotice::Error {
-            description: format!("Interner Fehler: {}", err),
-            line: None,
-        }],
+        Err(err) => {
+            return Err(CheckNotice::Error {
+                description: format!("Interner Fehler: {}", err),
+                line: None,
+            })
+        }
     };
     result.append(inner_checks);
 
-    result
+    Ok(result)
 }
 
 fn check_line(line: usize, content: String) -> Vec<CheckNotice> {

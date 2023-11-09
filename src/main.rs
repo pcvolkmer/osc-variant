@@ -277,20 +277,27 @@ fn main() -> Result<(), Box<dyn Error>> {
             if list {
                 print_checks();
             } else {
-                let notices = check_file(Path::new(file.unwrap_or_default().as_str()), password);
-                println!(
-                    "Es wurden {} Probleme gefunden\n",
-                    notices
-                        .iter()
-                        .filter(|notice| match notice {
-                            CheckNotice::ErrorWithCode { .. } | CheckNotice::Error { .. } => true,
-                            _ => false,
-                        })
-                        .count()
-                );
-                notices
-                    .iter()
-                    .for_each(|check_notice| println!("{}", check_notice));
+                match check_file(Path::new(file.unwrap_or_default().as_str()), password) {
+                    Ok(notices) => {
+                        println!(
+                            "Es wurden {} Probleme gefunden\n",
+                            notices
+                                .iter()
+                                .filter(|notice| match notice {
+                                    CheckNotice::ErrorWithCode { .. }
+                                    | CheckNotice::Error { .. } => true,
+                                    _ => false,
+                                })
+                                .count()
+                        );
+                        notices
+                            .iter()
+                            .for_each(|check_notice| println!("{}", check_notice));
+                    }
+                    Err(err) => {
+                        println!("{}", err)
+                    }
+                }
             }
         }
         #[cfg(feature = "unzip-osb")]

@@ -55,6 +55,8 @@ pub enum CheckNotice {
         description: String,
         line: Option<usize>,
     },
+    /// Ok
+    Ok(String),
 }
 
 impl Display for CheckNotice {
@@ -74,7 +76,7 @@ impl Display for CheckNotice {
                     line,
                     description,
                     match example {
-                        Some(example) => format!(" -> '{}'", style(example).dim()),
+                        Some(example) => format!("\n        🔥 '{}'", style(example).dim()),
                         _ => String::new(),
                     }
                 ),
@@ -85,7 +87,7 @@ impl Display for CheckNotice {
                     code,
                     description,
                     match example {
-                        Some(example) => format!(" -> '{}'", style(example).dim()),
+                        Some(example) => format!("\n        🔥 '{}'", style(example).dim()),
                         _ => String::new(),
                     }
                 ),
@@ -125,6 +127,7 @@ impl Display for CheckNotice {
                 ),
                 None => write!(f, "{: <7} {}", style("INFO").blue().bold(), description),
             },
+            CheckNotice::Ok(msg) => write!(f, "{: <7} {}", style("OK").green(), msg),
         }
     }
 }
@@ -138,7 +141,7 @@ pub trait Fixable {
 }
 
 #[allow(unused_variables)]
-pub fn check_file(file: &Path, password: Option<String>) -> Vec<CheckNotice> {
+pub fn check_file(file: &Path, password: Option<String>) -> Result<Vec<CheckNotice>, CheckNotice> {
     match file.extension() {
         Some(ex) => match ex.to_str() {
             #[cfg(feature = "unzip-osb")]
@@ -150,15 +153,15 @@ pub fn check_file(file: &Path, password: Option<String>) -> Vec<CheckNotice> {
                 }
             },
             Some("osc") => osc::check_file(file),
-            _ => vec![CheckNotice::Error {
+            _ => Err(CheckNotice::Error {
                 description: "Keine prüfbare Datei".to_string(),
                 line: None,
-            }],
+            }),
         },
-        _ => vec![CheckNotice::Error {
+        _ => Err(CheckNotice::Error {
             description: "Keine prüfbare Datei".to_string(),
             line: None,
-        }],
+        }),
     }
 }
 

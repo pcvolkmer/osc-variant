@@ -31,24 +31,24 @@ use indicatif::ProgressBar;
 use crate::checks::{osc, CheckNotice};
 
 #[cfg(feature = "unzip-osb")]
-pub fn check_file(file: &Path, password: &str) -> Vec<CheckNotice> {
+pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, CheckNotice> {
     let file = match fs::File::open(file) {
         Ok(file) => file,
         Err(err) => {
-            return vec![CheckNotice::Error {
+            return Err(CheckNotice::Error {
                 description: format!("Kann Datei nicht lesen: {}", err),
                 line: None,
-            }];
+            });
         }
     };
 
     let mut archive = match zip::ZipArchive::new(file) {
         Ok(file) => file,
         Err(err) => {
-            return vec![CheckNotice::Error {
+            return Err(CheckNotice::Error {
                 description: format!("Kann Datei nicht lesen: {}", err),
                 line: None,
-            }];
+            });
         }
     };
 
@@ -60,27 +60,49 @@ pub fn check_file(file: &Path, password: &str) -> Vec<CheckNotice> {
         progress_bar.inc(1);
         if let Ok(Ok(mut zip_file)) = archive.by_index_decrypt(i, password.as_bytes()) {
             if zip_file.is_file() && zip_file.name().ends_with(".osc") {
-                result.push(CheckNotice::Info {
-                    description: format!("Prüfe Eintrag '{}'", zip_file.name()),
-                    line: None,
-                });
                 let mut buf = String::new();
                 let _ = zip_file.read_to_string(&mut buf);
-                result.append(&mut osc::check(buf));
+                match osc::check(buf) {
+                    Ok(ref mut check_result) => {
+                        result.push(CheckNotice::Info {
+                            description: format!("Prüfe Eintrag '{}'", zip_file.name()),
+                            line: None,
+                        });
+                        if check_result.is_empty() {
+                            result.push(CheckNotice::Ok(format!(
+                                "Keine Probleme in '{}' erkannt",
+                                zip_file.name()
+                            )))
+                        }
+                        result.append(check_result)
+                    }
+                    Err(_) => result.push(CheckNotice::Warning {
+                        description: format!(
+                            "Überspringe Eintrag '{}': Inhalt kann nicht geprüft werden",
+                            zip_file.name(),
+                        ),
+                        line: None,
+                    }),
+                };
                 continue;
             }
-            result.push(CheckNotice::Warning {
-                description: format!("Überspringe Eintrag '{}'", zip_file.name()),
-                line: None,
-            })
+            if zip_file.is_file() {
+                result.push(CheckNotice::Warning {
+                    description: format!(
+                        "Überspringe Eintrag '{}': Keine OSC-Datei",
+                        zip_file.name()
+                    ),
+                    line: None,
+                })
+            }
         } else {
-            return vec![CheckNotice::Error {
+            return Err(CheckNotice::Error {
                 description: format!("Kann Datei nicht lesen"),
                 line: None,
-            }];
+            });
         }
     }
     progress_bar.finish_and_clear();
 
-    result
+    Ok(result)
 }
