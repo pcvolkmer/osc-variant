@@ -107,7 +107,6 @@ pub enum SubCommand {
         strict: bool,
     },
     #[command(about = "Überprüfe OSC-Datei auf bekannte Problemen")]
-    #[group(multiple = false)]
     Check {
         #[arg(help = "Die zu prüfende Datei", group = "check-file", required = true)]
         file: Option<String>,
@@ -120,7 +119,8 @@ pub enum SubCommand {
         password: Option<String>,
         #[arg(
             long = "list",
-            help = "Prüfe nicht und zeige Liste mit Checks auf bekannte Problemen"
+            help = "Prüfe nicht und zeige Liste mit Checks auf bekannte Problemen",
+            conflicts_with = "check-file"
         )]
         list: bool,
     },
