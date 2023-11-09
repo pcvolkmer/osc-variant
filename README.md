@@ -91,6 +91,15 @@ Ohne Profildatei wird die Datei lediglich eingelesen, Leerzeichen am Ende eines 
 
 Ohne eine Angabe der Ausgabedatei wird auf die Standardausgabe ausgegeben.
 
+##### Enthaltene Profile
+
+Die im Ordner [`examples/`](/examples) enthaltenen Profile für Standorte sind in der ausführbaren Anwendung enthalten 
+und die Dateien müssen nicht explizit als Datei vorliegen:
+
+* `--profile examples/dnpm-ukm.yml` => `--profile UKM`
+* `--profile examples/dnpm-ukw.yml` => `--profile UKW`
+* `--profile examples/dnpm-umg.yml` => `--profile UMG`
+
 #### Unterbefehl `unzip-osb`
 
 Ab Version 0.6.0 ist die Anwendung zudem in der Lage, die für eine Aktualisierung der OS-Bibliothek genutzten OSB-Dateien zu entpacken:
