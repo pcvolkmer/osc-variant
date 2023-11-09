@@ -20,6 +20,7 @@ quick-xml = { version = "0.31", features = ["escape-html", "serialize"], default
 console = "0.15"
 sha256 = "1.4"
 dialoguer = "0.11"
+indicatif = "0.17"
 
 deob = { path = "./libs/deob", optional = true }
 zip = { version = "0.6", optional = true }

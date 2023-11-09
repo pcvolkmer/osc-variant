@@ -26,6 +26,8 @@ use std::fs;
 use std::io::Read;
 use std::path::Path;
 
+use indicatif::ProgressBar;
+
 use crate::checks::{osc, CheckNotice};
 
 #[cfg(feature = "unzip-osb")]
@@ -52,7 +54,10 @@ pub fn check_file(file: &Path, password: &str) -> Vec<CheckNotice> {
 
     let mut result = vec![];
 
+    let progress_bar = ProgressBar::new(archive.len() as u64);
+
     for i in 0..archive.len() {
+        progress_bar.inc(1);
         if let Ok(Ok(mut zip_file)) = archive.by_index_decrypt(i, password.as_bytes()) {
             if zip_file.is_file() && zip_file.name().ends_with(".osc") {
                 result.push(CheckNotice::Info {
@@ -75,6 +80,7 @@ pub fn check_file(file: &Path, password: &str) -> Vec<CheckNotice> {
             }];
         }
     }
+    progress_bar.finish_and_clear();
 
     result
 }
