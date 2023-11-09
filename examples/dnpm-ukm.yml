@@ -7,6 +7,7 @@ forms:
         scripts_code: |
           setFieldValue('AnmeldedatumMTB', getFieldValue('MTB').MTBTermin);
           setFieldValue('WHOGrad', getFieldValue('MTB').WHOGrad);
+          setFieldValue('Leitlinienstatus', getFieldValue('MTB').Leitlinienstatus);
   - name: 'DNPM Therapieplan'
     form_references:
       - name: referstemtb
