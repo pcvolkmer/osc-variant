@@ -26,12 +26,12 @@ use std::fmt::{Display, Formatter};
 use std::path::Path;
 
 use console::style;
-use deob::deobfuscate;
 
 #[cfg(feature = "unzip-osb")]
 pub mod osb;
 pub mod osc;
 
+#[allow(dead_code)]
 pub enum CheckNotice {
     /// This will result in Error if importing file and has a support code
     ErrorWithCode {
@@ -137,13 +137,17 @@ pub trait Fixable {
     fn fix(&mut self) -> bool;
 }
 
+#[allow(unused_variables)]
 pub fn check_file(file: &Path, password: Option<String>) -> Vec<CheckNotice> {
     match file.extension() {
         Some(ex) => match ex.to_str() {
             #[cfg(feature = "unzip-osb")]
             Some("osb") => match password {
                 Some(password) => osb::check_file(file, password.as_str()),
-                None => osb::check_file(file, deobfuscate(env!("OSB_KEY").trim()).as_str()),
+                None => {
+                    use deob::deobfuscate;
+                    osb::check_file(file, deobfuscate(env!("OSB_KEY").trim()).as_str())
+                }
             },
             Some("osc") => osc::check_file(file),
             _ => vec![CheckNotice::Error {
