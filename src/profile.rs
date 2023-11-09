@@ -34,6 +34,19 @@ pub struct Profile {
     pub forms: Vec<Form>,
 }
 
+impl Profile {
+    pub fn embedded_profile(name: &str) -> Result<Profile, String> {
+        let s = match name {
+            "UKM" => include_str!("../examples/dnpm-ukm.yml"),
+            "UKW" => include_str!("../examples/dnpm-ukw.yml"),
+            "UMG" => include_str!("../examples/dnpm-umg.yml"),
+            _ => return Err(format!("Not an embedded profile: '{name}'")),
+        };
+
+        Profile::from_str(s)
+    }
+}
+
 impl FromStr for Profile {
     type Err = String;
 

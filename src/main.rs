@@ -160,9 +160,14 @@ fn main() -> Result<(), Box<dyn Error>> {
             let data = &mut read_inputfile(inputfile)?;
 
             if let Some(profile) = profile {
-                let profile = read_profile(profile.clone()).map_err(|_| {
-                    FileError::Reading(profile, "Kann Profildatei nicht lesen!".into())
-                })?;
+                let profile = if profile.contains(".") {
+                    read_profile(profile.clone()).map_err(|_| {
+                        FileError::Reading(profile, "Kann Profildatei nicht lesen!".into())
+                    })?
+                } else {
+                    Profile::embedded_profile(profile.as_str())?
+                };
+
                 data.apply_profile(&profile);
             }
 
