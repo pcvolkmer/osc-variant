@@ -106,7 +106,7 @@ pub enum SubCommand {
         #[arg(long = "strict", help = "Strikter Vergleich des Inhalts")]
         strict: bool,
     },
-    #[command(about = "Überprüfe OSC-Datei auf bekannte Problemen")]
+    #[command(about = if cfg!(feature = "unzip-osb") { "Prüfe eine OSB- oder OSC-Datei auf bekannte Problemen" } else { "Prüfe eine OSC-Datei auf bekannte Problemen" })]
     Check {
         #[arg(help = "Die zu prüfende Datei", group = "check-file", required = true)]
         file: Option<String>,
@@ -114,7 +114,8 @@ pub enum SubCommand {
             short = 'p',
             long = "password",
             help = "Passwort der OSB-Datei (Optional - für OSB-Dateien)",
-            requires = "check-file"
+            requires = "check-file",
+            hide = !cfg!(feature = "unzip-osb")
         )]
         password: Option<String>,
         #[arg(
