@@ -225,6 +225,20 @@ pub fn print_checks() {
             ",
             fixable: true,
         },
+        Problem {
+            code: "2023-0004",
+            name: "Verweis auf noch nicht definiertes Formular (OSTARSUPP-13212)",
+            description: "  Wenn ein Formular einen Verweis auf ein anderes Formular enthält,\n  \
+            das nicht vor diesem Formular in der OSC-Datei definiert ist, wird der\n  \
+            Formularverweis beim Import der OSC-Datei nicht übernommen.\n\n  \
+            Dies kann bei wechselseitiger Abhängigkeit zwischen zwei (Unter-)Formularen\n  \
+            auftreten.\n\n  \
+            In diesem Fall kann ein erneuter/zweiter Import helfen, da das Onkostar in\n  \
+            diesem Fall alle Formulare importiert hat und der Formularverweis dann \n  \
+            gespeichert werden kann. 
+            ",
+            fixable: false,
+        },
     ]
     .iter()
     .for_each(|problem| println!("{}\n", problem))
