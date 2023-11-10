@@ -34,7 +34,7 @@ use crate::checks::{CheckNotice, Checkable};
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
 use crate::model::property_catalogue::PropertyCatalogue;
-use crate::model::requirements::Requires;
+use crate::model::requirements::{Requirement, Requires};
 use crate::model::unterformular::Unterformular;
 use crate::model::{Comparable, FolderContent, FormEntryContainer, Listable, Sortable};
 use crate::profile::Profile;
@@ -412,6 +412,8 @@ impl FromStr for OnkostarEditor {
 
 impl Checkable for OnkostarEditor {
     fn check(&self) -> Vec<CheckNotice> {
+        // Inner form checks
+
         let mut result = self
             .editor
             .data_form
@@ -427,6 +429,65 @@ impl Checkable for OnkostarEditor {
             .collect::<Vec<_>>();
 
         result.append(other);
+
+        // Check requirements
+
+        let mut requirement_checked_forms = vec![];
+
+        fn requirement_error(
+            form: &impl Comparable,
+            item: &impl Comparable,
+            t: &str,
+        ) -> CheckNotice {
+            CheckNotice::ErrorWithCode {
+                code: "2023-0004".to_string(),
+                description: format!(
+                    "'{}' hat einen Verweis auf zuvor nicht definiertes {t} '{}' (OSTARSUPP-13212)",
+                    form.get_name(),
+                    item.get_name()
+                ),
+                line: None,
+                example: None,
+            }
+        }
+
+        self.editor.unterformular.iter().for_each(|form| {
+            requirement_checked_forms.push(form.get_name());
+            form.get_required_entries(self)
+                .iter()
+                .for_each(|entry| match entry {
+                    Requirement::DataFormReference(&ref item) => {
+                        if !requirement_checked_forms.contains(&item.get_name()) {
+                            result.push(requirement_error(form, item, "Formular"))
+                        }
+                    }
+                    Requirement::UnterformularReference(&ref item) => {
+                        if !requirement_checked_forms.contains(&item.get_name()) {
+                            result.push(requirement_error(form, item, "Unterformular"))
+                        }
+                    }
+                    _ => {}
+                });
+        });
+
+        self.editor.data_form.iter().for_each(|form| {
+            requirement_checked_forms.push(form.get_name());
+            form.get_required_entries(self)
+                .iter()
+                .for_each(|entry| match entry {
+                    Requirement::DataFormReference(&ref item) => {
+                        if !requirement_checked_forms.contains(&item.get_name()) {
+                            result.push(requirement_error(form, item, "Formular"))
+                        }
+                    }
+                    Requirement::UnterformularReference(&ref item) => {
+                        if !requirement_checked_forms.contains(&item.get_name()) {
+                            result.push(requirement_error(form, item, "Unterformular"))
+                        }
+                    }
+                    _ => {}
+                });
+        });
 
         result
     }
