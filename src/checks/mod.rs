@@ -201,7 +201,8 @@ pub fn print_checks() {
             code: "2023-0001",
             name: "Unterformular mit Markierung 'hat Unterformulare'",
             description: "  Aktuell gibt es keine Unterformulare in Unterformularen, daher\n  \
-            sollte dies nicht vorkommen.",
+            sollte dies nicht vorkommen.\n\n  \
+            Eine mögliche Ursache ist die Speicherung eines Unterformulars als Formular.",
             fixable: false,
         },
         Problem {
@@ -209,7 +210,8 @@ pub fn print_checks() {
             name: "Formular hat keine Angabe zum Prozedurdatum",
             description: "  Formulare benötigen die Angabe des Prozedurdatums, anderenfalls\n  \
             führt dies zu Problemen in Onkostar.\n\n  \
-            Unterformulare können ein Prozedurdatum haben, müssen es aber nicht.",
+            Unterformulare können ein Prozedurdatum haben, müssen es aber nicht.\n\n  \
+            Eine mögliche Ursache ist die Speicherung eines Formulars als Unterformular.",
             fixable: false,
         },
         Problem {
