@@ -283,11 +283,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                             "Es wurden {} Probleme gefunden\n",
                             notices
                                 .iter()
-                                .filter(|notice| match notice {
-                                    CheckNotice::ErrorWithCode { .. }
-                                    | CheckNotice::Error { .. } => true,
-                                    _ => false,
-                                })
+                                .filter(|notice| matches!(
+                                    notice,
+                                    CheckNotice::ErrorWithCode { .. } | CheckNotice::Error { .. }
+                                ))
                                 .count()
                         );
                         notices
