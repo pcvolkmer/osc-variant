@@ -28,6 +28,7 @@ use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::unterformular::Unterformular;
 use crate::model::{Comparable, Listable, Sortable};
+use std::fmt::Display;
 
 #[allow(clippy::enum_variant_names)]
 pub enum Requirement<'a> {
@@ -67,9 +68,9 @@ impl Sortable for Requirement<'_> {
     }
 }
 
-impl ToString for Requirement<'_> {
-    fn to_string(&self) -> String {
-        match self {
+impl Display for Requirement<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let str = match self {
             Requirement::PropertyCatalogue(item) => item.to_listed_string(),
             Requirement::DataCatalogue(item) => item.to_listed_string(),
             Requirement::DataFormReference(item) => item.to_listed_string(),
@@ -90,7 +91,8 @@ impl ToString for Requirement<'_> {
             | Requirement::ExternalUnterformularSubform(name) => {
                 format!("Unterformular (-) '{}' - hier nicht enthalten", name)
             }
-        }
+        };
+        write!(f, "{}", str)
     }
 }
 
@@ -138,19 +140,19 @@ where
                         }
                     }
                     Requirement::ExternalDataCatalogue(_) => {
-                        Some(format!("  + {}\n", entry.to_string()))
+                        Some(format!("  + {}\n", entry))
                     }
                     Requirement::DataFormReference(_)
                     | Requirement::ExternalDataFormReference(_)
                     | Requirement::UnterformularReference(_)
                     | Requirement::ExternalUnterformularReference(_) => {
-                        Some(format!("  > {}\n", entry.to_string()))
+                        Some(format!("  > {}\n", entry))
                     }
                     Requirement::DataFormSubform(_)
                     | Requirement::ExternalDataFormSubform(_)
                     | Requirement::UnterformularSubform(_)
                     | Requirement::ExternalUnterformularSubform(_) => {
-                        Some(format!("  * {}\n", entry.to_string()))
+                        Some(format!("  * {}\n", entry))
                     }
                     _ => None,
                 })
