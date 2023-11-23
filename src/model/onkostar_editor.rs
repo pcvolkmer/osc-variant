@@ -456,14 +456,14 @@ impl Checkable for OnkostarEditor {
             form.get_required_entries(self)
                 .iter()
                 .for_each(|entry| match entry {
-                    Requirement::DataFormReference(&ref item) => {
+                    Requirement::DataFormReference(item) => {
                         if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, item, "Formular"))
+                            result.push(requirement_error(form, *item, "Formular"))
                         }
                     }
-                    Requirement::UnterformularReference(&ref item) => {
+                    Requirement::UnterformularReference(item) => {
                         if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, item, "Unterformular"))
+                            result.push(requirement_error(form, *item, "Unterformular"))
                         }
                     }
                     _ => {}
@@ -475,14 +475,14 @@ impl Checkable for OnkostarEditor {
             form.get_required_entries(self)
                 .iter()
                 .for_each(|entry| match entry {
-                    Requirement::DataFormReference(&ref item) => {
+                    Requirement::DataFormReference(item) => {
                         if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, item, "Formular"))
+                            result.push(requirement_error(form, *item, "Formular"))
                         }
                     }
-                    Requirement::UnterformularReference(&ref item) => {
+                    Requirement::UnterformularReference(item) => {
                         if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, item, "Unterformular"))
+                            result.push(requirement_error(form, *item, "Unterformular"))
                         }
                     }
                     _ => {}
