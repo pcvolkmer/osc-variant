@@ -134,10 +134,10 @@ impl Requires for DataCatalogue {
                 .iter()
                 .map(|entry| match entry {
                     Requirement::PropertyCatalogue(_) => {
-                        Some(format!("  - {}\n", entry.to_string()))
+                        Some(format!("  - {}\n", entry))
                     }
                     Requirement::ExternalPropertyCatalogue(_) => {
-                        Some(format!("  - {}\n", entry.to_string()))
+                        Some(format!("  - {}\n", entry))
                     }
                     _ => None,
                 })
