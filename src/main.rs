@@ -85,23 +85,19 @@ impl Display for FileError {
 fn read_inputfile(inputfile: String) -> Result<OnkostarEditor, FileError> {
     let filename = Path::new(&inputfile);
 
-    match filename.extension() {
-        Some(extension) => match extension.to_ascii_lowercase().to_str() {
-            Some("osc") => {
-                return match fs::read_to_string(filename) {
-                    Ok(content) => match OnkostarEditor::from_str(content.as_str()) {
-                        Ok(data) => Ok(data),
-                        Err(err) => Err(FileError::Parsing(inputfile, err)),
-                    },
-                    Err(err) => Err(FileError::Reading(inputfile, err.to_string())),
-                };
-            }
-            _ => {}
-        },
-        None => {}
+    if let Some(extension) = filename.extension() {
+        if let Some("osc") = extension.to_ascii_lowercase().to_str() {
+            return match fs::read_to_string(filename) {
+                Ok(content) => match OnkostarEditor::from_str(content.as_str()) {
+                    Ok(data) => Ok(data),
+                    Err(err) => Err(FileError::Parsing(inputfile, err)),
+                },
+                Err(err) => Err(FileError::Reading(inputfile, err.to_string())),
+            };
+        }
     }
 
-    return Err(FileError::Reading(inputfile, "Keine OSC-Datei".into()));
+    Err(FileError::Reading(inputfile, "Keine OSC-Datei".into()))
 }
 
 fn write_outputfile(filename: String, content: &String) -> Result<(), FileError> {
