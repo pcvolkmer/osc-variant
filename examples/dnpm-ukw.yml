@@ -4,6 +4,13 @@ forms:
       - name: MTB
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
         anzeige_auswahl: 'MTB vom {Datum}'
+        script_code: |
+          // Keine Übernahme des Datums des MTBs bei Verwendung
+          // des Formulars 'OS.Tumorkonferenz'.
+          // Gewollt ist das Datum, an der die Anmeldung stattgefunden hat.
+          //setFieldValue('AnmeldedatumMTB', getFieldValue('MTB').Datum);
+          
+          setFieldValue('WHOGrad', getFieldValue('MTB').WHOGrad);
   - name: 'DNPM Therapieplan'
     form_references:
       - name: referstemtb
