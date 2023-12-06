@@ -31,7 +31,6 @@ use std::ops::Add;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
-use crate::checks::{check_file, print_checks, CheckNotice};
 use clap::Parser;
 use console::style;
 use dialoguer::Confirm;
@@ -39,6 +38,7 @@ use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha256::digest;
 
+use crate::checks::{check_file, print_checks, CheckNotice};
 use crate::cli::{Cli, SubCommand};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
@@ -83,13 +83,25 @@ impl Display for FileError {
 }
 
 fn read_inputfile(inputfile: String) -> Result<OnkostarEditor, FileError> {
-    return match fs::read_to_string(inputfile.clone()) {
-        Ok(content) => match OnkostarEditor::from_str(content.as_str()) {
-            Ok(data) => Ok(data),
-            Err(err) => Err(FileError::Parsing(inputfile, err)),
+    let filename = Path::new(&inputfile);
+
+    match filename.extension() {
+        Some(extension) => match extension.to_ascii_lowercase().to_str() {
+            Some("osc") => {
+                return match fs::read_to_string(filename) {
+                    Ok(content) => match OnkostarEditor::from_str(content.as_str()) {
+                        Ok(data) => Ok(data),
+                        Err(err) => Err(FileError::Parsing(inputfile, err)),
+                    },
+                    Err(err) => Err(FileError::Reading(inputfile, err.to_string())),
+                };
+            }
+            _ => {}
         },
-        Err(err) => Err(FileError::Reading(inputfile, err.to_string())),
-    };
+        None => {}
+    }
+
+    return Err(FileError::Reading(inputfile, "Keine OSC-Datei".into()));
 }
 
 fn write_outputfile(filename: String, content: &String) -> Result<(), FileError> {
