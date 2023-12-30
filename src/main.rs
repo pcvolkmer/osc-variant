@@ -154,9 +154,12 @@ fn main() -> Result<(), Box<dyn Error>> {
                 }
                 OnkostarEditor::print_tree(&content);
             }
-            InputFile::Osb { filename, .. }
-            | InputFile::Profile { filename, .. }
-            | InputFile::Other { filename, .. } => {
+            InputFile::Osb { filename, .. } => return Err(Box::new(FileError::Reading(
+                filename,
+                "Nur OSC-Dateien werden unterstützt. OSB-Dateien erzeugen eine zu lange Ausgabe."
+                    .to_string(),
+            ))),
+            InputFile::Profile { filename, .. } | InputFile::Other { filename, .. } => {
                 return Err(Box::new(FileError::Reading(
                     filename,
                     "Nur OSC-Dateien werden unterstützt".to_string(),
