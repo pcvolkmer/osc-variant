@@ -23,7 +23,6 @@
  */
 
 use std::error::Error;
-use std::fmt::{Debug, Display, Formatter};
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -40,65 +39,17 @@ use sha256::digest;
 
 use crate::checks::{check_file, print_checks, CheckNotice};
 use crate::cli::{Cli, SubCommand};
+use crate::file_io::{FileError, InputFile};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 
 mod checks;
 mod cli;
+mod file_io;
 mod model;
 mod profile;
 #[cfg(feature = "unzip-osb")]
 mod unzip_osb;
-
-enum FileError {
-    Reading(String, String),
-    Writing(String, String),
-    Parsing(String, String),
-}
-
-impl Error for FileError {}
-
-impl Debug for FileError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        Display::fmt(self, f)
-    }
-}
-
-impl Display for FileError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match &self {
-                FileError::Reading(filename, err) => format!("Kann Datei '{}' nicht lesen: {}", filename, err),
-                FileError::Writing(filename, err) => format!("Kann Datei '{}' nicht schreiben: {}", filename, err),
-                FileError::Parsing(filename, err) => format!(
-                    "Die Datei '{}' ist entweder keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte\n{}",
-                    filename,
-                    err
-                ),
-            }
-        )
-    }
-}
-
-fn read_inputfile(inputfile: String) -> Result<OnkostarEditor, FileError> {
-    let filename = Path::new(&inputfile);
-
-    if let Some(extension) = filename.extension() {
-        if let Some("osc") = extension.to_ascii_lowercase().to_str() {
-            return match fs::read_to_string(filename) {
-                Ok(content) => match OnkostarEditor::from_str(content.as_str()) {
-                    Ok(data) => Ok(data),
-                    Err(err) => Err(FileError::Parsing(inputfile, err)),
-                },
-                Err(err) => Err(FileError::Reading(inputfile, err.to_string())),
-            };
-        }
-    }
-
-    Err(FileError::Reading(inputfile, "Keine OSC-Datei".into()))
-}
 
 fn write_outputfile(filename: String, content: &String) -> Result<(), FileError> {
     OpenOptions::new()
@@ -129,32 +80,89 @@ fn main() -> Result<(), Box<dyn Error>> {
             inputfile,
             sorted,
             filter,
-        } => {
-            let mut data = read_inputfile(inputfile)?;
-            if sorted {
-                data.sorted()
+        } => match InputFile::read(inputfile, None)? {
+            osc @ InputFile::Osc { .. } => {
+                let mut content: OnkostarEditor = osc.try_into()?;
+                if sorted {
+                    content.sorted()
+                }
+                if let Some(name) = filter {
+                    OnkostarEditor::print_list_filtered(&mut content, name.as_str());
+                    return Ok(());
+                }
+                content.print_list();
             }
-            if let Some(name) = filter {
-                OnkostarEditor::print_list_filtered(&mut data, name.as_str());
-                return Ok(());
+            InputFile::Osb { content, .. } => {
+                for file in content {
+                    match file {
+                        InputFile::Osc { .. } => {
+                            println!(
+                                "{}{}",
+                                style("OSB-Paketinhalt: ").bold().yellow(),
+                                style(format!("{}", file.filename())).bold()
+                            );
+
+                            let mut content: OnkostarEditor = match file.try_into() {
+                                Ok(oe) => oe,
+                                Err(err) => {
+                                    println!("{}", err);
+                                    continue;
+                                }
+                            };
+
+                            if sorted {
+                                content.sorted()
+                            }
+                            if let Some(name) = filter {
+                                OnkostarEditor::print_list_filtered(&mut content, name.as_str());
+                                return Ok(());
+                            }
+                            content.print_list();
+                            println!()
+                        }
+                        _ => {
+                            println!(
+                                "{}{}{}",
+                                style("OSB-Paketinhalt: ").bold().yellow(),
+                                style(format!("{}", file.filename())).bold(),
+                                style(" ignoriert").yellow()
+                            );
+                        }
+                    }
+                }
             }
-            data.print_list();
-        }
+            InputFile::Profile { filename, .. } | InputFile::Other { filename, .. } => {
+                return Err(Box::new(FileError::Reading(
+                    filename,
+                    "Nur OSB- und OSC-Dateien werden unterstützt".to_string(),
+                )))
+            }
+        },
         SubCommand::Tree {
             inputfile,
             sorted,
             filter,
-        } => {
-            let mut data = read_inputfile(inputfile)?;
-            if sorted {
-                data.sorted()
+        } => match InputFile::read(inputfile, None)? {
+            osc @ InputFile::Osc { .. } => {
+                let mut content: OnkostarEditor = osc.try_into()?;
+                if sorted {
+                    content.sorted()
+                }
+                if let Some(name) = filter {
+                    OnkostarEditor::print_tree_filtered(&mut content, name.as_str());
+                    return Ok(());
+                }
+                OnkostarEditor::print_tree(&content);
             }
-            if let Some(name) = filter {
-                OnkostarEditor::print_tree_filtered(&mut data, name.as_str());
-                return Ok(());
+            InputFile::Osb { filename, .. }
+            | InputFile::Profile { filename, .. }
+            | InputFile::Other { filename, .. } => {
+                return Err(Box::new(FileError::Reading(
+                    filename,
+                    "Nur OSC-Dateien werden unterstützt".to_string(),
+                )))
             }
-            OnkostarEditor::print_tree(&data);
-        }
+        },
         SubCommand::Modify {
             inputfile,
             profile,
@@ -165,7 +173,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             interactive,
             fix,
         } => {
-            let data = &mut read_inputfile(inputfile)?;
+            let mut data: OnkostarEditor = InputFile::read(inputfile, None)?.try_into()?;
 
             if let Some(profile) = profile {
                 let profile = if profile.contains('.') {
@@ -254,8 +262,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                 style(&inputfile_b).yellow()
             );
 
-            let data_a = &mut read_inputfile(inputfile_a)?;
-            let data_b = &mut read_inputfile(inputfile_b)?;
+            let data_a: &mut OnkostarEditor =
+                &mut InputFile::read(inputfile_a, None)?.try_into()?;
+            let data_b: &mut OnkostarEditor =
+                &mut InputFile::read(inputfile_b, None)?.try_into()?;
 
             data_a.print_diff(data_b, strict);
         }

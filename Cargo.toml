@@ -24,6 +24,7 @@ indicatif = "0.17"
 
 deob = { path = "./libs/deob", optional = true }
 zip = { version = "0.6", optional = true }
+bytes = "1.5.0"
 
 [features]
 # Requires env var OSB_KEY to be present at build time
