@@ -478,6 +478,7 @@ dependencies = [
 name = "osc-variant"
 version = "0.7.0"
 dependencies = [
+ "bytes",
  "clap",
  "clap_complete",
  "console",
