@@ -37,7 +37,7 @@ use sha256::digest;
 
 use crate::checks::{check_file, print_checks, CheckNotice};
 use crate::cli::SubCommand;
-use crate::file_io::{FileError, InputFile};
+use crate::file_io::{FileError, FileReader, InputFile};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 
@@ -160,7 +160,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
 
             if let Some(profile) = profile {
                 let profile = if profile.contains('.') {
-                    InputFile::read(profile.to_string(), None)?.try_into()?
+                    FileReader::<Profile>::read(profile)?
                 } else {
                     Profile::embedded_profile(profile.as_str())?
                 };
@@ -243,10 +243,8 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                 style(&inputfile_b).yellow()
             );
 
-            let data_a: &mut OnkostarEditor =
-                &mut InputFile::read(inputfile_a, None)?.try_into()?;
-            let data_b: &mut OnkostarEditor =
-                &mut InputFile::read(inputfile_b, None)?.try_into()?;
+            let data_a = &mut FileReader::<OnkostarEditor>::read(inputfile_a)?;
+            let data_b = &mut FileReader::<OnkostarEditor>::read(inputfile_b)?;
 
             data_a.print_diff(data_b, strict);
         }

@@ -25,6 +25,7 @@
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
 use std::fs;
+use std::marker::PhantomData;
 use std::path::Path;
 use std::str::FromStr;
 
@@ -204,5 +205,22 @@ impl TryFrom<InputFile> for Profile {
                 "Keine Profildatei".to_string(),
             )),
         };
+    }
+}
+
+/// Shortcut methods for OSC and Profile files
+pub struct FileReader<FileType> {
+    file_type: PhantomData<FileType>,
+}
+
+impl FileReader<OnkostarEditor> {
+    pub fn read(filename: String) -> Result<OnkostarEditor, FileError> {
+        TryInto::<OnkostarEditor>::try_into(InputFile::read(filename.to_string(), None)?)
+    }
+}
+
+impl FileReader<Profile> {
+    pub fn read(filename: String) -> Result<Profile, FileError> {
+        TryInto::<Profile>::try_into(InputFile::read(filename.to_string(), None)?)
     }
 }
