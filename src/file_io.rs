@@ -33,6 +33,9 @@ use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
 
+#[cfg(feature = "unzip-osb")]
+use deob::deobfuscate;
+
 pub enum FileError {
     Reading(String, String),
     Writing(String, String),
