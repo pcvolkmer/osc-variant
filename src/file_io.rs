@@ -22,19 +22,13 @@
  * SOFTWARE.
  */
 
-use crate::file_io::InputFile::{Osc, Other};
-use crate::model::onkostar_editor::OnkostarEditor;
-use bytes::BytesMut;
-use deob::deobfuscate;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
 use std::fs;
-use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
 
-#[cfg(feature = "unzip-osb")]
-use deob::deobfuscate;
+use crate::model::onkostar_editor::OnkostarEditor;
 
 pub enum FileError {
     Reading(String, String),
@@ -58,8 +52,15 @@ impl Display for FileError {
             match &self {
                 FileError::Reading(filename, err) => format!("Kann Datei '{}' nicht lesen: {}", filename, err),
                 FileError::Writing(filename, err) => format!("Kann Datei '{}' nicht schreiben: {}", filename, err),
+                #[cfg(feature = "unzip-osb")]
                 FileError::Parsing(filename, err) => format!(
                     "Die Datei '{}' ist entweder keine OSB- oder OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte\n{}",
+                    filename,
+                    err
+                ),
+                #[cfg(not(feature = "unzip-osb"))]
+                FileError::Parsing(filename, err) => format!(
+                    "Die Datei '{}' ist keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte\n{}",
                     filename,
                     err
                 ),
@@ -91,23 +92,27 @@ pub enum InputFile {
 impl InputFile {
     pub fn filename(&self) -> String {
         match self {
-            Osc { filename, .. } => filename,
+            InputFile::Osc { filename, .. } => filename,
             InputFile::Profile { filename, .. } => filename,
             InputFile::Osb { filename, .. } => filename,
-            Other { filename, .. } => filename,
+            InputFile::Other { filename, .. } => filename,
         }
         .to_string()
     }
 
-    pub fn read(filename: String, password: Option<String>) -> Result<Self, FileError> {
+    pub fn read(filename: String, _password: Option<String>) -> Result<Self, FileError> {
         if let Some(extension) = Path::new(filename.as_str()).extension() {
             return match extension.to_str() {
                 Some("osc") => match fs::read_to_string(filename.clone()) {
-                    Ok(content) => Ok(Osc { filename, content }),
+                    Ok(content) => Ok(InputFile::Osc { filename, content }),
                     Err(err) => Err(FileError::Reading(filename, err.to_string())),
                 },
                 #[cfg(feature = "unzip-osb")]
                 Some("osb") => {
+                    use bytes::BytesMut;
+                    use deob::deobfuscate;
+                    use std::io::Read;
+
                     let file = match fs::File::open(filename.clone()) {
                         Ok(file) => file,
                         Err(err) => return Err(FileError::Reading(filename, err.to_string())),
@@ -120,16 +125,7 @@ impl InputFile {
 
                     let mut result = vec![];
 
-                    let password = password.unwrap_or_else(|| {
-                        #[cfg(feature = "unzip-osb")]
-                        {
-                            deobfuscate(env!("OSB_KEY").trim())
-                        }
-                        #[cfg(not(feature = "unzip-osb"))]
-                        {
-                            return Err(FileError::Reading(filename.clone(), "No Password".into()));
-                        }
-                    });
+                    let password = _password.unwrap_or_else(|| deobfuscate(env!("OSB_KEY").trim()));
 
                     for i in 0..archive.len() {
                         if let Ok(Ok(mut zip_file)) =
@@ -138,14 +134,14 @@ impl InputFile {
                             if zip_file.is_file() && zip_file.name().ends_with(".osc") {
                                 let mut buf = String::new();
                                 let _ = zip_file.read_to_string(&mut buf);
-                                result.push(Osc {
+                                result.push(InputFile::Osc {
                                     filename: zip_file.name().to_string(),
                                     content: buf,
                                 })
                             } else {
                                 let mut buf = BytesMut::new();
                                 let _ = zip_file.read(&mut buf);
-                                result.push(Other {
+                                result.push(InputFile::Other {
                                     filename: zip_file.name().to_string(),
                                     content: buf.to_vec(),
                                 })
@@ -163,9 +159,15 @@ impl InputFile {
                         content: result,
                     })
                 }
+                #[cfg(feature = "unzip-osb")]
                 _ => Err(FileError::Parsing(
                     filename,
                     "Nur OSB- oder OSC-Dateien werden unterstützt".to_string(),
+                )),
+                #[cfg(not(feature = "unzip-osb"))]
+                _ => Err(FileError::Parsing(
+                    filename,
+                    "Nur OSC-Dateien werden unterstützt".to_string(),
                 )),
             };
         }
@@ -179,7 +181,7 @@ impl TryFrom<InputFile> for OnkostarEditor {
 
     fn try_from(value: InputFile) -> Result<Self, Self::Error> {
         return match value {
-            Osc {
+            InputFile::Osc {
                 filename, content, ..
             } => match OnkostarEditor::from_str(content.as_str()) {
                 Ok(data) => Ok(data),
@@ -187,10 +189,9 @@ impl TryFrom<InputFile> for OnkostarEditor {
             },
             InputFile::Osb { filename, .. }
             | InputFile::Profile { filename, .. }
-            | Other { filename, .. } => Err(FileError::Parsing(
-                filename,
-                "Nur OSC-Dateien werden unterstützt".to_string(),
-            )),
+            | InputFile::Other { filename, .. } => {
+                Err(FileError::Parsing(filename, "Keine OSC-Datei".to_string()))
+            }
         };
     }
 }
