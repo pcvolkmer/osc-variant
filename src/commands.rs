@@ -28,7 +28,6 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::path::{Path, PathBuf};
-use std::str::FromStr;
 
 use console::style;
 use dialoguer::Confirm;
@@ -53,14 +52,6 @@ fn write_outputfile(filename: String, content: &String) -> Result<(), FileError>
         .write_all(content.as_bytes())
         .map_err(|err| FileError::Writing(filename, err.to_string()))?;
     Ok(())
-}
-
-fn read_profile(filename: String) -> Result<Profile, FileError> {
-    let profile = fs::read_to_string(filename.clone())
-        .map_err(|err| FileError::Reading(filename.clone(), err.to_string()))?;
-    let profile =
-        Profile::from_str(profile.as_str()).map_err(|err| FileError::Reading(filename, err))?;
-    Ok(profile)
 }
 
 pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
@@ -120,7 +111,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                     }
                 }
             }
-            InputFile::Profile { filename, .. } | InputFile::Other { filename, .. } => {
+            InputFile::Yaml { filename, .. } | InputFile::Other { filename, .. } => {
                 return Err(Box::new(FileError::Reading(
                     filename,
                     "Nur OSB- und OSC-Dateien werden unterstützt".to_string(),
@@ -148,7 +139,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                 "Nur OSC-Dateien werden unterstützt. OSB-Dateien erzeugen eine zu lange Ausgabe."
                     .to_string(),
             ))),
-            InputFile::Profile { filename, .. } | InputFile::Other { filename, .. } => {
+            InputFile::Yaml { filename, .. } | InputFile::Other { filename, .. } => {
                 return Err(Box::new(FileError::Reading(
                     filename,
                     "Nur OSC-Dateien werden unterstützt".to_string(),
@@ -169,9 +160,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
 
             if let Some(profile) = profile {
                 let profile = if profile.contains('.') {
-                    read_profile(profile.clone()).map_err(|_| {
-                        FileError::Reading(profile, "Kann Profildatei nicht lesen!".into())
-                    })?
+                    InputFile::read(profile.to_string(), None)?.try_into()?
                 } else {
                     Profile::embedded_profile(profile.as_str())?
                 };

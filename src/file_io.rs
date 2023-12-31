@@ -29,6 +29,7 @@ use std::path::Path;
 use std::str::FromStr;
 
 use crate::model::onkostar_editor::OnkostarEditor;
+use crate::profile::Profile;
 
 pub enum FileError {
     Reading(String, String),
@@ -52,18 +53,11 @@ impl Display for FileError {
             match &self {
                 FileError::Reading(filename, err) => format!("Kann Datei '{}' nicht lesen: {}", filename, err),
                 FileError::Writing(filename, err) => format!("Kann Datei '{}' nicht schreiben: {}", filename, err),
-                #[cfg(feature = "unzip-osb")]
                 FileError::Parsing(filename, err) => format!(
-                    "Die Datei '{}' ist entweder keine OSB- oder OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte\n{}",
+                    "Die Datei '{}' wird nicht unterstützt, ist fehlerhaft oder enthält zusätzliche Inhalte\n{}",
                     filename,
                     err
-                ),
-                #[cfg(not(feature = "unzip-osb"))]
-                FileError::Parsing(filename, err) => format!(
-                    "Die Datei '{}' ist keine OSC-Datei, fehlerhaft oder enthält zusätzliche Inhalte\n{}",
-                    filename,
-                    err
-                ),
+                )
             }
         )
     }
@@ -75,13 +69,13 @@ pub enum InputFile {
         filename: String,
         content: String,
     },
-    Profile {
-        filename: String,
-        content: String,
-    },
     Osb {
         filename: String,
         content: Vec<InputFile>,
+    },
+    Yaml {
+        filename: String,
+        content: String,
     },
     Other {
         filename: String,
@@ -93,8 +87,8 @@ impl InputFile {
     pub fn filename(&self) -> String {
         match self {
             InputFile::Osc { filename, .. } => filename,
-            InputFile::Profile { filename, .. } => filename,
             InputFile::Osb { filename, .. } => filename,
+            InputFile::Yaml { filename, .. } => filename,
             InputFile::Other { filename, .. } => filename,
         }
         .to_string()
@@ -159,15 +153,13 @@ impl InputFile {
                         content: result,
                     })
                 }
-                #[cfg(feature = "unzip-osb")]
+                Some("yml") | Some("yaml") => match fs::read_to_string(filename.clone()) {
+                    Ok(content) => Ok(InputFile::Yaml { filename, content }),
+                    Err(err) => Err(FileError::Reading(filename, err.to_string())),
+                },
                 _ => Err(FileError::Parsing(
                     filename,
-                    "Nur OSB- oder OSC-Dateien werden unterstützt".to_string(),
-                )),
-                #[cfg(not(feature = "unzip-osb"))]
-                _ => Err(FileError::Parsing(
-                    filename,
-                    "Nur OSC-Dateien werden unterstützt".to_string(),
+                    "Kein unterstütztes Dateiformat".to_string(),
                 )),
             };
         }
@@ -188,10 +180,29 @@ impl TryFrom<InputFile> for OnkostarEditor {
                 Err(err) => Err(FileError::Parsing(filename, err)),
             },
             InputFile::Osb { filename, .. }
-            | InputFile::Profile { filename, .. }
+            | InputFile::Yaml { filename, .. }
             | InputFile::Other { filename, .. } => {
                 Err(FileError::Parsing(filename, "Keine OSC-Datei".to_string()))
             }
+        };
+    }
+}
+
+impl TryFrom<InputFile> for Profile {
+    type Error = FileError;
+
+    fn try_from(value: InputFile) -> Result<Self, Self::Error> {
+        return match value {
+            InputFile::Yaml { filename, content } => match Profile::from_str(&content) {
+                Ok(profile) => Ok(profile),
+                Err(err) => Err(FileError::Parsing(filename, err)),
+            },
+            InputFile::Osc { filename, .. }
+            | InputFile::Osb { filename, .. }
+            | InputFile::Other { filename, .. } => Err(FileError::Parsing(
+                filename,
+                "Keine Profildatei".to_string(),
+            )),
         };
     }
 }
