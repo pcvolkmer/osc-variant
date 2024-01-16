@@ -18,6 +18,25 @@ unvollständigen Ausgabedateien zu erzeugen.
 
 Die folgenden Unterbefehle sind verfügbar
 
+```
+Anwendung zum Anpassen einer OSC-Datei an einen Standort
+
+Usage: osc-variant <COMMAND>
+
+Commands:
+sha256sum  Berechne SHA256 Prüfsumme für die angegebene Datei
+list       Zeigt alle enthaltenen Kataloge und Formulare mit Revision an.
+tree       Zeigt Kataloge und Formulare mit Revision und Abhängigkeiten an.
+modify     Modifiziert die angegebene Datei anhand der Profildatei
+diff       Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte
+check      Prüfe eine OSC-Datei auf bekannte Problemen
+help       Print this message or the help of the given subcommand(s)
+
+Options:
+-h, --help     Print help
+-V, --version  Print version
+```
+
 #### Unterbefehl `sha256sum`
 
 Das Berechnen der SHA256 Prüfsumme ist mit dem Unterbefehl `sha256sum` auch unter Windows einfach möglich
