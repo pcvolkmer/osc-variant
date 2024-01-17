@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Comprehensive Cancer Center Mainfranken
+ * Copyright (c) 2024 Comprehensive Cancer Center Mainfranken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,8 @@ fn build_cli() -> Command {
 }
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-#[command(propagate_version = true, arg_required_else_help(true))]
+#[command(author, version, about)]
+#[command(arg_required_else_help(true))]
 pub struct Cli {
     #[command(subcommand)]
     pub cmd: SubCommand,
