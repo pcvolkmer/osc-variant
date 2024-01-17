@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Comprehensive Cancer Center Mainfranken
+ * Copyright (c) 2024 Comprehensive Cancer Center Mainfranken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -248,24 +248,22 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
 
             data_a.print_diff(data_b, strict);
         }
-        SubCommand::Sha256Sum { inputfile } => {
-            match fs::read_to_string(inputfile.clone()) {
-                Ok(content) => {
-                    println!(
-                        "{}  {}",
-                        digest(content).as_str(),
-                        PathBuf::from(inputfile.clone())
-                            .canonicalize()
-                            .unwrap_or_default()
-                            .to_str()
-                            .unwrap_or_default()
-                    )
-                }
-                Err(err) => {
-                    eprintln!("{}", FileError::Reading(inputfile, err.to_string()));
-                }
-            };
-        }
+        SubCommand::Sha256Sum { inputfile } => match fs::read_to_string(inputfile.clone()) {
+            Ok(content) => {
+                println!(
+                    "{}  {}",
+                    digest(content).as_str(),
+                    PathBuf::from(inputfile.clone())
+                        .canonicalize()
+                        .unwrap_or_default()
+                        .to_str()
+                        .unwrap_or_default()
+                )
+            }
+            Err(err) => {
+                eprintln!("{}", FileError::Reading(inputfile, err.to_string()));
+            }
+        },
         SubCommand::Check {
             file,
             list,
