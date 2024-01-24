@@ -54,7 +54,7 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
 
     let mut result = vec![];
 
-    let mut progress_bar = ProgressBar::new(archive.len() as u64).with_style(
+    let progress_bar = ProgressBar::new(archive.len() as u64).with_style(
         ProgressStyle::default_bar()
             .template("{wide_bar} {msg:32} {pos}/{len}")
             .unwrap(),
