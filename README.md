@@ -56,6 +56,8 @@ osc-variant list meine-beispieldatei.osc
 
 Mit der Option `--filter` kann die Ausgabe eingeschränkt werden. 
 
+*Bei Verwendung der OSB-Funktionalität kann die Eingabe eines Passworts erforderlich sein.*
+
 #### Unterbefehl `tree`
 
 Zum Auflisten der Inhalte mit allen Abhängigkeiten, z.B. Daten- und Merkmalskataloge und bei Formularen wird der Befehl
@@ -138,10 +140,12 @@ Der Unterbefehl `check` prüft eine OSC-Datei auf bekannte Probleme und gibt ein
 
 Eine Liste mit bekannten Problemen wird mit `check --list` ausgegeben.
 
+*Bei Verwendung der OSB-Funktionalität kann die Eingabe eines Passworts erforderlich sein.*
+
 #### Kompakte Ausgabe
 
 OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne Zeilenumbrüche.
-Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 30% eingespart werden.
+Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 30 % eingespart werden.
 
 #### Filter
 
@@ -161,6 +165,8 @@ Formulare, die von anderen Formularen in einem Formularverweis oder als Unterfor
 da Onkostar einen Formularimport sequenziell, ohne Berücksichtigung von Abhängigkeiten, durchführt.
 
 Dies erlaubt eine konsistente Reihenfolge der Einträge, wodurch ein direkter Vergleich mit Vorversionen ermöglicht wird.
+
+*Die Einteilung in Formualre und Unterformualare wird hierdurch nicht angepasst.* 
 
 ##### Entfernen von Inhalten der Systembibliothek bei Modifikation
 
