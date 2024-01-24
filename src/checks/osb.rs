@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Comprehensive Cancer Center Mainfranken
+ * Copyright (c) 2024 Comprehensive Cancer Center Mainfranken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ use std::fs;
 use std::io::Read;
 use std::path::Path;
 
-use indicatif::ProgressBar;
+use indicatif::{ProgressBar, ProgressStyle};
 
 use crate::checks::{osc, CheckNotice};
 
@@ -54,11 +54,16 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
 
     let mut result = vec![];
 
-    let progress_bar = ProgressBar::new(archive.len() as u64);
+    let mut progress_bar = ProgressBar::new(archive.len() as u64).with_style(
+        ProgressStyle::default_bar()
+            .template("{wide_bar} {msg:32} {pos}/{len}")
+            .unwrap(),
+    );
 
     for i in 0..archive.len() {
         progress_bar.inc(1);
         if let Ok(Ok(mut zip_file)) = archive.by_index_decrypt(i, password.as_bytes()) {
+            progress_bar.set_message(zip_file.name().to_string());
             if zip_file.is_file() && zip_file.name().ends_with(".osc") {
                 let mut buf = String::new();
                 let _ = zip_file.read_to_string(&mut buf);
@@ -97,7 +102,7 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
             }
         } else {
             return Err(CheckNotice::Error {
-                description: format!("Kann Datei nicht lesen"),
+                description: "Kann Datei nicht lesen".to_string(),
                 line: None,
             });
         }
