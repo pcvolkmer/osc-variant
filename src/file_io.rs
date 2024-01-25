@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Comprehensive Cancer Center Mainfranken
+ * Copyright (c) 2024 Comprehensive Cancer Center Mainfranken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -193,7 +193,7 @@ impl TryFrom<InputFile> for Profile {
     type Error = FileError;
 
     fn try_from(value: InputFile) -> Result<Self, Self::Error> {
-        return match value {
+        match value {
             InputFile::Yaml { filename, content } => match Profile::from_str(&content) {
                 Ok(profile) => Ok(profile),
                 Err(err) => Err(FileError::Parsing(filename, err)),
@@ -204,7 +204,7 @@ impl TryFrom<InputFile> for Profile {
                 filename,
                 "Keine Profildatei".to_string(),
             )),
-        };
+        }
     }
 }
 

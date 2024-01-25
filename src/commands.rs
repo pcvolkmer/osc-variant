@@ -79,7 +79,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                             println!(
                                 "{}{}",
                                 style("OSB-Paketinhalt: ").bold().yellow(),
-                                style(format!("{}", file.filename())).bold()
+                                style(file.filename()).bold()
                             );
 
                             let mut content: OnkostarEditor = match file.try_into() {
@@ -104,7 +104,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                             println!(
                                 "{}{}{}",
                                 style("OSB-Paketinhalt: ").bold().yellow(),
-                                style(format!("{}", file.filename())).bold(),
+                                style(file.filename()).bold(),
                                 style(" ignoriert").yellow()
                             );
                         }
