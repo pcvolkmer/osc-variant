@@ -102,6 +102,9 @@ pub struct DataForm {
     #[serde(rename = "Datenart")]
     #[serde(skip_serializing_if = "Option::is_none")]
     datenart: Option<String>,
+    #[serde(rename = "ShowHistoryButton", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    show_history_button: Option<bool>,
     #[serde(rename = "TudokReadonly")]
     tudok_readonly: bool,
     #[serde(rename = "VitalstatusRelevant")]
