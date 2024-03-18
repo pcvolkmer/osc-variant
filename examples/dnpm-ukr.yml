@@ -1,12 +1,27 @@
 forms:
   - name: 'DNPM Klinik/Anamnese'
+    form_fields:
+      - name: Leitlinienstatus
+        default_value: "unknown"
+      - name: LeitlinienTherapieProgr
+        default_value: "9"
+      - name: LeitlinienTherapieDurchl
+        default_value: "k"
     form_references:
       - name: MTB
         referenced_data_form: 'UKR.Tumorkonferenz'
     menu_category:
       name: Sonstiges
       position: 99.0
-      column: 0
+      column: 1
+  - name: 'DNPM UF Therapielinie'
+    form_fields:
+      - name: Ergebnis
+        default_value: "x"
+      - name: Beendigung
+        default_value: "U"
+      - name: Abbruchsgrund
+        default_value: "u"
   - name: 'DNPM Therapieplan'
     form_references:
       - name: referstemtb
@@ -21,9 +36,9 @@ forms:
     menu_category:
       name: Sonstiges
       position: 99.0
-      column: 0
+      column: 1
   - name: 'DNPM FollowUp'
     menu_category:
       name: Sonstiges
       position: 100.0
-      column: 0
+      column: 1
