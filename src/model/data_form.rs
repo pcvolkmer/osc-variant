@@ -745,4 +745,54 @@ mod tests {
         assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].name, "Auswahl");
         assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].default_value, "")
     }
+
+    #[test]
+    fn should_change_menu_category() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 menu_category:
+                   name: Testformulare
+                   position: 1.0
+                   column: 1
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        onkostar_editor.apply_profile(&profile);
+
+        match &onkostar_editor.editor.data_form[0].menu_category {
+            Some(menu_category) => assert_eq!(menu_category.name, "Testformulare"),
+            _ => panic!("Test failed: MenuCategory not found!")
+        }
+    }
+
+    #[test]
+    fn should_keep_menu_category() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        onkostar_editor.apply_profile(&profile);
+
+        match &onkostar_editor.editor.data_form[0].menu_category {
+            Some(menu_category) => assert_eq!(menu_category.name, "Test"),
+            _ => panic!("Test failed: MenuCategory not found!")
+        }
+    }
 }

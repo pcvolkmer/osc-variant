@@ -744,4 +744,24 @@ mod tests {
         assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].name, "Termin");
         assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].default_value, "")
     }
+
+    #[test]
+    fn should_ignore_menu_category_for_subform() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Unterformular'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert!(&onkostar_editor.editor.unterformular[0].menu_category.is_none());
+    }
 }
