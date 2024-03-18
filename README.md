@@ -186,6 +186,8 @@ forms:
     form_field:
       - name: "formularfeld"
         hide: true
+      - name: "otherformfield"
+        default_value: "T"
     form_references:
       - name: "ref_first_mtb"
         referenced_data_form: "Formularverweis.Variante"
@@ -217,6 +219,9 @@ Dadurch wird das Formularfeld nie angezeigt.
 Ein zuvor bestehender Filter wird ersetzt.
 Weiterhin wird die Eigenschaft "Speichern" des Formularfelds auf "Immer speichern" gesetzt um sicherzustellen, dass zuvor
 enthaltene Daten weiterhin gespeichert bleiben und werden, auch wenn das Formularfeld nicht sichtbar ist.
+
+Der Standardwert des Feldes `otherformfield` ist nun auf `T` gesetzt.
+Zum Löschen eines Standardwerts ist `""` anzugeben.
 
 **Achtung!** Diese Anwendung überprüft keine Scripts und verwendet angegebene Scripts als "valid" im resultierenden OSC-File.
 

@@ -25,19 +25,19 @@
 use std::cmp::Ordering;
 use std::collections::HashSet;
 
-use crate::checks::CheckNotice::ErrorWithCode;
-use crate::checks::{CheckNotice, Checkable};
 use console::style;
 use serde::{Deserialize, Serialize};
 
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::requirements::{Requirement, Requires};
+use crate::checks::{Checkable, CheckNotice};
+use crate::checks::CheckNotice::ErrorWithCode;
 use crate::model::{
-    apply_profile_to_form_entry, apply_profile_to_form_field, Ansichten, Comparable, Entries,
+    Ansichten, apply_profile_to_form_entry, apply_profile_to_form_field, Comparable, Entries,
     Filter, FolderContent, FormEntry, FormEntryContainer, Kennzahlen, Listable, MenuCategory,
     PlausibilityRules, PunkteKategorien, RefEntries, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
+use crate::model::onkostar_editor::OnkostarEditor;
+use crate::model::requirements::{Requirement, Requires};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -193,7 +193,7 @@ impl FormEntryContainer for Unterformular {
                             apply_profile_to_form_entry(entry, form_reference)
                         });
 
-                    // Hide form field using filter set to "false" if requested
+                    // Hide form field using filter set to "false" if requested and change default value
                     profile_form
                         .form_fields
                         .iter()
@@ -645,6 +645,10 @@ impl FormEntry for Entry {
         });
     }
 
+    fn update_default_value(&mut self, value: String) {
+        self.default_value = value
+    }
+
     fn hide(&mut self) {
         self.filter = Some(Filter {
             condition: "false".into(),
@@ -681,4 +685,83 @@ pub struct DataFormEntries {
     #[serde(rename = "EntryName")]
     #[serde(skip_serializing_if = "Option::is_none")]
     entry_name: Option<Vec<String>>,
+}
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use crate::model::onkostar_editor::OnkostarEditor;
+    use crate::profile::Profile;
+
+    #[test]
+    fn should_change_dataform_entry_default_value() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Unterformular'
+                 form_fields:
+                   - name: Termin
+                     default_value: '2024-03-18'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].name, "Termin");
+        assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].default_value, "");
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].name, "Termin");
+        assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].default_value, "2024-03-18")
+    }
+
+    #[test]
+    fn should_not_change_dataform_entry_default_value() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Unterformular'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].name, "Termin");
+        assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].default_value, "");
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].name, "Termin");
+        assert_eq!(onkostar_editor.editor.unterformular[0].entries.entry[1].default_value, "")
+    }
+
+    #[test]
+    fn should_ignore_menu_category_for_subform() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Unterformular'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert!(&onkostar_editor.editor.unterformular[0].menu_category.is_none());
+    }
 }

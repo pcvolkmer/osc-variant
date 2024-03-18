@@ -335,6 +335,12 @@ where
     if entry.get_name() == form_field.name && form_field.hide {
         entry.hide()
     }
+
+    if entry.get_name() == form_field.name {
+        if let Some(new_default_value) = &form_field.default_value {
+            entry.update_default_value(new_default_value.to_string())
+        }
+    }
 }
 
 pub trait FormEntryContainer {
@@ -379,6 +385,7 @@ pub trait FormEntry {
     fn update_anzeige(&mut self, value: String);
     fn update_anzeige_auswahl(&mut self, value: String);
     fn update_scripts_code(&mut self, value: String);
+    fn update_default_value(&mut self, value: String);
     fn hide(&mut self);
 }
 

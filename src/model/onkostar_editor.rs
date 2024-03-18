@@ -45,7 +45,7 @@ pub struct OnkostarEditor {
     #[serde(rename = "InfoXML")]
     info_xml: InfoXML,
     #[serde(rename = "Editor")]
-    editor: Editor,
+    pub editor: Editor,
 }
 
 impl OnkostarEditor {
@@ -506,13 +506,13 @@ pub struct InfoXML {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
-struct Editor {
+pub struct Editor {
     #[serde(rename = "PropertyCatalogue", default)]
     property_catalogue: Vec<PropertyCatalogue>,
     #[serde(rename = "DataCatalogue", default)]
     data_catalogue: Vec<DataCatalogue>,
     #[serde(rename = "Unterformular", default)]
-    unterformular: Vec<Unterformular>,
+    pub unterformular: Vec<Unterformular>,
     #[serde(rename = "DataForm", default)]
-    data_form: Vec<DataForm>,
+    pub data_form: Vec<DataForm>,
 }
