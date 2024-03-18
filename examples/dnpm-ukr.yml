@@ -1,0 +1,29 @@
+forms:
+  - name: 'DNPM Klinik/Anamnese'
+    form_references:
+      - name: MTB
+        referenced_data_form: 'UKR.Tumorkonferenz'
+    menu_category:
+      name: Sonstiges
+      position: 99.0
+      column: 0
+  - name: 'DNPM Therapieplan'
+    form_references:
+      - name: referstemtb
+        referenced_data_form: 'UKR.Tumorkonferenz'
+        anzeige_auswahl: 'MTB vom {Datum}'
+      - name: reftkhumangenber
+        referenced_data_form: 'UKR.Tumorkonferenz'
+        anzeige_auswahl: 'MTB vom {Datum}'
+      - name: reftkreevaluation
+        referenced_data_form: 'UKR.Tumorkonferenz'
+        anzeige_auswahl: 'MTB vom {Datum}'
+    menu_category:
+      name: Sonstiges
+      position: 99.0
+      column: 0
+  - name: 'DNPM FollowUp'
+    menu_category:
+      name: Sonstiges
+      position: 100.0
+      column: 0
