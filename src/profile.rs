@@ -38,6 +38,7 @@ impl Profile {
     pub fn embedded_profile(name: &str) -> Result<Profile, String> {
         let s = match name {
             "UKM" => include_str!("../examples/dnpm-ukm.yml"),
+            "UKR" => include_str!("../examples/dnpm-ukr.yml"),
             "UKW" => include_str!("../examples/dnpm-ukw.yml"),
             "UMG" => include_str!("../examples/dnpm-umg.yml"),
             _ => return Err(format!("Not an embedded profile: '{name}'")),
