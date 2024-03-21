@@ -117,9 +117,10 @@ Ohne eine Angabe der Ausgabedatei wird auf die Standardausgabe ausgegeben.
 Die im Ordner [`examples/`](/examples) enthaltenen Profile für Standorte sind in der ausführbaren Anwendung enthalten 
 und die Dateien müssen nicht explizit als Datei vorliegen:
 
-* `--profile examples/dnpm-ukm.yml` => `--profile UKM`
-* `--profile examples/dnpm-ukw.yml` => `--profile UKW`
-* `--profile examples/dnpm-umg.yml` => `--profile UMG`
+* `--profile examples/dnpm-ukm.yml` => `--profile UKM` für **Marburg**
+* `--profile examples/dnpm-ukr.yml` => `--profile UKR` für **Regensburg**
+* `--profile examples/dnpm-ukw.yml` => `--profile UKW` für **Würzburg**
+* `--profile examples/dnpm-umg.yml` => `--profile UMG` für **Göttingen**
 
 #### Unterbefehl `unzip-osb`
 
