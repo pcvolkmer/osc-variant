@@ -3,25 +3,25 @@ forms:
     form_references:
       - name: MTB
         referenced_data_form: 'OS.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
   - name: 'DNPM Therapieplan'
     form_references:
       - name: referstemtb
         referenced_data_form: 'OS.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
       - name: reftkhumangenber
         referenced_data_form: 'OS.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
       - name: reftkreevaluation
         referenced_data_form: 'OS.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
   - name: 'DNPM UF Einzelempfehlung'
     form_references:
       - name: mtb
         referenced_data_form: 'OS.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
   - name: 'DNPM UF Rebiopsie'
     form_references:
       - name: reftumorkonferenz
         referenced_data_form: 'OS.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'

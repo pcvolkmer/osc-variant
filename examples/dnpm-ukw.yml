@@ -3,7 +3,7 @@ forms:
     form_references:
       - name: MTB
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
         script_code: |
           // Keine Übernahme des Datums des MTBs bei Verwendung
           // des Formulars 'OS.Tumorkonferenz'.
@@ -15,20 +15,20 @@ forms:
     form_references:
       - name: referstemtb
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
       - name: reftkhumangenber
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
       - name: reftkreevaluation
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
   - name: 'DNPM UF Einzelempfehlung'
     form_references:
       - name: mtb
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
   - name: 'DNPM UF Rebiopsie'
     form_references:
       - name: reftumorkonferenz
         referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'

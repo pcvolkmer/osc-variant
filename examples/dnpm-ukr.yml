@@ -26,13 +26,13 @@ forms:
     form_references:
       - name: referstemtb
         referenced_data_form: 'UKR.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
       - name: reftkhumangenber
         referenced_data_form: 'UKR.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
       - name: reftkreevaluation
         referenced_data_form: 'UKR.Tumorkonferenz'
-        anzeige_auswahl: 'MTB vom {Datum}'
+        anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
     menu_category:
       name: Sonstiges
       position: 99.0
