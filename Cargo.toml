@@ -1,6 +1,6 @@
 [package]
 name = "osc-variant"
-version = "0.7.0"
+version = "0.8.0"
 edition = "2021"
 authors = ["Paul-Christian Volkmer <volkmer_p@ukw.de>"]
 description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort"
@@ -23,8 +23,8 @@ dialoguer = "0.11"
 indicatif = "0.17"
 
 deob = { path = "./libs/deob", optional = true }
-zip = { version = "0.6", optional = true }
-bytes = "1.5.0"
+zip = { version = "0.6.6", optional = true }
+bytes = "1.6.0"
 
 [features]
 # Requires env var OSB_KEY to be present at build time
@@ -42,7 +42,7 @@ strip = true
 panic = "abort"
 
 [package.metadata.deb]
-copyright = "Copyright (c) 2023 Comprehensive Cancer Center Mainfranken"
+copyright = "Copyright (c) 2024 Comprehensive Cancer Center Mainfranken"
 extended-description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort."
 assets = [
     ["target/release/osc-variant", "usr/bin/", "755"],
