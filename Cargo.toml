@@ -23,8 +23,8 @@ dialoguer = "0.11"
 indicatif = "0.17"
 
 deob = { path = "./libs/deob", optional = true }
-zip = { version = "0.6.6", optional = true }
-bytes = "1.6.0"
+zip = { version = "0.6", optional = true }
+bytes = "1.6"
 
 [features]
 # Requires env var OSB_KEY to be present at build time
