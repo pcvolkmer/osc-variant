@@ -89,7 +89,7 @@ pub struct FormField {
     pub name: String,
     #[serde(default)]
     pub hide: bool,
-    pub default_value: Option<String>
+    pub default_value: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -280,7 +280,10 @@ mod tests {
                 assert_eq!(profile.forms.len(), 1);
                 assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
                 assert_eq!(profile.forms[0].form_fields[0].name, "formularfeld_to_keep");
-                assert_eq!(profile.forms[0].form_fields[0].default_value, Some("X".to_string()));
+                assert_eq!(
+                    profile.forms[0].form_fields[0].default_value,
+                    Some("X".to_string())
+                );
             }
             Err(e) => panic!("Cannot deserialize profile: {}", e),
         }

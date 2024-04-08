@@ -28,16 +28,16 @@ use std::collections::HashSet;
 use console::style;
 use serde::{Deserialize, Serialize};
 
-use crate::checks::{Checkable, CheckNotice};
 use crate::checks::CheckNotice::ErrorWithCode;
+use crate::checks::{CheckNotice, Checkable};
+use crate::model::onkostar_editor::OnkostarEditor;
+use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
-    Ansichten, apply_profile_to_form_entry, apply_profile_to_form_field, Comparable, Entries,
+    apply_profile_to_form_entry, apply_profile_to_form_field, Ansichten, Comparable, Entries,
     Filter, FolderContent, FormEntry, FormEntryContainer, Kennzahlen, Listable, MenuCategory,
     PlausibilityRules, PunkteKategorien, RefEntries, Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::requirements::{Requirement, Requires};
 use crate::profile::Profile;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -713,13 +713,25 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].name, "Auswahl");
-        assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].default_value, "");
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].name,
+            "Auswahl"
+        );
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
+            ""
+        );
 
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].name, "Auswahl");
-        assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].default_value, "B")
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].name,
+            "Auswahl"
+        );
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
+            "B"
+        )
     }
 
     #[test]
@@ -737,13 +749,25 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].name, "Auswahl");
-        assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].default_value, "");
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].name,
+            "Auswahl"
+        );
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
+            ""
+        );
 
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].name, "Auswahl");
-        assert_eq!(onkostar_editor.editor.data_form[0].entries.entry[2].default_value, "")
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].name,
+            "Auswahl"
+        );
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
+            ""
+        )
     }
 
     #[test]
@@ -769,7 +793,7 @@ mod tests {
 
         match &onkostar_editor.editor.data_form[0].menu_category {
             Some(menu_category) => assert_eq!(menu_category.name, "Testformulare"),
-            _ => panic!("Test failed: MenuCategory not found!")
+            _ => panic!("Test failed: MenuCategory not found!"),
         }
     }
 
@@ -792,7 +816,7 @@ mod tests {
 
         match &onkostar_editor.editor.data_form[0].menu_category {
             Some(menu_category) => assert_eq!(menu_category.name, "Test"),
-            _ => panic!("Test failed: MenuCategory not found!")
+            _ => panic!("Test failed: MenuCategory not found!"),
         }
     }
 }
