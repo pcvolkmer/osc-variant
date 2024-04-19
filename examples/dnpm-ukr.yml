@@ -13,7 +13,7 @@ forms:
     menu_category:
       name: Sonstiges
       position: 99.0
-      column: 1
+      column: 3
   - name: 'DNPM UF Therapielinie'
     form_fields:
       - name: Ergebnis
@@ -36,9 +36,9 @@ forms:
     menu_category:
       name: Sonstiges
       position: 99.0
-      column: 1
+      column: 3
   - name: 'DNPM FollowUp'
     menu_category:
       name: Sonstiges
       position: 100.0
-      column: 1
+      column: 3
