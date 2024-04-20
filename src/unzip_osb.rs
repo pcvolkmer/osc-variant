@@ -77,7 +77,7 @@ pub fn unzip_osb_using_password(path: &str, dir: &str, password: &str) {
     };
 
     for i in 0..archive.len() {
-        let mut file = if let Ok(Ok(file)) = archive.by_index_decrypt(i, password.as_bytes()) {
+        let mut file = if let Ok(file) = archive.by_index_decrypt(i, password.as_bytes()) {
             file
         } else {
             println!(

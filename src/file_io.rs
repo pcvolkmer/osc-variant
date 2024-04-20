@@ -123,9 +123,7 @@ impl InputFile {
                     let password = _password.unwrap_or_else(|| deobfuscate(env!("OSB_KEY").trim()));
 
                     for i in 0..archive.len() {
-                        if let Ok(Ok(mut zip_file)) =
-                            archive.by_index_decrypt(i, password.as_bytes())
-                        {
+                        if let Ok(mut zip_file) = archive.by_index_decrypt(i, password.as_bytes()) {
                             if zip_file.is_file() && zip_file.name().ends_with(".osc") {
                                 let mut buf = String::new();
                                 let _ = zip_file.read_to_string(&mut buf);
