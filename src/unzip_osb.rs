@@ -88,7 +88,7 @@ pub fn unzip_osb_using_password(path: &str, dir: &str, password: &str) {
         };
 
         let outpath = match file.enclosed_name() {
-            Some(path) => Path::new(dir).join(path.to_owned()),
+            Some(path) => Path::new(dir).join(&path),
             None => continue,
         };
 

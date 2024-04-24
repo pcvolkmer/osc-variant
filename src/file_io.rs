@@ -141,7 +141,7 @@ impl InputFile {
                             }
                         } else {
                             return Err(FileError::Parsing(
-                                filename.into(),
+                                filename,
                                 "Kann OSB-Datei nicht lesen".to_string(),
                             ));
                         }

@@ -32,12 +32,12 @@
 #define S0 8373972096940928081
 #define S1 7378413942531504450
 #define CS (char*)&s
-#define DL sizeof(d) / sizeof(d[0]) - 2
+#define DL sizeof(d) / sizeof(d[0]) - 3
 #define I2 i*2
 #define INZ(var) in[var] = 0
 #define DLS(idx) in[idx] = (d[DL+1]<<4)|d[DL]
 #define DLT(idx) d[DL+idx] = (in[I2+idx] == d[j]) ? (char)j : d[DL+idx]
 
-void deob(char * in);
+void deob(char *in);
 
 #endif //OSC_VARIANT_DEOB_H
