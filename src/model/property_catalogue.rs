@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Comprehensive Cancer Center Mainfranken
+ * Copyright (c) 2024 Comprehensive Cancer Center Mainfranken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,8 @@ pub struct PropertyCatalogue {
     #[serde(rename = "Name")]
     name: String,
     #[serde(rename = "Description")]
-    description: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<String>,
     #[serde(rename = "Standard")]
     standard: String,
     #[serde(rename = "Readonly")]
