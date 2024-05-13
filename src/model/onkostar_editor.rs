@@ -518,15 +518,21 @@ pub struct Editor {
     pub data_form: Vec<DataForm>,
 
     #[serde(rename = "Ablaufschema", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ablaufschema: Option<Vec<Ablaufschema>>,
     #[serde(rename = "Akte", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub akte: Option<Vec<Akte>>,
     #[serde(rename = "RecordLinkage", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub record_linkage: Option<Vec<RecordLinkage>>,
     #[serde(rename = "Rskript", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub rskript: Option<Vec<Rskript>>,
     #[serde(rename = "FormulareLoeschen", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub formulare_loeschen: Option<Vec<SidGuid>>,
     #[serde(rename = "FormulareDeaktivieren", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub formulare_deaktivieren: Option<Vec<SidGuid>>,
 }
