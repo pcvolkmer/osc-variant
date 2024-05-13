@@ -136,6 +136,7 @@ pub trait Checkable {
     fn check(&self) -> Vec<CheckNotice>;
 }
 
+#[allow(unused)]
 pub trait Fixable {
     fn fix(&mut self) -> bool;
 }
