@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Comprehensive Cancer Center Mainfranken
+ * Copyright (c) 2024 Comprehensive Cancer Center Mainfranken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ use serde::{Deserialize, Serialize};
 use crate::checks::{CheckNotice, Checkable};
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::data_form::DataForm;
+use crate::model::other::{Ablaufschema, Akte, RecordLinkage, Rskript, SidGuid};
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::unterformular::Unterformular;
@@ -515,4 +516,17 @@ pub struct Editor {
     pub unterformular: Vec<Unterformular>,
     #[serde(rename = "DataForm", default)]
     pub data_form: Vec<DataForm>,
+
+    #[serde(rename = "Ablaufschema", default)]
+    pub ablaufschema: Option<Vec<Ablaufschema>>,
+    #[serde(rename = "Akte", default)]
+    pub akte: Option<Vec<Akte>>,
+    #[serde(rename = "RecordLinkage", default)]
+    pub record_linkage: Option<Vec<RecordLinkage>>,
+    #[serde(rename = "Rskript", default)]
+    pub rskript: Option<Vec<Rskript>>,
+    #[serde(rename = "FormulareLoeschen", default)]
+    pub formulare_loeschen: Option<Vec<SidGuid>>,
+    #[serde(rename = "FormulareDeaktivieren", default)]
+    pub formulare_deaktivieren: Option<Vec<SidGuid>>,
 }

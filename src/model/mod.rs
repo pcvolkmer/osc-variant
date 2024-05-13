@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Comprehensive Cancer Center Mainfranken
+ * Copyright (c) 2024 Comprehensive Cancer Center Mainfranken
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@ use crate::profile::{FormField, FormReference, Profile};
 pub mod data_catalogue;
 pub mod data_form;
 pub mod onkostar_editor;
+pub mod other;
 pub mod property_catalogue;
 pub mod requirements;
 pub mod unterformular;
