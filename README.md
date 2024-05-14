@@ -54,7 +54,7 @@ Zum Auflisten der Inhalte einer Datei wird folgender Befehl verwendet:
 osc-variant list meine-beispieldatei.osc
 ```
 
-Mit der Option `--filter` kann die Ausgabe eingeschränkt werden. 
+Mit der Option `--filter` kann die Ausgabe eingeschränkt werden.
 
 *Bei Verwendung der OSB-Funktionalität kann die Eingabe eines Passworts erforderlich sein.*
 
@@ -84,7 +84,7 @@ Mit der Option `--filter` kann auch hier die Ausgabe eingeschränkt werden.
 
 Zum Vergleich zweier OSC-Dateien wird der Unterbefehl `diff` verwendet.
 Der optionale Parameter `--strict` vergleicht auch den Inhalt der OSC-Datei.
-Ohne diesen wird nur das Vorhandensein von Inhalten und die Revision verglichen. 
+Ohne diesen wird nur das Vorhandensein von Inhalten und die Revision verglichen.
 
 ```
 osc-variant diff meine-beispieldatei.osc andere-beispieldatei.osc
@@ -105,7 +105,8 @@ osc-variant modify meine-beispieldatei.osc --profile ukw-profil.yml --output ukw
 ```
 
 Die Parameter `--profile` und `--output` sind optional.
-Mit dem ebenfalls optionalen Parameter `--interactve` oder `-i` können die Parameter zur kompakten Ausgabe, zum Sortieren
+Mit dem ebenfalls optionalen Parameter `--interactve` oder `-i` können die Parameter zur kompakten Ausgabe, zum
+Sortieren
 und dem Entfernen von Inhalten der Systembibliothek interaktiv gesetzt werden.
 
 Ohne Profildatei wird die Datei lediglich eingelesen, Leerzeichen am Ende eines XML-Tags entfernt und wieder ausgegeben.
@@ -114,7 +115,7 @@ Ohne eine Angabe der Ausgabedatei wird auf die Standardausgabe ausgegeben.
 
 ##### Enthaltene Profile
 
-Die im Ordner [`examples/`](/examples) enthaltenen Profile für Standorte sind in der ausführbaren Anwendung enthalten 
+Die im Ordner [`examples/`](/examples) enthaltenen Profile für Standorte sind in der ausführbaren Anwendung enthalten
 und die Dateien müssen nicht explizit als Datei vorliegen:
 
 * `--profile examples/dnpm-ukm.yml` => `--profile UKM` für **Marburg**
@@ -124,7 +125,8 @@ und die Dateien müssen nicht explizit als Datei vorliegen:
 
 #### Unterbefehl `unzip-osb`
 
-Ab Version 0.6.0 ist die Anwendung zudem in der Lage, die für eine Aktualisierung der OS-Bibliothek genutzten OSB-Dateien zu entpacken:
+Ab Version 0.6.0 ist die Anwendung zudem in der Lage, die für eine Aktualisierung der OS-Bibliothek genutzten
+OSB-Dateien zu entpacken:
 
 ```
 osc-variant unzip-osb OSBIB-6.10.osb
@@ -132,12 +134,17 @@ osc-variant unzip-osb OSBIB-6.10.osb
 
 Dieser Befehl kennt die beiden optionalen Parameter
 
-* `-d`: Optionale Angabe des Zielverzeichnisses. Wenn keine Angabe vorhanden ist, wird das aktuelle Verzeichnis verwendet.
+* `-d`: Optionale Angabe des Zielverzeichnisses. Wenn keine Angabe vorhanden ist, wird das aktuelle Verzeichnis
+  verwendet.
 * `-p`/`--password`: Optionale Angabe des Passworts zum Entpacken der OSB-Datei.
+
+Dies setzt voraus, dass die Anwendung mit dem Feature `unzip-osb` compiliert wurde.
 
 #### Unterbefehl `check`
 
-Der Unterbefehl `check` prüft eine OSC-Datei auf bekannte Probleme und gibt eine Liste mit erkannten Problemen aus.
+Der Unterbefehl `check` prüft eine OSC- oder OSB-Datei (sofern unterstützt) auf bekannte Probleme und gibt eine Liste
+mit erkannten Problemen aus.
+In OSB-Dateien werden nur enthaltene OSC-Dateien mit Onkostar-Formularen geprüft.
 
 Eine Liste mit bekannten Problemen wird mit `check --list` ausgegeben.
 
@@ -145,35 +152,42 @@ Eine Liste mit bekannten Problemen wird mit `check --list` ausgegeben.
 
 #### Kompakte Ausgabe
 
-OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne Zeilenumbrüche.
+OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne
+Zeilenumbrüche.
 Hierzu ist die Option `--compact` vorgesehen. Es können, je nach Datei, bis zu 30 % eingespart werden.
 
 #### Filter
 
-Bei der Auflistung von Inhalten ist es möglich, die Anzeige für die Unterbefehle `list` und `tree` anhand des Namens zu filtern.
+Bei der Auflistung von Inhalten ist es möglich, die Anzeige für die Unterbefehle `list` und `tree` anhand des Namens zu
+filtern.
 Hierzu ist die Option `--filter=` vorgesehen.
 Wird diese angewendet, werden nur Inhalte angezeigt, deren Name die angegebene Zeichenkette beinhalten.
 
 #### Sortierung
 
-Bei der Auflistung der Inhalte, kann die Option `--sorted` dazu verwendet werden, die angezeigten Einträge alphabetisch zu sortieren.
+Bei der Auflistung der Inhalte, kann die Option `--sorted` dazu verwendet werden, die angezeigten Einträge alphabetisch
+zu sortieren.
 Die Sortierung erfolgt dabei nach Namen des Katalogs oder des Formulars.
 
-Beim Modifizieren der Inhalte kann ebenfalls die Option `--sorted` dazu verwendet werden, die Einträge im Anschluss an die Modifikation
+Beim Modifizieren der Inhalte kann ebenfalls die Option `--sorted` dazu verwendet werden, die Einträge im Anschluss an
+die Modifikation
 nach Namen und für Formulare der Abhängigkeit von Formularverweisen und Unterformularen zu sortieren.
 
-Formulare, die von anderen Formularen in einem Formularverweis oder als Unterformular verwendet werden, werden dabei weiter oben angeordnet,
+Formulare, die von anderen Formularen in einem Formularverweis oder als Unterformular verwendet werden, werden dabei
+weiter oben angeordnet,
 da Onkostar einen Formularimport sequenziell, ohne Berücksichtigung von Abhängigkeiten, durchführt.
 
 Dies erlaubt eine konsistente Reihenfolge der Einträge, wodurch ein direkter Vergleich mit Vorversionen ermöglicht wird.
 
-*Die Einteilung in Formualre und Unterformualare wird hierdurch nicht angepasst.* 
+*Die Einteilung in Formualre und Unterformualare wird hierdurch nicht angepasst.*
 
 ##### Entfernen von Inhalten der Systembibliothek bei Modifikation
 
-Mit der die experimentelle Option `--strip` ist es möglich, die in der OSC-Datei enthaltenen und beim Import nicht genutzten Inhalte aus der Systembibliothek zu entfernen.
+Mit der die experimentelle Option `--strip` ist es möglich, die in der OSC-Datei enthaltenen und beim Import nicht
+genutzten Inhalte aus der Systembibliothek zu entfernen.
 
-Hierbei werden alle Inhalte entfernt, die im Ordner "ONKOSTAR Bibliothek" enthalten sind, beim Import jedoch ignoriert werden.
+Hierbei werden alle Inhalte entfernt, die im Ordner "ONKOSTAR Bibliothek" enthalten sind, beim Import jedoch ignoriert
+werden.
 
 ## Profile
 
@@ -208,23 +222,27 @@ Hierzu wird die Anwendung angewiesen im Formular "ExampleForm" den Formularverwe
 * den Verweis auf das Formular "Formularverweis.Variante" zu setzen
 * die Anzeige im Auswahlmenü auf "Referenziertes Formular vom: {Datum}" zu setzen
 * die Anzeige unterhalb des Auswahlmenüs auf "Datum im referenzierten Formular: {Datum}" zu setzen
-* den Code zur Ausführung "nach Aktualisierung" für das Formularfeld auf die angegebene, mehrzeilige Zeichenkette anzupassen
+* den Code zur Ausführung "nach Aktualisierung" für das Formularfeld auf die angegebene, mehrzeilige Zeichenkette
+  anzupassen
 
 und dabei die vorhandenen Angaben für den Formularverweis zu ersetzen.
 
 Die Angaben für `referenced_data_form`, `anzeige_auswahl`, `anzeige` und `scripts_code` sind optional.
 Wird keine Angabe gemacht, wird der bestehende Wert beibehalten.
 
-Zudem wird im Formular "ExampleForm" das Formularfeld "formularfeld" ausgeblendet, indem der Filter auf "false" gesetzt wird.
+Zudem wird im Formular "ExampleForm" das Formularfeld "formularfeld" ausgeblendet, indem der Filter auf "false" gesetzt
+wird.
 Dadurch wird das Formularfeld nie angezeigt.
 Ein zuvor bestehender Filter wird ersetzt.
-Weiterhin wird die Eigenschaft "Speichern" des Formularfelds auf "Immer speichern" gesetzt um sicherzustellen, dass zuvor
+Weiterhin wird die Eigenschaft "Speichern" des Formularfelds auf "Immer speichern" gesetzt um sicherzustellen, dass
+zuvor
 enthaltene Daten weiterhin gespeichert bleiben und werden, auch wenn das Formularfeld nicht sichtbar ist.
 
 Der Standardwert des Feldes `otherformfield` ist nun auf `T` gesetzt.
 Zum Löschen eines Standardwerts ist `""` anzugeben.
 
-**Achtung!** Diese Anwendung überprüft keine Scripts und verwendet angegebene Scripts als "valid" im resultierenden OSC-File.
+**Achtung!** Diese Anwendung überprüft keine Scripts und verwendet angegebene Scripts als "valid" im resultierenden
+OSC-File.
 
 Zudem kann die Menükategorie angepasst werden.
 Die Angabe einer `menu_category` ist fakultativ.
