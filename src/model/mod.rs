@@ -100,7 +100,8 @@ pub struct Ansicht {
     #[serde(skip_serializing_if = "Option::is_none")]
     data_form: Option<String>,
     #[serde(rename = "DataCatalogue")]
-    data_catalogue: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    data_catalogue: Option<String>,
     #[serde(rename = "TypAuswahl")]
     typ_auswahl: String,
     #[serde(rename = "PersonenstammKontext", default)]
