@@ -122,6 +122,9 @@ pub struct DataForm {
     datenschutz_relevant: Option<bool>,
     #[serde(rename = "KonferenzRelevant")]
     konferenz_relevant: bool,
+    #[serde(rename = "Drucken")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    drucken: Option<String>,
     #[serde(rename = "hatUnterformulare")]
     hat_unterformulare: bool,
     #[serde(rename = "ScriptBeimSchliessen")]
