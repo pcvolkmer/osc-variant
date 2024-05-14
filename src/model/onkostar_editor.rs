@@ -404,6 +404,16 @@ impl FromStr for OnkostarEditor {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if !s
+            .matches("<AnalyseBereichEditor>")
+            .collect::<String>()
+            .is_empty()
+        {
+            return Err(
+                "Datei mit Inhalt 'AnalyseBereichEditor' kann nicht verwendet werden".into(),
+            );
+        }
+
         match from_str::<OnkostarEditor>(s) {
             Ok(profile) => Ok(profile),
             Err(err) => Err(err.to_string()),
