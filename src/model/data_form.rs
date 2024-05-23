@@ -662,6 +662,10 @@ impl FormEntry for Entry {
         });
         self.speichern = "0".into()
     }
+
+    fn remove_filter(&mut self) {
+        self.filter = None;
+    }
 }
 
 impl Sortable for Entry {
@@ -696,7 +700,7 @@ mod tests {
     use std::str::FromStr;
 
     use crate::model::onkostar_editor::OnkostarEditor;
-    use crate::model::Script;
+    use crate::model::{Filter, RefEntries, Script};
     use crate::profile::Profile;
 
     #[test]
@@ -893,6 +897,142 @@ mod tests {
                 code: "// Example code&#10;console.log(42);".into(),
                 valid: true
             })
+        );
+    }
+
+    #[test]
+    fn should_remove_dataform_entry_filter_with_form_fields() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     remove_filter: true
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
+            Some(Filter {
+                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
+                valid: true,
+                ref_entries: Some(RefEntries { ref_entry: None })
+            })
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
+            None
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
+            None
+        );
+    }
+
+    #[test]
+    fn should_remove_dataform_entry_filter_with_form_references() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     remove_filter: true
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
+            Some(Filter {
+                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
+                valid: true,
+                ref_entries: Some(RefEntries { ref_entry: None })
+            })
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
+            None
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
+            None
         );
     }
 }

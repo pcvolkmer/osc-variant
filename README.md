@@ -203,6 +203,7 @@ forms:
         hide: true
       - name: "otherformfield"
         default_value: "T"
+        remove_filter: true
         scripts_code: |
           // Beispielcode
           console.log(getFieldValue('ref_first_mtb'));
@@ -238,11 +239,12 @@ wird.
 Dadurch wird das Formularfeld nie angezeigt.
 Ein zuvor bestehender Filter wird ersetzt.
 Weiterhin wird die Eigenschaft "Speichern" des Formularfelds auf "Immer speichern" gesetzt um sicherzustellen, dass
-zuvor
-enthaltene Daten weiterhin gespeichert bleiben und werden, auch wenn das Formularfeld nicht sichtbar ist.
+zuvor enthaltene Daten weiterhin gespeichert bleiben und werden, auch wenn das Formularfeld nicht sichtbar ist.
 
 Der Standardwert des Feldes `otherformfield` ist nun auf `T` gesetzt.
 Zum Löschen eines Standardwerts ist `""` anzugeben.
+Das Formularfeld wird dabei nun immer angezeigt, auch wenn zuvor ein (Anzeige)-Filter gesetzt war.
+Dieser wird mir `remove_filter: true` entfernt.
 
 **Achtung!** Diese Anwendung überprüft keine Scripts und verwendet angegebene Scripts als "valid" im resultierenden
 OSC-File.

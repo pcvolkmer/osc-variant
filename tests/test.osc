@@ -300,6 +300,11 @@
           <ZuordnungErkrankung>0</ZuordnungErkrankung>
           <GrafikAusrichtung>0</GrafikAusrichtung>
           <Mandatory>false</Mandatory>
+          <Filter>
+            <Condition>getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'</Condition>
+            <Valid>true</Valid>
+            <RefEntries/>
+          </Filter>
           <NotSpecified>false</NotSpecified>
           <ReferencedDataFormField/>
           <Anzeige/>
@@ -545,6 +550,11 @@
           <ZuordnungErkrankung>0</ZuordnungErkrankung>
           <GrafikAusrichtung>0</GrafikAusrichtung>
           <Mandatory>mandatory</Mandatory>
+          <Filter>
+            <Condition>getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'</Condition>
+            <Valid>true</Valid>
+            <RefEntries/>
+          </Filter>
           <NotSpecified>false</NotSpecified>
           <ReferencedDataFormField/>
           <Anzeige/>

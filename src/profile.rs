@@ -79,6 +79,8 @@ pub struct FormReference {
     pub referenced_data_form: Option<String>,
     pub anzeige: Option<String>,
     pub anzeige_auswahl: Option<String>,
+    #[serde(default)]
+    pub remove_filter: bool,
     scripts_code: Option<String>,
 }
 
@@ -94,6 +96,8 @@ pub struct FormField {
     #[serde(default)]
     pub hide: bool,
     pub default_value: Option<String>,
+    #[serde(default)]
+    pub remove_filter: bool,
     scripts_code: Option<String>,
 }
 
@@ -154,6 +158,7 @@ mod tests {
                      referenced_data_form: 'OS.Tumorkonferenz.VarianteUKW'
                      anzeige: 'Datum: {Datum}'
                      anzeige_auswahl: 'TK vom {Datum}'
+                     remove_filter: true
                      scripts_code: |-
                        // Example code
                        console.log(42);
@@ -177,6 +182,7 @@ mod tests {
                     profile.forms[0].form_references[0].anzeige_auswahl,
                     Some("TK vom {Datum}".to_string())
                 );
+                assert!(profile.forms[0].form_references[0].remove_filter);
                 assert_eq!(
                     profile.forms[0].form_references[0].escaped_scripts_code(),
                     Some("// Example code&#10;console.log(42);".to_string())
@@ -262,6 +268,7 @@ mod tests {
                    - name: formularfeld_to_hide
                      hide: true
                    - name: formularfeld_to_mod
+                     remove_filter: true
                      scripts_code: |-
                        // Example code
                        console.log(42);
@@ -278,6 +285,7 @@ mod tests {
                 assert!(profile.forms[0].form_fields[1].hide);
                 assert_eq!(profile.forms[0].form_fields[2].name, "formularfeld_to_mod");
                 assert!(!profile.forms[0].form_fields[2].hide);
+                assert!(profile.forms[0].form_fields[2].remove_filter);
                 assert_eq!(
                     profile.forms[0].form_fields[2].escaped_scripts_code(),
                     Some("// Example code&#10;console.log(42);".to_string())

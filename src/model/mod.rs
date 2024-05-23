@@ -197,7 +197,7 @@ pub struct FeldWert {
     punkte: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Filter {
     #[serde(rename = "Condition")]
@@ -209,7 +209,7 @@ pub struct Filter {
     ref_entries: Option<RefEntries>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct RefEntries {
     #[serde(rename = "RefEntry")]
@@ -327,6 +327,9 @@ where
         if let Some(scripts_code) = &form_reference.escaped_scripts_code() {
             entry.update_scripts_code(scripts_code.clone());
         }
+        if form_reference.remove_filter {
+            entry.remove_filter()
+        }
     }
 }
 
@@ -334,16 +337,19 @@ fn apply_profile_to_form_field<E>(entry: &mut E, form_field: &FormField)
 where
     E: FormEntry,
 {
-    if entry.get_name() == form_field.name && form_field.hide {
-        entry.hide()
-    }
     if entry.get_name() == form_field.name {
+        if form_field.hide {
+            entry.hide()
+        }
         if let Some(new_default_value) = &form_field.default_value {
             entry.update_default_value(new_default_value.to_string())
         }
-    }
-    if let Some(scripts_code) = &form_field.escaped_scripts_code() {
-        entry.update_scripts_code(scripts_code.clone());
+        if let Some(scripts_code) = &form_field.escaped_scripts_code() {
+            entry.update_scripts_code(scripts_code.clone());
+        }
+        if form_field.remove_filter {
+            entry.remove_filter()
+        }
     }
 }
 
@@ -391,6 +397,7 @@ pub trait FormEntry {
     fn update_scripts_code(&mut self, value: String);
     fn update_default_value(&mut self, value: String);
     fn hide(&mut self);
+    fn remove_filter(&mut self);
 }
 
 pub trait FolderContent {

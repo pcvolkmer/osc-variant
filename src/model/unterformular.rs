@@ -657,6 +657,10 @@ impl FormEntry for Entry {
         });
         self.speichern = "0".into()
     }
+
+    fn remove_filter(&mut self) {
+        self.filter = None;
+    }
 }
 
 impl Sortable for Entry {
@@ -692,7 +696,7 @@ mod tests {
     use std::str::FromStr;
 
     use crate::model::onkostar_editor::OnkostarEditor;
-    use crate::model::Script;
+    use crate::model::{Filter, RefEntries, Script};
     use crate::profile::Profile;
 
     #[test]
@@ -793,7 +797,7 @@ mod tests {
     }
 
     #[test]
-    fn should_change_dataform_entry_scripts_code_with_form_fields() {
+    fn should_change_unterformular_entry_scripts_code_with_form_fields() {
         let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
 
         assert!(onkostar_editor.is_ok());
@@ -829,7 +833,7 @@ mod tests {
     }
 
     #[test]
-    fn should_change_dataform_entry_scripts_code_with_form_references() {
+    fn should_change_unterformular_entry_scripts_code_with_form_references() {
         let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
 
         assert!(onkostar_editor.is_ok());
@@ -861,6 +865,102 @@ mod tests {
                 code: "// Example code&#10;console.log(42);".into(),
                 valid: true
             })
+        );
+    }
+
+    #[test]
+    fn should_remove_unterformular_entry_filter_with_form_fields() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Unterformular'
+                 form_fields:
+                   - name: Termin
+                     remove_filter: true
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.unterformular[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.unterformular[0].entries.entry[1].filter,
+            Some(Filter {
+                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
+                valid: true,
+                ref_entries: Some(RefEntries { ref_entry: None })
+            })
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.unterformular[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.unterformular[0].entries.entry[1].filter,
+            None
+        );
+    }
+
+    #[test]
+    fn should_remove_unterformular_entry_filter_with_form_references() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Unterformular'
+                 form_fields:
+                   - name: Termin
+                     remove_filter: true
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.unterformular[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.unterformular[0].entries.entry[1].filter,
+            Some(Filter {
+                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
+                valid: true,
+                ref_entries: Some(RefEntries { ref_entry: None })
+            })
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.unterformular[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.unterformular[0].entries.entry[1].filter,
+            None
         );
     }
 }
