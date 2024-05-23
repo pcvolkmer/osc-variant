@@ -237,14 +237,15 @@ Wird keine Angabe gemacht, wird der bestehende Wert beibehalten.
 Zudem wird im Formular "ExampleForm" das Formularfeld "formularfeld" ausgeblendet, indem der Filter auf "false" gesetzt
 wird.
 Dadurch wird das Formularfeld nie angezeigt.
-Ein zuvor bestehender Filter wird ersetzt.
+Ein zuvor bestehender Filter wird ersetzt und das Formularfeld wird nie angezeigt.
 Weiterhin wird die Eigenschaft "Speichern" des Formularfelds auf "Immer speichern" gesetzt um sicherzustellen, dass
 zuvor enthaltene Daten weiterhin gespeichert bleiben und werden, auch wenn das Formularfeld nicht sichtbar ist.
+Um das Gegenteil zu erreichen und das Formularfeld *immer* anzuzeigen, kann `never_hide: true` verwendet werden.
 
 Der Standardwert des Feldes `otherformfield` ist nun auf `T` gesetzt.
 Zum Löschen eines Standardwerts ist `""` anzugeben.
 Das Formularfeld wird dabei nun immer angezeigt, auch wenn zuvor ein (Anzeige)-Filter gesetzt war.
-Dieser wird mir `remove_filter: true` entfernt.
+Dieser wird mir `remove_filter: true` oder `never_hide: true` entfernt.
 
 **Achtung!** Diese Anwendung überprüft keine Scripts und verwendet angegebene Scripts als "valid" im resultierenden
 OSC-File.

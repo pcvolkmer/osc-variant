@@ -79,7 +79,7 @@ pub struct FormReference {
     pub referenced_data_form: Option<String>,
     pub anzeige: Option<String>,
     pub anzeige_auswahl: Option<String>,
-    #[serde(default)]
+    #[serde(alias = "never_hide", default)]
     pub remove_filter: bool,
     scripts_code: Option<String>,
 }
@@ -96,7 +96,7 @@ pub struct FormField {
     #[serde(default)]
     pub hide: bool,
     pub default_value: Option<String>,
-    #[serde(default)]
+    #[serde(alias = "never_hide", default)]
     pub remove_filter: bool,
     scripts_code: Option<String>,
 }
@@ -313,6 +313,51 @@ mod tests {
                     profile.forms[0].form_fields[0].default_value,
                     Some("X".to_string())
                 );
+            }
+            Err(e) => panic!("Cannot deserialize profile: {}", e),
+        }
+    }
+
+    #[test]
+    fn should_use_never_hide_as_alias_for_remove_filter_in_form_references() {
+        let content = "forms:
+               - name: 'DNPM Therapieplan'
+                 form_references:
+                   - name: formularref_to_mod
+                     never_hide: true
+            ";
+
+        match Profile::from_str(content) {
+            Ok(profile) => {
+                assert_eq!(profile.forms.len(), 1);
+                assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
+                assert_eq!(profile.forms[0].form_references.len(), 1);
+                assert_eq!(
+                    profile.forms[0].form_references[0].name,
+                    "formularref_to_mod"
+                );
+                assert!(profile.forms[0].form_references[0].remove_filter);
+            }
+            Err(e) => panic!("Cannot deserialize profile: {}", e),
+        }
+    }
+
+    #[test]
+    fn should_use_never_hide_as_alias_for_remove_filter_in_form_fields() {
+        let content = "forms:
+               - name: 'DNPM Therapieplan'
+                 form_fields:
+                   - name: formularfeld_to_mod
+                     never_hide: true
+            ";
+
+        match Profile::from_str(content) {
+            Ok(profile) => {
+                assert_eq!(profile.forms.len(), 1);
+                assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
+                assert_eq!(profile.forms[0].form_fields.len(), 1);
+                assert_eq!(profile.forms[0].form_fields[0].name, "formularfeld_to_mod");
+                assert!(profile.forms[0].form_fields[0].remove_filter);
             }
             Err(e) => panic!("Cannot deserialize profile: {}", e),
         }
