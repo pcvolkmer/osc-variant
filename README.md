@@ -198,11 +198,14 @@ In ihr sind die durchzuführenden Änderungen definiert. Eine Profildatei hat di
 ```
 forms:
   - name: "ExampleForm"
-    form_field:
+    form_fields:
       - name: "formularfeld"
         hide: true
       - name: "otherformfield"
         default_value: "T"
+        scripts_code: |
+          // Beispielcode
+          console.log(getFieldValue('ref_first_mtb'));
     form_references:
       - name: "ref_first_mtb"
         referenced_data_form: "Formularverweis.Variante"
@@ -222,8 +225,8 @@ Hierzu wird die Anwendung angewiesen im Formular "ExampleForm" den Formularverwe
 * den Verweis auf das Formular "Formularverweis.Variante" zu setzen
 * die Anzeige im Auswahlmenü auf "Referenziertes Formular vom: {Datum}" zu setzen
 * die Anzeige unterhalb des Auswahlmenüs auf "Datum im referenzierten Formular: {Datum}" zu setzen
-* den Code zur Ausführung "nach Aktualisierung" für das Formularfeld auf die angegebene, mehrzeilige Zeichenkette
-  anzupassen
+* den Code zur Ausführung "nach Aktualisierung" für Formularfelder werden auf die angegebene, mehrzeilige Zeichenkette
+  anzupassen. Dies kann in `form_fields`, als auch `form_references` geschehen.
 
 und dabei die vorhandenen Angaben für den Formularverweis zu ersetzen.
 

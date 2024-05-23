@@ -696,6 +696,7 @@ mod tests {
     use std::str::FromStr;
 
     use crate::model::onkostar_editor::OnkostarEditor;
+    use crate::model::Script;
     use crate::profile::Profile;
 
     #[test]
@@ -821,5 +822,77 @@ mod tests {
             Some(menu_category) => assert_eq!(menu_category.name, "Test"),
             _ => panic!("Test failed: MenuCategory not found!"),
         }
+    }
+
+    #[test]
+    fn should_change_dataform_entry_scripts_code_with_form_fields() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            None
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            Some(Script {
+                code: "// Example code&#10;console.log(42);".into(),
+                valid: true
+            })
+        );
+    }
+
+    #[test]
+    fn should_change_dataform_entry_scripts_code_with_form_references() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            None
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            Some(Script {
+                code: "// Example code&#10;console.log(42);".into(),
+                valid: true
+            })
+        );
     }
 }

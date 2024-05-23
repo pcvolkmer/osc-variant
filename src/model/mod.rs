@@ -30,7 +30,7 @@ use std::hash::{Hash, Hasher};
 use serde::{Deserialize, Serialize};
 
 use crate::model::requirements::Requires;
-use crate::profile::{FormField, FormReference, Profile};
+use crate::profile::{FormField, FormReference, Profile, WithScriptsCode};
 
 pub mod data_catalogue;
 pub mod data_form;
@@ -40,7 +40,7 @@ pub mod property_catalogue;
 pub mod requirements;
 pub mod unterformular;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Script {
     #[serde(rename = "Code")]
@@ -337,11 +337,13 @@ where
     if entry.get_name() == form_field.name && form_field.hide {
         entry.hide()
     }
-
     if entry.get_name() == form_field.name {
         if let Some(new_default_value) = &form_field.default_value {
             entry.update_default_value(new_default_value.to_string())
         }
+    }
+    if let Some(scripts_code) = &form_field.escaped_scripts_code() {
+        entry.update_scripts_code(scripts_code.clone());
     }
 }
 

@@ -69,6 +69,10 @@ pub struct Form {
     pub menu_category: Option<MenuCategory>,
 }
 
+pub trait WithScriptsCode {
+    fn escaped_scripts_code(&self) -> Option<String>;
+}
+
 #[derive(Deserialize)]
 pub struct FormReference {
     pub name: String,
@@ -78,8 +82,8 @@ pub struct FormReference {
     scripts_code: Option<String>,
 }
 
-impl FormReference {
-    pub fn escaped_scripts_code(&self) -> Option<String> {
+impl WithScriptsCode for FormReference {
+    fn escaped_scripts_code(&self) -> Option<String> {
         self.scripts_code.as_ref().map(|code| escape_script(code))
     }
 }
@@ -90,6 +94,13 @@ pub struct FormField {
     #[serde(default)]
     pub hide: bool,
     pub default_value: Option<String>,
+    scripts_code: Option<String>,
+}
+
+impl WithScriptsCode for FormField {
+    fn escaped_scripts_code(&self) -> Option<String> {
+        self.scripts_code.as_ref().map(|code| escape_script(code))
+    }
 }
 
 #[derive(Deserialize)]
@@ -101,7 +112,7 @@ pub struct MenuCategory {
 
 #[cfg(test)]
 mod tests {
-    use crate::profile::Profile;
+    use crate::profile::{Profile, WithScriptsCode};
     use std::str::FromStr;
 
     #[test]
@@ -250,17 +261,27 @@ mod tests {
                      hide: false
                    - name: formularfeld_to_hide
                      hide: true
+                   - name: formularfeld_to_mod
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
             ";
 
         match Profile::from_str(content) {
             Ok(profile) => {
                 assert_eq!(profile.forms.len(), 1);
                 assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
-                assert_eq!(profile.forms[0].form_fields.len(), 2);
+                assert_eq!(profile.forms[0].form_fields.len(), 3);
                 assert_eq!(profile.forms[0].form_fields[0].name, "formularfeld_to_keep");
                 assert!(!profile.forms[0].form_fields[0].hide);
                 assert_eq!(profile.forms[0].form_fields[1].name, "formularfeld_to_hide");
                 assert!(profile.forms[0].form_fields[1].hide);
+                assert_eq!(profile.forms[0].form_fields[2].name, "formularfeld_to_mod");
+                assert!(!profile.forms[0].form_fields[2].hide);
+                assert_eq!(
+                    profile.forms[0].form_fields[2].escaped_scripts_code(),
+                    Some("// Example code&#10;console.log(42);".to_string())
+                );
             }
             Err(e) => panic!("Cannot deserialize profile: {}", e),
         }
