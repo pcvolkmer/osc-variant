@@ -1,0 +1,15 @@
+forms:
+  - name: 'DNPM Therapieplan'
+    form_fields:
+      - name: datumtkhumangenber
+        never_hide: true
+      - name: datumtkreevaluation
+        never_hide: true
+  - name: 'DNPM UF Einzelempfehlung'
+    form_fields:
+      - name: ufeedatum
+        never_hide: true
+  - name: 'DNPM UF Rebiopsie'
+    form_fields:
+      - name: ufrbdatum
+        never_hide: true
