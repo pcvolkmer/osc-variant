@@ -15,7 +15,8 @@ win-package: win-binary-x86_64
 	cp -r examples osc-variant/
 	cp README.md osc-variant/
 	cp LICENSE.txt osc-variant/
-	zip osc-variant-$(TAG)_win64.zip osc-variant/* osc-variant/examples/*
+	# first try (linux) zip command, then powershell sub command to create ZIP file
+	zip osc-variant-$(TAG)_win64.zip osc-variant/* osc-variant/examples/* || powershell Compress-ARCHIVE osc-variant osc-variant-$(TAG)_win64.zip
 	rm -rf osc-variant || true
 
 .PHONY: linux-package
