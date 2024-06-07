@@ -5,6 +5,10 @@ on:
     tags:
       - 'v*'
 
+env:
+  # Use invalid OSB key to packages with ZIP support but without valid build in password
+  OSB_KEY: "invalid"
+
 jobs:
   linuxbuild:
     runs-on: ubuntu-latest
