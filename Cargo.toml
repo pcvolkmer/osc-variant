@@ -2,9 +2,9 @@
 name = "osc-variant"
 version = "0.8.0"
 edition = "2021"
-authors = ["Paul-Christian Volkmer <volkmer_p@ukw.de>"]
+authors = ["Paul-Christian Volkmer"]
 description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort"
-license = "MIT"
+license = "GPL-2"
 readme = "README.md"
 
 build = "build.rs"
@@ -42,7 +42,7 @@ strip = true
 panic = "abort"
 
 [package.metadata.deb]
-copyright = "Copyright (c) 2024 Comprehensive Cancer Center Mainfranken"
+copyright = "Copyright (C) 2023-2024 the original author or authors"
 extended-description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort."
 assets = [
     ["target/release/osc-variant", "usr/bin/", "755"],
