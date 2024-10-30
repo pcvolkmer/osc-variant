@@ -117,6 +117,8 @@ pub struct Version {
     active: bool,
     #[serde(rename = "Description")]
     description: String,
+    #[serde(rename = "LkrCode")]
+    lkr_code: Option<String>,
     #[serde(rename = "SID")]
     sid: String,
     #[serde(rename = "GUID")]
