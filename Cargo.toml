@@ -22,7 +22,7 @@ sha256 = "1.5"
 dialoguer = "0.11"
 indicatif = "0.17"
 
-deob = { path = "./libs/deob", version = "*", optional = true }
+deob = { path = "libs/deob", version = "*", optional = true }
 zip = { version = "2.1", optional = true }
 bytes = "1.6"
 
