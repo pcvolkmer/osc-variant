@@ -21,16 +21,13 @@
 #include "deob.h"
 
 void deob(char *in) {
+    char *d = malloc(LD*sizeof(char));
     const long long s[2] = {S0, S1};
-    char d[] = "OSTAR.password$OSB";
-    for (size_t i = 0; i < DL; i++) d[i] = (CS)[i];
+    for (size_t i = 0; i < LD; i++) d[i] = (CS)[i];
     size_t l = strlen(in) / 2;
     for (size_t i = 0; i < l; i++) {
-        for (size_t j = 0; j < DL; j++) {
-            DLT(0);
-            DLT(1);
-        }
+        for (size_t j = 0; j < LD; j++) { DLT(0); DLT(1); }
         DLS(i);
     }
-    INZ(l);
+    INZ(l); F(d);
 }

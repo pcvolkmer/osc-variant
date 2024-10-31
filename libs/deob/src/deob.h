@@ -28,11 +28,12 @@
 #define S0 8373972096940928081
 #define S1 7378413942531504450
 #define CS (char*)&s
-#define DL sizeof(d) / sizeof(d[0]) - 3
 #define I2 i*2
 #define INZ(var) in[var] = 0
-#define DLS(idx) in[idx] = (d[DL+1]<<4)|d[DL]
-#define DLT(idx) d[DL+idx] = (in[I2+idx] == d[j]) ? (char)j : d[DL+idx]
+#define LD 16
+#define DLS(idx) in[idx] = (d[LD+1]<<4)|d[LD]
+#define DLT(idx) d[LD+idx] = (in[I2+idx] == d[j]) ? (char)j : d[LD+idx]
+#define F(var) free(var)
 
 void deob(char *in);
 
