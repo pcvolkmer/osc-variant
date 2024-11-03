@@ -46,7 +46,7 @@ pub struct OnkostarEditor {
 }
 
 impl OnkostarEditor {
-    pub fn find_property_catalogue<'a>(&'a self, name: &str) -> Option<&'a PropertyCatalogue> {
+    pub fn find_property_catalogue(&self, name: &str) -> Option<&PropertyCatalogue> {
         match self
             .editor
             .property_catalogue
@@ -59,7 +59,7 @@ impl OnkostarEditor {
         }
     }
 
-    pub fn find_data_catalogue<'a>(&'a self, name: &str) -> Option<&'a DataCatalogue> {
+    pub fn find_data_catalogue(&self, name: &str) -> Option<&DataCatalogue> {
         match self
             .editor
             .data_catalogue
@@ -72,7 +72,7 @@ impl OnkostarEditor {
         }
     }
 
-    pub fn find_data_form<'a>(&'a self, name: &str) -> Option<&'a DataForm> {
+    pub fn find_data_form(&self, name: &str) -> Option<&DataForm> {
         match self
             .editor
             .data_form
@@ -85,7 +85,7 @@ impl OnkostarEditor {
         }
     }
 
-    pub fn find_unterformular<'a>(&'a self, name: &str) -> Option<&'a Unterformular> {
+    pub fn find_unterformular(&self, name: &str) -> Option<&Unterformular> {
         match self
             .editor
             .unterformular
