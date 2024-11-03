@@ -167,7 +167,7 @@ impl TryFrom<InputFile> for OnkostarEditor {
     type Error = FileError;
 
     fn try_from(value: InputFile) -> Result<Self, Self::Error> {
-        return match value {
+        match value {
             InputFile::Osc {
                 filename, content, ..
             } => match OnkostarEditor::from_str(content.as_str()) {
@@ -179,7 +179,7 @@ impl TryFrom<InputFile> for OnkostarEditor {
             | InputFile::Other { filename, .. } => {
                 Err(FileError::Parsing(filename, "Keine OSC-Datei".to_string()))
             }
-        };
+        }
     }
 }
 
