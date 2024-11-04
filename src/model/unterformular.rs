@@ -62,7 +62,8 @@ pub struct Unterformular {
     #[serde(rename = "TudokPosition")]
     tudok_position: String,
     #[serde(rename = "Aktenbereich")]
-    aktenbereich: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    aktenbereich: Option<String>,
     #[serde(rename = "BefragungRelevant")]
     #[serde(skip_serializing_if = "Option::is_none")]
     befragung_relevant: Option<bool>,
@@ -74,7 +75,8 @@ pub struct Unterformular {
     #[serde(rename = "BigSummary")]
     big_summary: String,
     #[serde(rename = "KalenderSchnipsel")]
-    kalender_schnipsel: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    kalender_schnipsel: Option<String>,
     #[serde(rename = "EmailTemplate")]
     #[serde(skip_serializing_if = "Option::is_none")]
     mail_template: Option<String>,
@@ -94,7 +96,8 @@ pub struct Unterformular {
     #[serde(skip_serializing_if = "Option::is_none")]
     erkrankung_big_summary: Option<String>,
     #[serde(rename = "Kontext")]
-    kontext: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    kontext: Option<i32>,
     #[serde(rename = "Datenart")]
     #[serde(skip_serializing_if = "Option::is_none")]
     datenart: Option<String>,
@@ -102,22 +105,32 @@ pub struct Unterformular {
     #[serde(skip_serializing_if = "Option::is_none")]
     show_history_button: Option<bool>,
     #[serde(rename = "TudokReadonly")]
-    tudok_readonly: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    tudok_readonly: Option<bool>,
     #[serde(rename = "VitalstatusRelevant")]
-    vitalstatus_relevant: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    vitalstatus_relevant: Option<bool>,
     #[serde(rename = "AutoNummerierung")]
-    auto_nummerierung: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    auto_nummerierung: Option<bool>,
     #[serde(rename = "Zwischenspeichern")]
-    zwischenspeichern: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    zwischenspeichern: Option<bool>,
     #[serde(rename = "Zurueckblaettern")]
-    zurueckblaettern: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    zurueckblaettern: Option<bool>,
     #[serde(rename = "Datenbankexport")]
-    datenbankexport: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    datenbankexport: Option<bool>,
     #[serde(rename = "DatenschutzRelevant")]
     #[serde(skip_serializing_if = "Option::is_none")]
     datenschutz_relevant: Option<bool>,
     #[serde(rename = "KonferenzRelevant")]
-    konferenz_relevant: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    konferenz_relevant: Option<bool>,
+    #[serde(rename = "Drucken")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    drucken: Option<String>,
     #[serde(rename = "hatUnterformulare")]
     hat_unterformulare: bool,
     #[serde(rename = "ScriptBeimSchliessen")]
@@ -292,6 +305,7 @@ impl Requires for Unterformular {
             .last()
             .unwrap_or_default()
     }
+
     fn requires_subform(&self, name: &str) -> bool {
         self.entries
             .entry

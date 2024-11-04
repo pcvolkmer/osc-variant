@@ -160,6 +160,9 @@ pub struct DataForm {
     guid: String,
     #[serde(rename = "Revision")]
     revision: u16,
+    #[serde(rename = "maxAnzahl")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    max_anzahl: Option<u16>,
     #[serde(rename = "VerknuepftGUID")]
     #[serde(skip_serializing_if = "Option::is_none")]
     verknuepft_guid: Option<String>,
@@ -302,6 +305,7 @@ impl Requires for DataForm {
             .last()
             .unwrap_or_default()
     }
+
     fn requires_subform(&self, name: &str) -> bool {
         self.entries
             .entry
@@ -317,6 +321,7 @@ impl Requires for DataForm {
             .last()
             .unwrap_or_default()
     }
+
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
         let mut result = self
             .data_catalogues
@@ -698,6 +703,7 @@ impl Sortable for Entry {
 #[serde(deny_unknown_fields)]
 pub struct DataFormEntries {
     #[serde(rename = "EntryName")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     entry_name: Option<Vec<String>>,
 }
 
