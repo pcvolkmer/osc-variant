@@ -28,11 +28,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::checks::{CheckNotice, Checkable};
 use crate::model::data_catalogue::DataCatalogue;
-use crate::model::data_form::DataForm;
+use crate::model::form::{DataFormType, Form, UnterformularType};
 use crate::model::other::{Ablaufschema, Akte, RecordLinkage, Rskript, SidGuid};
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::requirements::{Requirement, Requires};
-use crate::model::unterformular::Unterformular;
 use crate::model::{Comparable, FolderContent, FormEntryContainer, Listable, Sortable};
 use crate::profile::Profile;
 
@@ -72,7 +71,7 @@ impl OnkostarEditor {
         }
     }
 
-    pub fn find_data_form(&self, name: &str) -> Option<&DataForm> {
+    pub fn find_data_form(&self, name: &str) -> Option<&Form<DataFormType>> {
         match self
             .editor
             .data_form
@@ -85,7 +84,7 @@ impl OnkostarEditor {
         }
     }
 
-    pub fn find_unterformular(&self, name: &str) -> Option<&Unterformular> {
+    pub fn find_unterformular(&self, name: &str) -> Option<&Form<UnterformularType>> {
         match self
             .editor
             .unterformular
@@ -233,7 +232,7 @@ impl OnkostarEditor {
 
         self.editor
             .data_form
-            .sort_unstable_by(DataForm::compare_by_requirement);
+            .sort_unstable_by(Form::compare_by_requirement);
 
         self.editor.data_form.iter_mut().for_each(|item| {
             item.sorted();
@@ -245,7 +244,7 @@ impl OnkostarEditor {
 
         self.editor
             .unterformular
-            .sort_unstable_by(Unterformular::compare_by_requirement);
+            .sort_unstable_by(Form::compare_by_requirement);
 
         self.editor.unterformular.iter_mut().for_each(|item| {
             item.sorted();
@@ -519,9 +518,9 @@ pub struct Editor {
     #[serde(rename = "DataCatalogue", default)]
     data_catalogue: Vec<DataCatalogue>,
     #[serde(rename = "Unterformular", default)]
-    pub unterformular: Vec<Unterformular>,
+    pub unterformular: Vec<Form<UnterformularType>>,
     #[serde(rename = "DataForm", default)]
-    pub data_form: Vec<DataForm>,
+    pub data_form: Vec<Form<DataFormType>>,
 
     #[serde(rename = "Ablaufschema", default)]
     #[serde(skip_serializing_if = "Option::is_none")]

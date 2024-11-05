@@ -17,12 +17,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
-use std::cmp::Ordering;
-use std::collections::HashSet;
-
 use console::style;
 use serde::{Deserialize, Serialize};
+use std::any::TypeId;
+use std::cmp::Ordering;
+use std::collections::HashSet;
+use std::fmt::Debug;
+use std::marker::PhantomData;
 
 use crate::checks::CheckNotice::ErrorWithCode;
 use crate::checks::{CheckNotice, Checkable};
@@ -37,9 +38,18 @@ use crate::model::{
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
 
+#[derive(Debug)]
+pub struct DataFormType;
+
+#[derive(Debug)]
+pub struct UnterformularType;
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct Unterformular {
+pub struct Form<Type> {
+    #[serde(skip)]
+    form_type: PhantomData<Type>,
+
     #[serde(rename = "DataCatalogues")]
     data_catalogues: DataCatalogues,
     #[serde(rename = "Category")]
@@ -171,7 +181,7 @@ pub struct Unterformular {
     #[serde(skip_serializing_if = "Option::is_none")]
     seitenanzahl_sichtbar: Option<bool>,
     #[serde(rename = "Entries")]
-    entries: Entries<Entry>,
+    pub entries: Entries<Entry>,
     #[serde(rename = "PlausibilityRules")]
     plausibility_rules: PlausibilityRules<DataFormEntries>,
     #[serde(rename = "Haeufigkeiten")]
@@ -182,7 +192,7 @@ pub struct Unterformular {
     ordner: Ordner,
     #[serde(rename = "MenuCategory")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    menu_category: Option<MenuCategory>,
+    pub menu_category: Option<MenuCategory>,
     #[serde(rename = "PunkteKategorien")]
     #[serde(skip_serializing_if = "Option::is_none")]
     punkte_kategorien: Option<PunkteKategorien>,
@@ -191,7 +201,7 @@ pub struct Unterformular {
     ansichten: Option<Ansichten>,
 }
 
-impl FormEntryContainer for Unterformular {
+impl<Type: 'static> FormEntryContainer for Form<Type> {
     fn apply_profile(&mut self, profile: &Profile) {
         profile.forms.iter().for_each(|profile_form| {
             if self.name == profile_form.name {
@@ -222,21 +232,26 @@ impl FormEntryContainer for Unterformular {
     }
 }
 
-impl Listable for Unterformular {
+impl<Type: 'static> Listable for Form<Type> {
     fn to_listed_string(&self) -> String {
         format!(
-            "Unterformular ({}) '{}' in Revision '{}'",
+            "{} ({}) '{}' in Revision '{}'",
+            if TypeId::of::<Type>() == TypeId::of::<DataFormType>() {
+                "Formular"
+            } else {
+                "Unterformular"
+            },
             match self.is_system_library_content() {
                 true => style("S").yellow(),
                 _ => style("u"),
             },
             style(&self.name).yellow(),
-            style(&self.revision).yellow(),
+            style(&self.revision).yellow()
         )
     }
 }
 
-impl Sortable for Unterformular {
+impl<Type: 'static> Sortable for Form<Type> {
     fn sorting_key(&self) -> String {
         self.name.clone()
     }
@@ -265,7 +280,10 @@ impl Sortable for Unterformular {
     }
 }
 
-impl Comparable for Unterformular {
+impl<Type> Comparable for Form<Type>
+where
+    Type: Debug + 'static,
+{
     fn get_name(&self) -> String {
         self.name.clone()
     }
@@ -290,7 +308,10 @@ impl Comparable for Unterformular {
     }
 }
 
-impl Requires for Unterformular {
+impl<Type> Requires for Form<Type>
+where
+    Self: Listable + 'static,
+{
     fn requires_form_reference(&self, name: &str) -> bool {
         self.entries
             .entry
@@ -385,13 +406,37 @@ impl Requires for Unterformular {
     }
 }
 
-impl FolderContent for Unterformular {
+impl<Type: 'static> FolderContent for Form<Type> {
     fn get_library_folder(&self) -> String {
         self.ordner.bibliothek.name.to_string()
     }
 }
 
-impl Checkable for Unterformular {
+impl Checkable for Form<DataFormType> {
+    fn check(&self) -> Vec<CheckNotice> {
+        if self
+            .entries
+            .entry
+            .iter()
+            .filter(|entry| entry.procedure_date_status != "none")
+            .count()
+            == 0
+        {
+            return vec![ErrorWithCode {
+                code: "2023-0002".to_string(),
+                description: format!(
+                    "Formular '{}' hat keine Angabe zum Prozedurdatum",
+                    self.name
+                ),
+                line: None,
+                example: None,
+            }];
+        }
+        vec![]
+    }
+}
+
+impl Checkable for Form<UnterformularType> {
     fn check(&self) -> Vec<CheckNotice> {
         if self.hat_unterformulare {
             return vec![ErrorWithCode {
@@ -440,6 +485,339 @@ mod tests {
         let mut onkostar_editor = onkostar_editor.unwrap();
 
         let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     default_value: 'B'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].name,
+            "Auswahl"
+        );
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
+            ""
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].name,
+            "Auswahl"
+        );
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
+            "B"
+        )
+    }
+
+    #[test]
+    fn should_not_change_dataform_entry_default_value() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].name,
+            "Auswahl"
+        );
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
+            ""
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].name,
+            "Auswahl"
+        );
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
+            ""
+        )
+    }
+
+    #[test]
+    fn should_change_menu_category() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 menu_category:
+                   name: Testformulare
+                   position: 1.0
+                   column: 1
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        onkostar_editor.apply_profile(&profile);
+
+        match &onkostar_editor.editor.data_form[0].menu_category {
+            Some(menu_category) => assert_eq!(menu_category.name, "Testformulare"),
+            _ => panic!("Test failed: MenuCategory not found!"),
+        }
+    }
+
+    #[test]
+    fn should_keep_menu_category() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        onkostar_editor.apply_profile(&profile);
+
+        match &onkostar_editor.editor.data_form[0].menu_category {
+            Some(menu_category) => assert_eq!(menu_category.name, "Test"),
+            _ => panic!("Test failed: MenuCategory not found!"),
+        }
+    }
+
+    #[test]
+    fn should_change_dataform_entry_scripts_code_with_form_fields() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            None
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            Some(Script {
+                code: "// Example code&#10;console.log(42);".into(),
+                valid: true
+            })
+        );
+    }
+
+    #[test]
+    fn should_change_dataform_entry_scripts_code_with_form_references() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            None
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            Some(Script {
+                code: "// Example code&#10;console.log(42);".into(),
+                valid: true
+            })
+        );
+    }
+
+    #[test]
+    fn should_remove_dataform_entry_filter_with_form_fields() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     remove_filter: true
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
+            Some(Filter {
+                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
+                valid: true,
+                ref_entries: Some(RefEntries { ref_entry: None })
+            })
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
+            None
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
+            None
+        );
+    }
+
+    #[test]
+    fn should_remove_dataform_entry_filter_with_form_references() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_fields:
+                   - name: Auswahl
+                     remove_filter: true
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
+            Some(Filter {
+                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
+                valid: true,
+                ref_entries: Some(RefEntries { ref_entry: None })
+            })
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
+            None
+        );
+
+        onkostar_editor.apply_profile(&profile);
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
+            None
+        );
+
+        assert_eq!(
+            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
+            None
+        );
+    }
+
+    #[test]
+    fn should_change_unterformular_entry_default_value() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
                - name: 'Unterformular'
                  form_fields:
                    - name: Termin
@@ -472,7 +850,7 @@ mod tests {
     }
 
     #[test]
-    fn should_not_change_dataform_entry_default_value() {
+    fn should_not_change_unterformular_entry_default_value() {
         let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
 
         assert!(onkostar_editor.is_ok());
