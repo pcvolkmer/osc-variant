@@ -181,7 +181,7 @@ pub struct Form<Type> {
     #[serde(skip_serializing_if = "Option::is_none")]
     seitenanzahl_sichtbar: Option<bool>,
     #[serde(rename = "Entries")]
-    pub entries: Entries<Entry>,
+    entries: Entries<Entry>,
     #[serde(rename = "PlausibilityRules")]
     plausibility_rules: PlausibilityRules<DataFormEntries>,
     #[serde(rename = "Haeufigkeiten")]
@@ -192,7 +192,7 @@ pub struct Form<Type> {
     ordner: Ordner,
     #[serde(rename = "MenuCategory")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub menu_category: Option<MenuCategory>,
+    menu_category: Option<MenuCategory>,
     #[serde(rename = "PunkteKategorien")]
     #[serde(skip_serializing_if = "Option::is_none")]
     punkte_kategorien: Option<PunkteKategorien>,
