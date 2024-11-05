@@ -118,6 +118,7 @@ pub struct Version {
     #[serde(rename = "Description")]
     description: String,
     #[serde(rename = "LkrCode")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     lkr_code: Option<String>,
     #[serde(rename = "SID")]
     sid: String,
@@ -126,6 +127,7 @@ pub struct Version {
     #[serde(rename = "Revision")]
     revision: u16,
     #[serde(rename = "Entries")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     entries: Option<VersionEntries>,
     #[serde(rename = "Abbildung")]
     #[serde(skip_serializing_if = "Option::is_none")]
