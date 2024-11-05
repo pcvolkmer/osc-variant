@@ -33,6 +33,7 @@ pub struct Profile {
 impl Profile {
     pub fn embedded_profile(name: &str) -> Result<Profile, String> {
         let s = match name {
+            "UKA" => include_str!("../examples/dnpm-uka.yml"),
             "UKM" => include_str!("../examples/dnpm-ukm.yml"),
             "UKR" => include_str!("../examples/dnpm-ukr.yml"),
             "UKW" => include_str!("../examples/dnpm-ukw.yml"),
