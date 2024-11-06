@@ -14,6 +14,13 @@ sowie die Anzeige anhand eines Profils angepasst.
 Wird in einer OSC-Datei eine noch nicht bekannte Eigenschaft erkannt, wird die weitere Bearbeitung abgebrochen, um keine
 unvollständigen Ausgabedateien zu erzeugen.
 
+### Command Completion
+
+Die Anwendung kann selbständig Scripte zur automatischen Ergänzung der Unterbefehle erstellen,
+sollte dies nicht im Installationspaket enthalten sein.
+
+Weitere Informationen hier: [Command Completion](docs/completions.md)
+
 ### Beispiele
 
 Die folgenden Unterbefehle sind verfügbar
