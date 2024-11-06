@@ -18,24 +18,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+use crate::checks::{check_file, print_checks, CheckNotice};
+use crate::cli::{Cli, SubCommand};
+use crate::file_io::{FileError, FileReader, InputFile};
+use crate::model::onkostar_editor::OnkostarEditor;
+use crate::profile::Profile;
+use clap::CommandFactory;
+use clap_complete::generate;
+use console::style;
+use dialoguer::Confirm;
+use quick_xml::se::Serializer;
+use serde::Serialize;
+use sha256::digest;
 use std::error::Error;
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::path::{Path, PathBuf};
-
-use console::style;
-use dialoguer::Confirm;
-use quick_xml::se::Serializer;
-use serde::Serialize;
-use sha256::digest;
-
-use crate::checks::{check_file, print_checks, CheckNotice};
-use crate::cli::SubCommand;
-use crate::file_io::{FileError, FileReader, InputFile};
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::profile::Profile;
 
 fn write_outputfile(filename: String, content: &String) -> Result<(), FileError> {
     OpenOptions::new()
@@ -52,6 +52,15 @@ fn write_outputfile(filename: String, content: &String) -> Result<(), FileError>
 
 pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
     match command {
+        SubCommand::Completion { shell } => {
+            let command = &mut Cli::command();
+            generate(
+                shell,
+                command,
+                command.get_name().to_string(),
+                &mut std::io::stdout(),
+            );
+        }
         SubCommand::List {
             inputfile,
             sorted,
@@ -244,7 +253,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
 
             data_a.print_diff(data_b, strict);
         }
-        SubCommand::Sha256Sum { inputfile } => match fs::read_to_string(inputfile.clone()) {
+        SubCommand::Sha256Sum { inputfile } => match fs::read(inputfile.clone()) {
             Ok(content) => {
                 println!(
                     "{}  {}",

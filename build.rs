@@ -18,16 +18,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use std::fs;
-use std::io::Error;
-
+use clap::CommandFactory;
 use clap_complete::generate_to;
 use clap_complete::Shell::Bash;
+use std::fs;
+use std::io::Error;
 
 include!("src/cli.rs");
 
 fn main() -> Result<(), Error> {
-    let mut cmd = build_cli();
+    let mut cmd = Cli::command();
 
     let package_name = std::env::var("CARGO_CRATE_NAME").unwrap_or("osc-variant".to_string());
 
