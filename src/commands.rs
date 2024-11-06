@@ -253,7 +253,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
 
             data_a.print_diff(data_b, strict);
         }
-        SubCommand::Sha256Sum { inputfile } => match fs::read_to_string(inputfile.clone()) {
+        SubCommand::Sha256Sum { inputfile } => match fs::read(inputfile.clone()) {
             Ok(content) => {
                 println!(
                     "{}  {}",
