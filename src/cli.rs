@@ -18,12 +18,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use clap::{Command, CommandFactory, Parser, Subcommand};
-
-#[allow(dead_code)]
-fn build_cli() -> Command {
-    Cli::command()
-}
+use clap::{Parser, Subcommand};
+use clap_complete::Shell;
 
 #[derive(Parser)]
 #[command(author, version, about)]
@@ -35,6 +31,12 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum SubCommand {
+    #[command(
+        name = "completion",
+        about = "Erzeuge und gebe Command-Completion aus",
+        hide = true
+    )]
+    Completion { shell: Shell },
     #[command(
         name = "sha256sum",
         about = "Berechne SHA256 Prüfsumme für die angegebene Datei"
