@@ -270,9 +270,9 @@ pub struct Entry {
     #[serde(skip_serializing_if = "Option::is_none")]
     parent_ref_id: Option<u32>,
     #[serde(rename = "Type")]
-    pub type_: String,
+    pub(crate) type_: String,
     #[serde(rename = "Name")]
-    pub name: String,
+    pub(crate) name: String,
     #[serde(rename = "Description")]
     description: String,
     #[serde(rename = "Active")]
@@ -297,7 +297,7 @@ pub struct Entry {
     #[serde(rename = "MultipleChoice")]
     multiple_choice: bool,
     #[serde(rename = "DefaultValue")]
-    pub default_value: String,
+    pub(crate) default_value: String,
     #[serde(rename = "Alignment")]
     alignment: String,
     #[serde(rename = "Direction")]
@@ -310,7 +310,7 @@ pub struct Entry {
     #[serde(rename = "ElementParent")]
     element_parent: String,
     #[serde(rename = "ProcedureDateStatus")]
-    pub procedure_date_status: String,
+    pub(crate) procedure_date_status: String,
     #[serde(rename = "ZuordnungErkrankung")]
     zuordnung_erkrankung: String,
     #[serde(rename = "Grafik")]
@@ -326,7 +326,7 @@ pub struct Entry {
     datenart: Option<String>,
     #[serde(rename = "Filter")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub filter: Option<Filter>,
+    pub(crate) filter: Option<Filter>,
     #[serde(rename = "NotSpecified")]
     not_specified: bool,
     #[serde(rename = "Scripts")]

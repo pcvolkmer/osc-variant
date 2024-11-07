@@ -19,10 +19,9 @@
  */
 
 use crate::model::data_catalogue::DataCatalogue;
-use crate::model::data_form::DataForm;
+use crate::model::form::{DataFormType, Form, UnterformularType};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::property_catalogue::PropertyCatalogue;
-use crate::model::unterformular::Unterformular;
 use crate::model::{Comparable, Listable, Sortable};
 use std::fmt::Display;
 
@@ -32,14 +31,14 @@ pub enum Requirement<'a> {
     DataCatalogue(&'a DataCatalogue),
     ExternalPropertyCatalogue(String),
     ExternalDataCatalogue(String),
-    DataFormReference(&'a DataForm),
-    UnterformularReference(&'a Unterformular),
+    DataFormReference(&'a Form<DataFormType>),
+    UnterformularReference(&'a Form<UnterformularType>),
     #[allow(dead_code)]
     ExternalDataFormReference(String),
     ExternalUnterformularReference(String),
 
-    DataFormSubform(&'a DataForm),
-    UnterformularSubform(&'a Unterformular),
+    DataFormSubform(&'a Form<DataFormType>),
+    UnterformularSubform(&'a Form<UnterformularType>),
     #[allow(dead_code)]
     ExternalDataFormSubform(String),
     ExternalUnterformularSubform(String),
