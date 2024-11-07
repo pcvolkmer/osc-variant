@@ -200,7 +200,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             }
 
             if fix {
-                // No operation as of now
+                data = data.fix();
             }
 
             if sorted {
