@@ -236,6 +236,15 @@ pub fn print_checks() {
             ",
             fixable: false,
         },
+        Problem {
+            code: "2024-0005",
+            name: "Formular hat Formularverweise ohne Angabe des Formulars in den Formularfeldern",
+            description: "  Formularverweise ohne Angabe des Formulars führen zu Problemen\n  \
+            bei der Verwendung und Darstellung des entsprechenden Formularverweises.\n\n  \
+            Dieses Problem muss manuell behoben werden.
+            ",
+            fixable: false,
+        },
     ]
     .iter()
     .for_each(|problem| println!("{}\n", problem))

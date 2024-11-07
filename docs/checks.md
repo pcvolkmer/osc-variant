@@ -26,3 +26,9 @@ Dies kann bei wechselseitiger Abhängigkeit zwischen zwei (Unter-)Formularen auf
 
 In diesem Fall kann ein erneuter/zweiter Import helfen, da das Onkostar in diesem Fall alle Formulare importiert hat und
 der Formularverweis dann gespeichert werden kann.
+
+### Problem `2024-0005`: Formular hat Formularverweise ohne Angabe des Formulars in den Formularfeldern
+
+Formularverweise ohne Angabe des Formulars führen zu Problemen bei der Verwendung und Darstellung des entsprechenden
+Formularverweises.
+Dieses Problem muss manuell behoben werden.
