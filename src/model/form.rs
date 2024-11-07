@@ -424,7 +424,7 @@ impl<Type> Form<Type> {
 
         let mut result = vec![];
 
-        if missing_forms.len() > 0 {
+        if !missing_forms.is_empty() {
             result.push(ErrorWithCode {
                 code: "2024-0005".to_string(),
                 description: format!(
