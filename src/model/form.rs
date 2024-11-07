@@ -412,9 +412,38 @@ impl<Type: 'static> FolderContent for Form<Type> {
     }
 }
 
+impl<Type> Form<Type> {
+    fn common_check(&self) -> Vec<CheckNotice> {
+        let missing_forms = self
+            .entries
+            .entry
+            .iter()
+            .filter(|entry| entry.type_ == "formReference" && entry.referenced_data_form.is_none())
+            .map(|entry| format!("'{}'", entry.get_name()))
+            .collect::<Vec<_>>();
+
+        let mut result = vec![];
+
+        if missing_forms.len() > 0 {
+            result.push(ErrorWithCode {
+                code: "2024-0005".to_string(),
+                description: format!(
+                    "Formular '{}' hat Formularverweise ohne Angabe des Formulars in: {}",
+                    self.name,
+                    missing_forms.join(", ")
+                ),
+                line: None,
+                example: None,
+            });
+        }
+
+        result
+    }
+}
+
 impl Checkable for Form<DataFormType> {
     fn check(&self) -> Vec<CheckNotice> {
-        if self
+        let mut result = if self
             .entries
             .entry
             .iter()
@@ -422,7 +451,7 @@ impl Checkable for Form<DataFormType> {
             .count()
             == 0
         {
-            return vec![ErrorWithCode {
+            vec![ErrorWithCode {
                 code: "2023-0002".to_string(),
                 description: format!(
                     "Formular '{}' hat keine Angabe zum Prozedurdatum",
@@ -430,16 +459,21 @@ impl Checkable for Form<DataFormType> {
                 ),
                 line: None,
                 example: None,
-            }];
-        }
-        vec![]
+            }]
+        } else {
+            vec![]
+        };
+
+        result.append(&mut self.common_check());
+
+        result
     }
 }
 
 impl Checkable for Form<UnterformularType> {
     fn check(&self) -> Vec<CheckNotice> {
-        if self.hat_unterformulare {
-            return vec![ErrorWithCode {
+        let mut result = if self.hat_unterformulare {
+            vec![ErrorWithCode {
                 code: "2023-0001".to_string(),
                 description: format!(
                     "Unterformular '{}' mit Markierung 'hat Unterformulare'",
@@ -447,10 +481,14 @@ impl Checkable for Form<UnterformularType> {
                 ),
                 line: None,
                 example: None,
-            }];
-        }
+            }]
+        } else {
+            vec![]
+        };
 
-        vec![]
+        result.append(&mut self.common_check());
+
+        result
     }
 }
 
