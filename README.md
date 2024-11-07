@@ -158,6 +158,8 @@ Eine Liste mit bekannten Problemen wird mit `check --list` ausgegeben.
 
 *Bei Verwendung der OSB-Funktionalität kann die Eingabe eines Passworts erforderlich sein.*
 
+Weitere Informationen hier: [Checks](docs/checks.md)
+
 #### Kompakte Ausgabe
 
 OSC-Dateien sind XML-Dateien. Diese Anwendung ermöglicht optional die Ausgabe als kompaktere XML-Datei ohne
@@ -187,14 +189,14 @@ da Onkostar einen Formularimport sequenziell, ohne Berücksichtigung von Abhäng
 
 Dies erlaubt eine konsistente Reihenfolge der Einträge, wodurch ein direkter Vergleich mit Vorversionen ermöglicht wird.
 
-*Die Einteilung in Formualre und Unterformualare wird hierdurch nicht angepasst.*
+*Die Einteilung in Formulare und Unterformulare wird hierdurch nicht angepasst.*
 
 ##### Entfernen von Inhalten der Systembibliothek bei Modifikation
 
 Mit der die experimentelle Option `--strip` ist es möglich, die in der OSC-Datei enthaltenen und beim Import nicht
 genutzten Inhalte aus der Systembibliothek zu entfernen.
 
-Hierbei werden alle Inhalte entfernt, die im Ordner "ONKOSTAR Bibliothek" enthalten sind, beim Import jedoch ignoriert
+Hierbei werden alle Inhalte entfernt, die im Ordner `ONKOSTAR Bibliothek` enthalten sind, beim Import jedoch ignoriert
 werden.
 
 ## Profile
@@ -231,7 +233,7 @@ forms:
 
 Hierzu wird die Anwendung angewiesen im Formular "ExampleForm" den Formularverweis im Formularfeld "ref_first_mtb":
 
-* den Verweis auf das Formular "Formularverweis.Variante" zu setzen
+* den Verweis auf das Formular `Formularverweis.Variante` zu setzen
 * die Anzeige im Auswahlmenü auf "Referenziertes Formular vom: {Datum}" zu setzen
 * die Anzeige unterhalb des Auswahlmenüs auf "Datum im referenzierten Formular: {Datum}" zu setzen
 * den Code zur Ausführung "nach Aktualisierung" für Formularfelder werden auf die angegebene, mehrzeilige Zeichenkette
@@ -252,7 +254,7 @@ Um das Gegenteil zu erreichen und das Formularfeld *immer* anzuzeigen, kann `nev
 
 Der Standardwert des Feldes `otherformfield` ist nun auf `T` gesetzt.
 Zum Löschen eines Standardwerts ist `""` anzugeben.
-Das Formularfeld wird dabei nun immer angezeigt, auch wenn zuvor ein (Anzeige)-Filter gesetzt war.
+Das Formularfeld wird dadurch immer angezeigt, auch wenn zuvor ein (Anzeige)-Filter gesetzt war.
 Dieser wird mir `remove_filter: true` oder `never_hide: true` entfernt.
 
 **Achtung!** Diese Anwendung überprüft keine Scripts und verwendet angegebene Scripts als "valid" im resultierenden
