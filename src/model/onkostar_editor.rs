@@ -212,7 +212,7 @@ impl OnkostarEditor {
     }
 
     pub fn fix(mut self) -> Self {
-        fn has_error1(form: &Form<UnterformularType>, error_code: &str) -> bool {
+        fn has_unterformular_error(form: &Form<UnterformularType>, error_code: &str) -> bool {
             form.check()
                 .iter()
                 .filter(|&check_notice| match check_notice {
@@ -223,7 +223,7 @@ impl OnkostarEditor {
                 > 0
         }
 
-        fn has_error2(form: &Form<DataFormType>, error_code: &str) -> bool {
+        fn has_dataform_error(form: &Form<DataFormType>, error_code: &str) -> bool {
             form.check()
                 .iter()
                 .filter(|&check_notice| match check_notice {
@@ -237,24 +237,24 @@ impl OnkostarEditor {
         self.editor
             .data_form
             .iter_mut()
-            .filter(|form| has_error2(form, "2023-0002"))
+            .filter(|form| has_dataform_error(form, "2023-0002"))
             .map(|form| form.to_unterformular())
             .for_each(|form| self.editor.unterformular.push(form));
 
         self.editor
             .unterformular
             .iter_mut()
-            .filter(|form| has_error1(form, "2023-0001"))
+            .filter(|form| has_unterformular_error(form, "2023-0001"))
             .map(|form| form.to_dataform())
             .for_each(|form| self.editor.data_form.push(form));
 
         self.editor
             .data_form
-            .retain(|form| !has_error2(form, "2023-0002"));
+            .retain(|form| !has_dataform_error(form, "2023-0002"));
 
         self.editor
             .unterformular
-            .retain(|form| !has_error1(form, "2023-0001"));
+            .retain(|form| !has_unterformular_error(form, "2023-0001"));
 
         // Sort forms by requirements
         self.editor
