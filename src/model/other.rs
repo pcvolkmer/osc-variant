@@ -111,26 +111,33 @@ pub struct Akte {
     #[serde(rename = "Name")]
     pub name: String,
     #[serde(rename = "Beschreibung")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub beschreibung: Option<String>,
     #[serde(rename = "Ordner")]
     pub ordner: Ordner,
     #[serde(rename = "Aktiv")]
     pub aktiv: bool,
     #[serde(rename = "Kontext")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub kontext: Option<String>,
     #[serde(rename = "SID")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sid: Option<i32>,
     #[serde(rename = "GUID")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub guid: Option<String>,
     #[serde(rename = "Revision")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub revision: Option<i32>,
     #[serde(rename = "Modul")]
     pub modul: Vec<Modul>,
     #[serde(rename = "BerechtigungenAktiv")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub berechtigungen_aktiv: Option<bool>,
     #[serde(rename = "AkteRolle")]
     pub akte_rolle: Vec<AkteRolle>,
     #[serde(rename = "OffeneProzedurenReiterAktiv")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub offene_prozeduren_reiter_aktiv: Option<bool>,
 }
 
@@ -139,6 +146,7 @@ pub struct AkteRolle {
     #[serde(rename = "Name")]
     pub name: String,
     #[serde(rename = "Beschreibung")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub beschreibung: Option<String>,
     #[serde(rename = "ModulBerechtigung")]
     pub modul_berechtigung: Vec<ModulBerechtigung>,
@@ -175,20 +183,26 @@ pub struct Rskript {
     #[serde(rename = "Name")]
     pub name: String,
     #[serde(rename = "Titel")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub titel: Option<String>,
     #[serde(rename = "Skript")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub skript: Option<String>,
     #[serde(rename = "Bemerkung")]
     pub bemerkung: String,
     #[serde(rename = "Felder")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub felder: Option<String>,
     #[serde(rename = "Ordner")]
     pub ordner: Ordner,
     #[serde(rename = "SID")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sid: Option<i32>,
     #[serde(rename = "GUID")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub guid: Option<String>,
     #[serde(rename = "Revision")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub revision: Option<i32>,
 }
 
@@ -205,34 +219,46 @@ pub struct Modul {
     #[serde(rename = "Name")]
     pub name: String,
     #[serde(rename = "Beschreibung")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub beschreibung: Option<String>,
     #[serde(rename = "MenuEntry")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub menu_entry: Option<String>,
     #[serde(rename = "Typ")]
     pub typ: i32,
     #[serde(rename = "Position")]
     pub position: f64,
     #[serde(rename = "Konfiguration")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub konfiguration: Option<String>,
     #[serde(rename = "SID")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sid: Option<i32>,
     #[serde(rename = "GUID")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub guid: Option<String>,
     #[serde(rename = "Revision")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub revision: Option<i32>,
     #[serde(rename = "Formular")]
     pub formular: Vec<ModulFormular>,
     #[serde(rename = "Ansicht")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ansicht: Option<Ansicht>,
     #[serde(rename = "ElementParentGUID")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub element_parent_guid: Option<String>,
     #[serde(rename = "GeoeffnetAnzeigen")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub geoeffnet_anzeigen: Option<bool>,
     #[serde(rename = "AbAufschliessenAktiv")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub ab_aufschliessen_aktiv: Option<bool>,
     #[serde(rename = "AnmerkungenAktiv")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub anmerkungen_aktiv: Option<bool>,
     #[serde(rename = "AufgabenlisteAktiv")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub aufgabenliste_aktiv: Option<bool>,
 }
 
@@ -253,6 +279,7 @@ pub struct ModulBerechtigung {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ModulFormular {
     #[serde(rename = "Name")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(rename = "SID")]
     pub sid: i32,

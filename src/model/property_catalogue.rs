@@ -133,6 +133,7 @@ pub struct Version {
     #[serde(skip_serializing_if = "Option::is_none")]
     abbildung: Option<Vec<Abbildung>>,
     #[serde(rename = "Categories")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     categories: Option<Categories>,
 }
 
@@ -189,6 +190,7 @@ pub struct VersionEntry {
     #[serde(rename = "ShortDescription")]
     short_description: String,
     #[serde(rename = "Description")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<String>,
     #[serde(rename = "Synonyms", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
