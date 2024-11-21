@@ -17,14 +17,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use console::style;
-use serde::{Deserialize, Serialize};
-use std::any::TypeId;
-use std::cmp::Ordering;
-use std::collections::HashSet;
-use std::fmt::Debug;
-use std::marker::PhantomData;
-
 use crate::checks::CheckNotice::ErrorWithCode;
 use crate::checks::{CheckNotice, Checkable};
 use crate::model::onkostar_editor::OnkostarEditor;
@@ -37,6 +29,15 @@ use crate::model::{
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
+use console::style;
+use quick_xml::de::from_str;
+use quick_xml::se::Serializer;
+use serde::{Deserialize, Serialize};
+use std::any::TypeId;
+use std::cmp::Ordering;
+use std::collections::HashSet;
+use std::fmt::Debug;
+use std::marker::PhantomData;
 
 #[derive(Debug)]
 pub struct DataFormType;
@@ -199,6 +200,24 @@ pub struct Form<Type> {
     #[serde(rename = "Ansichten")]
     #[serde(skip_serializing_if = "Option::is_none")]
     ansichten: Option<Ansichten>,
+}
+
+impl Form<DataFormType> {
+    pub(crate) fn to_unterformular(&self) -> Form<UnterformularType> {
+        let mut buf = String::new();
+        let serializer = Serializer::new(&mut buf);
+        self.serialize(serializer).expect("Generated XML");
+        from_str::<Form<UnterformularType>>(&buf).unwrap()
+    }
+}
+
+impl Form<UnterformularType> {
+    pub(crate) fn to_dataform(&self) -> Form<DataFormType> {
+        let mut buf = String::new();
+        let serializer = Serializer::new(&mut buf);
+        self.serialize(serializer).expect("Generated XML");
+        from_str::<Form<DataFormType>>(&buf).unwrap()
+    }
 }
 
 impl<Type: 'static> FormEntryContainer for Form<Type> {
