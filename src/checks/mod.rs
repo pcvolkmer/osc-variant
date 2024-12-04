@@ -177,7 +177,7 @@ pub fn print_checks() {
         fixable: bool,
     }
 
-    impl<'a> Display for Problem<'a> {
+    impl Display for Problem<'_> {
         fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
             write!(
                 f,

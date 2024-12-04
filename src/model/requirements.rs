@@ -103,7 +103,7 @@ where
         false
     }
 
-    fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement>;
+    fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement<'a>>;
 
     fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
         format!(

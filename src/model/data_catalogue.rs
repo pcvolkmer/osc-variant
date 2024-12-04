@@ -100,7 +100,7 @@ impl Comparable for DataCatalogue {
 }
 
 impl Requires for DataCatalogue {
-    fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
+    fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement<'a>> {
         let mut result = self
             .entries
             .entry

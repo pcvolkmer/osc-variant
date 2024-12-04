@@ -344,7 +344,7 @@ where
             .unwrap_or_default()
     }
 
-    fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement> {
+    fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement<'a>> {
         let mut result = self
             .data_catalogues
             .data_catalogue
