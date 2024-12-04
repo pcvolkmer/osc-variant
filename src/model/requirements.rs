@@ -123,8 +123,7 @@ where
                                 }
                                 _ => None,
                             })
-                            .filter(Option::is_some)
-                            .map(|item| format!("    - {}\n", item.unwrap()))
+                            .filter_map(|item| item.map(|item| format!("    - {item}\n")))
                             .collect::<Vec<_>>()
                             .join("");
 

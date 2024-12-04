@@ -178,25 +178,33 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             let mut strip = strip;
 
             if interactive {
-                compact = Confirm::new()
-                    .with_prompt("Kompakte Ausgabe, ohne Einrücken?")
-                    .default(compact)
-                    .interact()
-                    .unwrap();
+                compact = matches!(
+                    Confirm::new()
+                        .with_prompt("Kompakte Ausgabe, ohne Einrücken?")
+                        .default(compact)
+                        .interact(),
+                    Ok(true)
+                );
 
-                sorted = Confirm::new()
-                    .with_prompt("Sortiere Kataloge und Formulare nach Name und Abhängigkeiten?")
-                    .default(sorted)
-                    .interact()
-                    .unwrap();
+                sorted = matches!(
+                    Confirm::new()
+                        .with_prompt(
+                            "Sortiere Kataloge und Formulare nach Name und Abhängigkeiten?"
+                        )
+                        .default(sorted)
+                        .interact(),
+                    Ok(true)
+                );
 
-                strip = Confirm::new()
-                    .with_prompt(
-                        "Entferne Einträge aus der Systembibliothek die nicht importiert werden?",
-                    )
-                    .default(strip)
-                    .interact()
-                    .unwrap();
+                strip = matches!(
+                    Confirm::new()
+                        .with_prompt(
+                            "Entferne Einträge aus der Systembibliothek die nicht importiert werden?",
+                        )
+                        .default(strip)
+                        .interact(),
+                    Ok(true)
+                );
             }
 
             if fix {
@@ -218,7 +226,9 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                 serializer.indent(' ', 2);
             }
 
-            data.serialize(serializer).expect("Generated XML");
+            data.serialize(serializer).map_err(|_| {
+                FileError::Writing("Cannot serialize result".to_string(), String::new())
+            })?;
 
             let output = &"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 .to_string()

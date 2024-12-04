@@ -42,6 +42,18 @@ lto = "thin"
 strip = true
 panic = "abort"
 
+# Lints
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+
+[lints.rust]
+unused_must_use = "deny"
+
+# Packaging
+
 [package.metadata.deb]
 copyright = "Copyright (C) 2023-2024 the original author or authors"
 extended-description = "Anwendung zum Anpassen einer OSC-Datei an einen Standort."
