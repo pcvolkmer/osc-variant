@@ -212,7 +212,7 @@ impl OnkostarEditor {
     pub fn sorted(&mut self) {
         self.editor
             .property_catalogue
-            .sort_unstable_by_key(|e| e.sorting_key());
+            .sort_unstable_by_key(Sortable::sorting_key);
 
         self.editor.property_catalogue.iter_mut().for_each(|item| {
             item.sorted();
@@ -220,7 +220,7 @@ impl OnkostarEditor {
 
         self.editor
             .data_catalogue
-            .sort_unstable_by_key(|e| e.sorting_key());
+            .sort_unstable_by_key(Sortable::sorting_key);
 
         self.editor.data_catalogue.iter_mut().for_each(|item| {
             item.sorted();
@@ -325,14 +325,8 @@ impl OnkostarEditor {
 
         let mut has_diff = false;
 
-        let names_a = list_a
-            .iter()
-            .map(|entry| entry.get_name())
-            .collect::<Vec<_>>();
-        let names_b = list_b
-            .iter()
-            .map(|entry| entry.get_name())
-            .collect::<Vec<_>>();
+        let names_a = list_a.iter().map(Comparable::get_name).collect::<Vec<_>>();
+        let names_b = list_b.iter().map(Comparable::get_name).collect::<Vec<_>>();
 
         names_b.iter().for_each(|entry| {
             if !names_a.contains(entry) {
@@ -424,14 +418,14 @@ impl Checkable for OnkostarEditor {
             .editor
             .data_form
             .iter()
-            .flat_map(|entity| entity.check())
+            .flat_map(Form::check)
             .collect::<Vec<_>>();
 
         let other = &mut self
             .editor
             .unterformular
             .iter()
-            .flat_map(|entity| entity.check())
+            .flat_map(Form::check)
             .collect::<Vec<_>>();
 
         result.append(other);

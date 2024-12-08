@@ -147,7 +147,7 @@ impl Sortable for Version {
         Self: Sized,
     {
         if let Some(ref mut abbildung) = self.abbildung {
-            abbildung.sort_unstable_by_key(|item| item.sorting_key());
+            abbildung.sort_unstable_by_key(Abbildung::sorting_key);
             abbildung.iter_mut().for_each(|item| {
                 item.sorted();
             });
@@ -156,7 +156,7 @@ impl Sortable for Version {
         if let Some(ref mut entries) = self.entries {
             entries
                 .content
-                .sort_unstable_by_key(|item| item.sorting_key());
+                .sort_unstable_by_key(VersionEntry::sorting_key);
             entries.content.iter_mut().for_each(|item| {
                 item.sorted();
             });
@@ -165,7 +165,7 @@ impl Sortable for Version {
         if let Some(ref mut categories) = self.categories {
             categories
                 .content
-                .sort_unstable_by_key(|item| item.sorting_key());
+                .sort_unstable_by_key(Category::sorting_key);
             categories.content.iter_mut().for_each(|item| {
                 item.sorted();
             });
@@ -246,7 +246,7 @@ impl Sortable for Category {
     {
         self.category_entries
             .content
-            .sort_unstable_by_key(|item| item.sorting_key());
+            .sort_unstable_by_key(CategoryEntry::sorting_key);
         self.category_entries.content.iter_mut().for_each(|item| {
             item.sorted();
         });
@@ -305,7 +305,8 @@ impl Sortable for Abbildung {
     where
         Self: Sized,
     {
-        self.content.sort_unstable_by_key(|item| item.sorting_key());
+        self.content
+            .sort_unstable_by_key(AbbildungEintrag::sorting_key);
         self.content.iter_mut().for_each(|item| {
             item.sorted();
         });

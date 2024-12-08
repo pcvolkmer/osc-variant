@@ -260,9 +260,7 @@ impl<Type: 'static> Sortable for Form<Type> {
     fn sorted(&mut self) -> &Self {
         self.data_catalogues.data_catalogue.sort_unstable();
 
-        self.entries
-            .entry
-            .sort_unstable_by_key(|item| item.sorting_key());
+        self.entries.entry.sort_unstable_by_key(Entry::sorting_key);
 
         self.entries.entry.iter_mut().for_each(|item| {
             item.sorted();
@@ -357,7 +355,7 @@ where
                 None => Requirement::ExternalDataCatalogue(entry.to_string()),
             })
             .collect::<Vec<_>>();
-        result.sort_unstable_by_key(|item| item.sorting_key());
+        result.sort_unstable_by_key(Requirement::sorting_key);
 
         let referenced_forms = &mut self
             .entries
@@ -378,7 +376,7 @@ where
                 },
             })
             .collect::<Vec<_>>();
-        referenced_forms.sort_unstable_by_key(|item| item.sorting_key());
+        referenced_forms.sort_unstable_by_key(Requirement::sorting_key);
         result.append(referenced_forms);
 
         let sub_forms = &mut self
@@ -400,7 +398,7 @@ where
                 },
             })
             .collect::<Vec<_>>();
-        sub_forms.sort_unstable_by_key(|item| item.sorting_key());
+        sub_forms.sort_unstable_by_key(Requirement::sorting_key);
         result.append(sub_forms);
 
         result

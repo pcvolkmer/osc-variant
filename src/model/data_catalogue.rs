@@ -80,9 +80,7 @@ impl Sortable for DataCatalogue {
     }
 
     fn sorted(&mut self) -> &Self {
-        self.entries
-            .entry
-            .sort_unstable_by_key(|item| item.sorting_key());
+        self.entries.entry.sort_unstable_by_key(Entry::sorting_key);
         self.entries.entry.iter_mut().for_each(|item| {
             item.sorted();
         });
@@ -118,7 +116,7 @@ impl Requires for DataCatalogue {
                 None => Requirement::ExternalPropertyCatalogue(entry),
             })
             .collect::<Vec<_>>();
-        result.sort_unstable_by_key(|item| item.sorting_key());
+        result.sort_unstable_by_key(Requirement::sorting_key);
 
         result
     }
@@ -230,7 +228,7 @@ impl Sortable for Entry {
     {
         if let Some(ref mut use_) = self.use_ {
             use_.program_module
-                .sort_unstable_by_key(|item| item.sorting_key());
+                .sort_unstable_by_key(ProgramModule::sorting_key);
         }
         self
     }
