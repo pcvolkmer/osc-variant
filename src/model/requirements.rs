@@ -73,21 +73,21 @@ impl Display for Requirement<'_> {
             Requirement::DataFormSubform(item) => item.to_listed_string(),
             Requirement::UnterformularSubform(item) => item.to_listed_string(),
             Requirement::ExternalPropertyCatalogue(name) => {
-                format!("Merkmalskatalog (-) '{}' - hier nicht enthalten", name)
+                format!("Merkmalskatalog (-) '{name}' - hier nicht enthalten")
             }
             Requirement::ExternalDataCatalogue(name) => {
-                format!("Datenkatalog (-) '{}' - hier nicht enthalten", name)
+                format!("Datenkatalog (-) '{name}' - hier nicht enthalten")
             }
             Requirement::ExternalDataFormReference(name)
             | Requirement::ExternalDataFormSubform(name) => {
-                format!("Formular (-) '{}' - hier nicht enthalten", name)
+                format!("Formular (-) '{name}' - hier nicht enthalten")
             }
             Requirement::ExternalUnterformularReference(name)
             | Requirement::ExternalUnterformularSubform(name) => {
-                format!("Unterformular (-) '{}' - hier nicht enthalten", name)
+                format!("Unterformular (-) '{name}' - hier nicht enthalten")
             }
         };
-        write!(f, "{}", str)
+        write!(f, "{str}")
     }
 }
 
@@ -134,19 +134,19 @@ where
                         }
                     }
                     Requirement::ExternalDataCatalogue(_) => {
-                        Some(format!("  + {}\n", entry))
+                        Some(format!("  + {entry}\n"))
                     }
                     Requirement::DataFormReference(_)
                     | Requirement::ExternalDataFormReference(_)
                     | Requirement::UnterformularReference(_)
                     | Requirement::ExternalUnterformularReference(_) => {
-                        Some(format!("  > {}\n", entry))
+                        Some(format!("  > {entry}\n"))
                     }
                     Requirement::DataFormSubform(_)
                     | Requirement::ExternalDataFormSubform(_)
                     | Requirement::UnterformularSubform(_)
                     | Requirement::ExternalUnterformularSubform(_) => {
-                        Some(format!("  * {}\n", entry))
+                        Some(format!("  * {entry}\n"))
                     }
                     _ => None,
                 })

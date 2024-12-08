@@ -63,9 +63,10 @@ impl Listable for DataCatalogue {
     fn to_listed_string(&self) -> String {
         format!(
             "Datenkatalog ({}) '{}' in Revision '{}'",
-            match self.is_system_library_content() {
-                true => style("S").yellow(),
-                _ => style("u"),
+            if self.is_system_library_content() {
+                style("S").yellow()
+            } else {
+                style("u")
             },
             style(&self.name).yellow(),
             style(&self.revision).yellow()
@@ -129,11 +130,9 @@ impl Requires for DataCatalogue {
             self.get_required_entries(all)
                 .iter()
                 .map(|entry| match entry {
-                    Requirement::PropertyCatalogue(_) => {
-                        Some(format!("  - {}\n", entry))
-                    }
-                    Requirement::ExternalPropertyCatalogue(_) => {
-                        Some(format!("  - {}\n", entry))
+                    Requirement::PropertyCatalogue(_)
+                    | Requirement::ExternalPropertyCatalogue(_) => {
+                        Some(format!("  - {entry}\n"))
                     }
                     _ => None,
                 })
@@ -231,7 +230,7 @@ impl Sortable for Entry {
     {
         if let Some(ref mut use_) = self.use_ {
             use_.program_module
-                .sort_unstable_by_key(|item| item.sorting_key())
+                .sort_unstable_by_key(|item| item.sorting_key());
         }
         self
     }

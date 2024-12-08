@@ -138,7 +138,7 @@ pub trait Fixable {
 }
 
 #[allow(unused_variables)]
-pub fn check_file(file: &Path, password: Option<String>) -> Result<Vec<CheckNotice>, CheckNotice> {
+pub fn check_file(file: &Path, password: &Option<String>) -> Result<Vec<CheckNotice>, CheckNotice> {
     match file.extension() {
         Some(ex) => match ex.to_str() {
             #[cfg(feature = "unzip-osb")]
@@ -163,13 +163,6 @@ pub fn check_file(file: &Path, password: Option<String>) -> Result<Vec<CheckNoti
 }
 
 pub fn print_checks() {
-    println!(
-        "{}",
-        style("Die folgenden Probleme sind bekannt\n")
-            .yellow()
-            .bold()
-    );
-
     struct Problem<'a> {
         code: &'a str,
         name: &'a str,
@@ -184,14 +177,22 @@ pub fn print_checks() {
                 "{} {} {}\n\n{}",
                 style(self.code).bold(),
                 style(self.name).underlined(),
-                match self.fixable {
-                    true => style("(Behebbar)").green(),
-                    false => style("(Nicht behebbar)").red(),
+                if self.fixable {
+                    style("(Behebbar)").green()
+                } else {
+                    style("(Nicht behebbar)").red()
                 },
                 self.description
             )
         }
     }
+
+    println!(
+        "{}",
+        style("Die folgenden Probleme sind bekannt\n")
+            .yellow()
+            .bold()
+    );
 
     vec![
         Problem {
@@ -247,5 +248,5 @@ pub fn print_checks() {
         },
     ]
     .iter()
-    .for_each(|problem| println!("{}\n", problem))
+    .for_each(|problem| println!("{problem}\n"));
 }

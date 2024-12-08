@@ -528,7 +528,7 @@ impl FormEntry for Entry {
     }
 
     fn update_default_value(&mut self, value: String) {
-        self.default_value = value
+        self.default_value = value;
     }
 
     fn hide(&mut self) {
@@ -537,7 +537,7 @@ impl FormEntry for Entry {
             valid: true,
             ref_entries: Some(RefEntries { ref_entry: None }),
         });
-        self.speichern = "0".into()
+        self.speichern = "0".into();
     }
 
     fn remove_filter(&mut self) {
@@ -557,7 +557,7 @@ impl Sortable for Entry {
         if let Some(ref mut filter) = self.filter {
             if let Some(ref mut ref_entries) = filter.ref_entries {
                 if let Some(ref mut ref_entry) = ref_entries.ref_entry {
-                    ref_entry.sort_unstable()
+                    ref_entry.sort_unstable();
                 }
             }
         }

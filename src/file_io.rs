@@ -48,12 +48,10 @@ impl Display for FileError {
             f,
             "{}",
             match &self {
-                FileError::Reading(filename, err) => format!("Kann Datei '{}' nicht lesen: {}", filename, err),
-                FileError::Writing(filename, err) => format!("Kann Datei '{}' nicht schreiben: {}", filename, err),
+                FileError::Reading(filename, err) => format!("Kann Datei '{filename}' nicht lesen: {err}"),
+                FileError::Writing(filename, err) => format!("Kann Datei '{filename}' nicht schreiben: {err}"),
                 FileError::Parsing(filename, err) => format!(
-                    "Die Datei '{}' wird nicht unterstützt, ist fehlerhaft oder enthält zusätzliche Inhalte\n{}",
-                    filename,
-                    err
+                    "Die Datei '{filename}' wird nicht unterstützt, ist fehlerhaft oder enthält zusätzliche Inhalte\n{err}"
                 )
             }
         )
@@ -83,10 +81,10 @@ pub enum InputFile {
 impl InputFile {
     pub fn filename(&self) -> String {
         match self {
-            InputFile::Osc { filename, .. } => filename,
-            InputFile::Osb { filename, .. } => filename,
-            InputFile::Yaml { filename, .. } => filename,
-            InputFile::Other { filename, .. } => filename,
+            InputFile::Osb { filename, .. }
+            | InputFile::Osc { filename, .. }
+            | InputFile::Yaml { filename, .. }
+            | InputFile::Other { filename, .. } => filename,
         }
         .to_string()
     }
@@ -148,7 +146,7 @@ impl InputFile {
                         content: result,
                     })
                 }
-                Some("yml") | Some("yaml") => match fs::read_to_string(filename.clone()) {
+                Some("yml" | "yaml") => match fs::read_to_string(filename.clone()) {
                     Ok(content) => Ok(InputFile::Yaml { filename, content }),
                     Err(err) => Err(FileError::Reading(filename, err.to_string())),
                 },
@@ -208,13 +206,13 @@ pub struct FileReader<FileType> {
 }
 
 impl FileReader<OnkostarEditor> {
-    pub fn read(filename: String) -> Result<OnkostarEditor, FileError> {
+    pub fn read(filename: &str) -> Result<OnkostarEditor, FileError> {
         TryInto::<OnkostarEditor>::try_into(InputFile::read(filename.to_string(), None)?)
     }
 }
 
 impl FileReader<Profile> {
-    pub fn read(filename: String) -> Result<Profile, FileError> {
+    pub fn read(filename: &str) -> Result<Profile, FileError> {
         TryInto::<Profile>::try_into(InputFile::read(filename.to_string(), None)?)
     }
 }

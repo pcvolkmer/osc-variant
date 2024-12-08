@@ -323,7 +323,7 @@ where
             entry.update_scripts_code(scripts_code.clone());
         }
         if form_reference.remove_filter {
-            entry.remove_filter()
+            entry.remove_filter();
         }
     }
 }
@@ -334,16 +334,16 @@ where
 {
     if entry.get_name() == form_field.name {
         if form_field.hide {
-            entry.hide()
+            entry.hide();
         }
         if let Some(new_default_value) = &form_field.default_value {
-            entry.update_default_value(new_default_value.to_string())
+            entry.update_default_value(new_default_value.to_string());
         }
         if let Some(scripts_code) = &form_field.escaped_scripts_code() {
             entry.update_scripts_code(scripts_code.clone());
         }
         if form_field.remove_filter {
-            entry.remove_filter()
+            entry.remove_filter();
         }
     }
 }
@@ -372,7 +372,7 @@ pub trait Comparable: Debug {
     fn get_revision(&self) -> u16;
     fn get_hash(&self) -> String {
         let mut h = DefaultHasher::new();
-        format!("{:?}", self).hash(&mut h);
+        format!("{self:?}").hash(&mut h);
         h.finish().to_string()
     }
     fn compare_by_requirement(_: &Self, _: &Self) -> Ordering

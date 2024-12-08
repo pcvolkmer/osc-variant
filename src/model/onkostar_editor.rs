@@ -381,7 +381,7 @@ impl OnkostarEditor {
                                 );
                                 has_diff = true;
                             } else if strict {
-                                println!("{}: {}", entry_a.get_name(), style("Identisch").green())
+                                println!("{}: {}", entry_a.get_name(), style("Identisch").green());
                             }
                         }
                     }
@@ -390,7 +390,7 @@ impl OnkostarEditor {
         });
 
         if !has_diff {
-            println!("Keine Unterschiede")
+            println!("Keine Unterschiede");
         }
     }
 }
@@ -464,12 +464,12 @@ impl Checkable for OnkostarEditor {
                 .for_each(|entry| match entry {
                     Requirement::DataFormReference(item) => {
                         if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, *item, "Formular"))
+                            result.push(requirement_error(form, *item, "Formular"));
                         }
                     }
                     Requirement::UnterformularReference(item) => {
                         if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, *item, "Unterformular"))
+                            result.push(requirement_error(form, *item, "Unterformular"));
                         }
                     }
                     _ => {}
@@ -483,12 +483,12 @@ impl Checkable for OnkostarEditor {
                 .for_each(|entry| match entry {
                     Requirement::DataFormReference(item) => {
                         if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, *item, "Formular"))
+                            result.push(requirement_error(form, *item, "Formular"));
                         }
                     }
                     Requirement::UnterformularReference(item) => {
                         if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, *item, "Unterformular"))
+                            result.push(requirement_error(form, *item, "Unterformular"));
                         }
                     }
                     _ => {}

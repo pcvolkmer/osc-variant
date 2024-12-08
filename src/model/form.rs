@@ -210,7 +210,7 @@ impl<Type: 'static> FormEntryContainer for Form<Type> {
                         .form_references
                         .iter()
                         .for_each(|form_reference| {
-                            apply_profile_to_form_entry(entry, form_reference)
+                            apply_profile_to_form_entry(entry, form_reference);
                         });
 
                     // Hide form field using filter set to "false" if requested and change default value
@@ -226,7 +226,7 @@ impl<Type: 'static> FormEntryContainer for Form<Type> {
                             column: menu_category.column.clone(),
                         });
                     }
-                })
+                });
             }
         });
     }
@@ -241,9 +241,10 @@ impl<Type: 'static> Listable for Form<Type> {
             } else {
                 "Unterformular"
             },
-            match self.is_system_library_content() {
-                true => style("S").yellow(),
-                _ => style("u"),
+            if self.is_system_library_content() {
+                style("S").yellow()
+            } else {
+                style("u")
             },
             style(&self.name).yellow(),
             style(&self.revision).yellow()

@@ -69,7 +69,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             osc @ InputFile::Osc { .. } => {
                 let mut content: OnkostarEditor = osc.try_into()?;
                 if sorted {
-                    content.sorted()
+                    content.sorted();
                 }
                 if let Some(name) = filter {
                     OnkostarEditor::print_list_filtered(&mut content, name.as_str());
@@ -90,20 +90,20 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                             let mut content: OnkostarEditor = match file.try_into() {
                                 Ok(oe) => oe,
                                 Err(err) => {
-                                    println!("{}", err);
+                                    println!("{err}");
                                     continue;
                                 }
                             };
 
                             if sorted {
-                                content.sorted()
+                                content.sorted();
                             }
                             if let Some(name) = filter {
                                 OnkostarEditor::print_list_filtered(&mut content, name.as_str());
                                 return Ok(());
                             }
                             content.print_list();
-                            println!()
+                            println!();
                         }
                         _ => {
                             println!(
@@ -131,7 +131,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             osc @ InputFile::Osc { .. } => {
                 let mut content: OnkostarEditor = osc.try_into()?;
                 if sorted {
-                    content.sorted()
+                    content.sorted();
                 }
                 if let Some(name) = filter {
                     OnkostarEditor::print_tree_filtered(&mut content, name.as_str());
@@ -165,9 +165,9 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
 
             if let Some(profile) = profile {
                 let profile = if profile.contains('.') {
-                    FileReader::<Profile>::read(profile)?
+                    FileReader::<Profile>::read(&profile)?
                 } else {
-                    Profile::embedded_profile(profile.as_str())?
+                    Profile::embedded_profile(&profile)?
                 };
 
                 data.apply_profile(&profile);
@@ -243,7 +243,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             match outputfile {
                 Some(filename) => write_outputfile(filename, output)?,
                 None => {
-                    println!("{}", output)
+                    println!("{output}");
                 }
             }
         }
@@ -258,8 +258,8 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                 style(&inputfile_b).yellow()
             );
 
-            let data_a = &mut FileReader::<OnkostarEditor>::read(inputfile_a)?;
-            let data_b = &mut FileReader::<OnkostarEditor>::read(inputfile_b)?;
+            let data_a = &mut FileReader::<OnkostarEditor>::read(&inputfile_a)?;
+            let data_b = &mut FileReader::<OnkostarEditor>::read(&inputfile_b)?;
 
             data_a.print_diff(data_b, strict);
         }
@@ -273,7 +273,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                         .unwrap_or_default()
                         .to_str()
                         .unwrap_or_default()
-                )
+                );
             }
             Err(err) => {
                 eprintln!("{}", FileError::Reading(inputfile, err.to_string()));
@@ -287,7 +287,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             if list {
                 print_checks();
             } else {
-                match check_file(Path::new(file.unwrap_or_default().as_str()), password) {
+                match check_file(Path::new(file.unwrap_or_default().as_str()), &password) {
                     Ok(notices) => {
                         println!(
                             "Es wurden {} Probleme gefunden\n",
@@ -301,10 +301,10 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                         );
                         notices
                             .iter()
-                            .for_each(|check_notice| println!("{}", check_notice));
+                            .for_each(|check_notice| println!("{check_notice}"));
                     }
                     Err(err) => {
-                        println!("{}", err)
+                        println!("{err}");
                     }
                 }
             }
