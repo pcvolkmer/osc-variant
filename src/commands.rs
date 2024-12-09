@@ -17,7 +17,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 use crate::checks::{check_file, print_checks, CheckNotice};
 use crate::cli::{Cli, SubCommand};
 use crate::file_io::{FileError, FileReader, InputFile};
@@ -29,7 +28,7 @@ use console::style;
 use dialoguer::Confirm;
 use quick_xml::se::Serializer;
 use serde::Serialize;
-use sha256::digest;
+use sha2::{Digest, Sha256};
 use std::error::Error;
 use std::fs;
 use std::fs::OpenOptions;
@@ -265,9 +264,12 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
         }
         SubCommand::Sha256Sum { inputfile } => match fs::read(inputfile.clone()) {
             Ok(content) => {
+                let mut hasher = Sha256::new();
+                hasher.update(content.as_slice());
+                let hash = hasher.finalize();
                 println!(
                     "{}  {}",
-                    digest(content).as_str(),
+                    base16ct::lower::encode_string(&hash),
                     PathBuf::from(inputfile.clone())
                         .canonicalize()
                         .unwrap_or_default()
