@@ -63,7 +63,7 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
             if zip_file.is_file() && zip_file.name().ends_with(".osc") {
                 let mut buf = String::new();
                 let _ = zip_file.read_to_string(&mut buf);
-                match osc::check(buf) {
+                match osc::check(&buf) {
                     Ok(ref mut check_result) => {
                         result.push(CheckNotice::Info {
                             description: format!("Prüfe Eintrag '{}'", zip_file.name()),
