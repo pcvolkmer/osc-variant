@@ -136,8 +136,7 @@ impl Requires for DataCatalogue {
                 })
                 .filter(Option::is_some)
                 .flatten()
-                .collect::<Vec<_>>()
-                .join("")
+                .collect::<String>()
         )
     }
 }

@@ -124,9 +124,7 @@ where
                                 _ => None,
                             })
                             .filter_map(|item| item.map(|item| format!("    - {item}\n")))
-                            .collect::<Vec<_>>()
-                            .join("");
-
+                            .collect::<String>();
                         if inner.is_empty() {
                             Some(format!("  + {}\n", x.to_listed_string()))
                         } else {
@@ -152,8 +150,7 @@ where
                 })
                 .filter(Option::is_some)
                 .flatten()
-                .collect::<Vec<_>>()
-                .join("")
+                .collect::<String>()
         )
     }
 }
