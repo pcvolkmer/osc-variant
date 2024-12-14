@@ -54,9 +54,10 @@ impl Listable for PropertyCatalogue {
     fn to_listed_string(&self) -> String {
         format!(
             "Merkmalskatalog ({}) '{}' in Revision '{}'",
-            match self.is_system_library_content() {
-                true => style("S").yellow(),
-                _ => style("u"),
+            if self.is_system_library_content() {
+                style("S").yellow()
+            } else {
+                style("u")
             },
             style(&self.name).yellow(),
             style(&self.revision).yellow()
