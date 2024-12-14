@@ -368,7 +368,7 @@ impl OnkostarEditor {
                             );
                             has_diff = true;
                         }
-                        _ => {
+                        Ordering::Equal => {
                             if strict && entry_a.get_hash() != entry_b.get_hash() {
                                 println!(
                                     "{}: {} (z.B. GUID oder Reihenfolge von Unterelementen)",
