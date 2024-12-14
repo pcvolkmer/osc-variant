@@ -414,6 +414,23 @@ impl FromStr for OnkostarEditor {
 
 impl Checkable for OnkostarEditor {
     fn check(&self) -> Vec<CheckNotice> {
+        fn requirement_error(
+            form: &impl Comparable,
+            item: &impl Comparable,
+            t: &str,
+        ) -> CheckNotice {
+            CheckNotice::ErrorWithCode {
+                code: "2023-0004".to_string(),
+                description: format!(
+                    "'{}' hat einen Verweis auf zuvor nicht definiertes {t} '{}' (OSTARSUPP-13212)",
+                    form.get_name(),
+                    item.get_name()
+                ),
+                line: None,
+                example: None,
+            }
+        }
+
         // Inner form checks
 
         let mut result = self
@@ -435,23 +452,6 @@ impl Checkable for OnkostarEditor {
         // Check requirements
 
         let mut requirement_checked_forms = vec![];
-
-        fn requirement_error(
-            form: &impl Comparable,
-            item: &impl Comparable,
-            t: &str,
-        ) -> CheckNotice {
-            CheckNotice::ErrorWithCode {
-                code: "2023-0004".to_string(),
-                description: format!(
-                    "'{}' hat einen Verweis auf zuvor nicht definiertes {t} '{}' (OSTARSUPP-13212)",
-                    form.get_name(),
-                    item.get_name()
-                ),
-                line: None,
-                example: None,
-            }
-        }
 
         self.editor.unterformular.iter().for_each(|form| {
             requirement_checked_forms.push(form.get_name());
