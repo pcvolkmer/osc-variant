@@ -48,7 +48,7 @@ pub struct UnterformularType;
 #[serde(deny_unknown_fields)]
 pub struct Form<Type> {
     #[serde(skip)]
-    form_type: PhantomData<Type>,
+    _type: PhantomData<Type>,
 
     #[serde(rename = "DataCatalogues")]
     data_catalogues: DataCatalogues,

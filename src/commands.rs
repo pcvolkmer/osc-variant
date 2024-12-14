@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use crate::checks::{check_file, print_checks, CheckNotice};
+use crate::checks::{check_file, print, CheckNotice};
 use crate::cli::{Cli, SubCommand};
 use crate::file_io::{FileError, FileReader, InputFile};
 use crate::model::onkostar_editor::OnkostarEditor;
@@ -287,7 +287,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             password,
         } => {
             if list {
-                print_checks();
+                print();
             } else {
                 match check_file(Path::new(file.unwrap_or_default().as_str()), &password) {
                     Ok(notices) => {

@@ -162,7 +162,7 @@ pub fn check_file(file: &Path, password: &Option<String>) -> Result<Vec<CheckNot
     }
 }
 
-pub fn print_checks() {
+pub fn print() {
     struct Problem<'a> {
         code: &'a str,
         name: &'a str,
