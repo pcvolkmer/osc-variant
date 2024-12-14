@@ -301,9 +301,9 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
                                 ))
                                 .count()
                         );
-                        notices
-                            .iter()
-                            .for_each(|check_notice| println!("{check_notice}"));
+                        for notice in notices {
+                            println!("{notice}");
+                        }
                     }
                     Err(err) => {
                         println!("{err}");

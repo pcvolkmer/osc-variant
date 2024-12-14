@@ -164,8 +164,9 @@ impl OnkostarEditor {
             " - Inhalte der Systembibliothek sind mit ({}), der Benutzerbibliothek mit (u) markiert",
             style("S").yellow()
         );
-        list.iter()
-            .for_each(|entry| println!("{}", entry.to_listed_string()));
+        for entry in list {
+            println!("{}", entry.to_listed_string());
+        }
     }
 
     pub fn print_tree(&self) {
@@ -205,8 +206,9 @@ impl OnkostarEditor {
             " - Inhalte der Systembibliothek sind mit ({}), der Benutzerbibliothek mit (u) markiert",
             style("S").yellow()
         );
-        list.iter()
-            .for_each(|entry| println!("{}", entry.to_requirement_string(self)));
+        for entry in list {
+            println!("{}", entry.to_requirement_string(self));
+        }
     }
 
     pub fn sorted(&mut self) {
@@ -328,22 +330,22 @@ impl OnkostarEditor {
         let names_a = list_a.iter().map(Comparable::get_name).collect::<Vec<_>>();
         let names_b = list_b.iter().map(Comparable::get_name).collect::<Vec<_>>();
 
-        names_b.iter().for_each(|entry| {
+        for entry in &names_b {
             if !names_a.contains(entry) {
                 println!("{}: {}", entry, style("Nicht in Datei A enthalten!").red());
                 has_diff = true;
             }
-        });
+        }
 
-        names_a.iter().for_each(|entry| {
+        for entry in &names_a {
             if !names_b.contains(entry) {
                 println!("{}: {}", entry, style("Nicht in Datei B enthalten!").red());
                 has_diff = true;
             }
-        });
+        }
 
-        list_a.iter().for_each(|entry_a| {
-            list_b.iter().for_each(|entry_b| {
+        for entry_a in list_a {
+            for entry_b in list_b {
                 if entry_a.get_name() == entry_b.get_name() {
                     match entry_a.get_revision().cmp(&entry_b.get_revision()) {
                         Ordering::Less => {
@@ -380,8 +382,8 @@ impl OnkostarEditor {
                         }
                     }
                 }
-            });
-        });
+            }
+        }
 
         if !has_diff {
             println!("Keine Unterschiede");

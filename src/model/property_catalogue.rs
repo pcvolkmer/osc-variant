@@ -72,9 +72,9 @@ impl Sortable for PropertyCatalogue {
     fn sorted(&mut self) -> &Self {
         if let Some(ref mut versions) = self.versions.entry {
             versions.sort_unstable_by_key(|item| item.version_number);
-            versions.iter_mut().for_each(|version| {
+            for version in versions {
                 version.sorted();
-            });
+            }
         }
         self
     }
@@ -148,9 +148,9 @@ impl Sortable for Version {
     {
         if let Some(ref mut abbildung) = self.abbildung {
             abbildung.sort_unstable_by_key(Abbildung::sorting_key);
-            abbildung.iter_mut().for_each(|item| {
+            for item in abbildung {
                 item.sorted();
-            });
+            }
         }
 
         if let Some(ref mut entries) = self.entries {

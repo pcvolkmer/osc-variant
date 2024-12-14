@@ -269,11 +269,11 @@ impl<Type: 'static> Sortable for Form<Type> {
         if let Some(ref mut plausibility_rule) = self.plausibility_rules.plausibility_rule {
             plausibility_rule.sort_unstable_by_key(|item| item.bezeichnung.clone());
 
-            plausibility_rule.iter_mut().for_each(|item| {
+            for item in plausibility_rule {
                 if let Some(ref mut data_form_entry_names) = item.data_form_entries.entry_name {
                     data_form_entry_names.sort_unstable();
                 }
-            });
+            }
         }
         self
     }

@@ -194,7 +194,7 @@ pub fn print() {
             .bold()
     );
 
-    vec![
+    for problem in vec![
         Problem {
             code: "2023-0001",
             name: "Unterformular mit Markierung 'hat Unterformulare'",
@@ -246,7 +246,7 @@ pub fn print() {
             ",
             fixable: false,
         },
-    ]
-    .iter()
-    .for_each(|problem| println!("{problem}\n"));
+    ] {
+        println!("{problem}\n");
+    }
 }
