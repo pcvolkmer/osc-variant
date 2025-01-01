@@ -111,7 +111,7 @@ where
             self.to_listed_string(),
             self.get_required_entries(all)
                 .iter()
-                .map(|entry| match entry {
+                .filter_map(|entry| match entry {
                     Requirement::DataCatalogue(x) => {
                         let inner = x
                             .get_required_entries(all)
@@ -148,8 +148,6 @@ where
                     }
                     _ => None,
                 })
-                .filter(Option::is_some)
-                .flatten()
                 .collect::<String>()
         )
     }
