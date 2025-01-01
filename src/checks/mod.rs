@@ -138,17 +138,18 @@ pub trait Fixable {
 }
 
 #[allow(unused_variables)]
-pub fn check_file(file: &Path, password: &Option<String>) -> Result<Vec<CheckNotice>, CheckNotice> {
+#[allow(clippy::needless_pass_by_value)]
+pub fn check_file(file: &Path, password: Option<String>) -> Result<Vec<CheckNotice>, CheckNotice> {
     match file.extension() {
         Some(ex) => match ex.to_str() {
             #[cfg(feature = "unzip-osb")]
-            Some("osb") => match password {
-                Some(password) => osb::check_file(file, password.as_str()),
-                None => {
-                    use deob::deobfuscate;
-                    osb::check_file(file, deobfuscate(env!("OSB_KEY").trim()).as_str())
-                }
-            },
+            Some("osb") => {
+                use deob::deobfuscate;
+                osb::check_file(
+                    file,
+                    &password.unwrap_or_else(|| deobfuscate(env!("OSB_KEY").trim())),
+                )
+            }
             Some("osc") => osc::check_file(file),
             _ => Err(CheckNotice::Error {
                 description: "Keine prüfbare Datei".to_string(),

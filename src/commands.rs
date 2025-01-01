@@ -289,7 +289,7 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             if list {
                 print();
             } else {
-                match check_file(Path::new(file.unwrap_or_default().as_str()), &password) {
+                match check_file(Path::new(file.unwrap_or_default().as_str()), password) {
                     Ok(notices) => {
                         println!(
                             "Es wurden {} Probleme gefunden\n",
