@@ -152,6 +152,8 @@ pub struct Entries {
     entry: Vec<Entry>,
 }
 
+#[allow(clippy::struct_excessive_bools)]
+#[allow(clippy::struct_field_names)]
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Entry {

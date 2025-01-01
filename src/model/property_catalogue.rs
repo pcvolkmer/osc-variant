@@ -105,6 +105,7 @@ pub struct Versions {
     entry: Option<Vec<Version>>,
 }
 
+#[allow(clippy::struct_field_names)]
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Version {
@@ -219,6 +220,7 @@ pub struct Categories {
     content: Vec<Category>,
 }
 
+#[allow(clippy::struct_field_names)]
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Category {

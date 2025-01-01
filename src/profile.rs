@@ -56,6 +56,7 @@ impl FromStr for Profile {
     }
 }
 
+#[allow(clippy::struct_field_names)]
 #[derive(Deserialize)]
 pub struct Form {
     pub name: String,

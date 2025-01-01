@@ -22,6 +22,7 @@ use crate::model::{Ansicht, Filter, FormEntry, Ordner, RefEntries, Script, Sorta
 use serde::{Deserialize, Serialize};
 
 // Ablaufschema ...
+#[allow(clippy::struct_field_names)]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Ablaufschema {
     #[serde(rename = "Name")]
@@ -106,6 +107,7 @@ pub struct AblaufschemaElement {
     pub end_element_guid: String,
 }
 
+#[allow(clippy::struct_field_names)]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Akte {
     #[serde(rename = "Name")]
@@ -152,6 +154,7 @@ pub struct AkteRolle {
     pub modul_berechtigung: Vec<ModulBerechtigung>,
 }
 
+#[allow(clippy::struct_field_names)]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RecordLinkage {
     #[serde(rename = "ID")]
@@ -262,6 +265,7 @@ pub struct Modul {
     pub aufgabenliste_aktiv: Option<bool>,
 }
 
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ModulBerechtigung {
     #[serde(rename = "ModulName")]
@@ -287,6 +291,8 @@ pub struct ModulFormular {
     pub guid: String,
 }
 
+#[allow(clippy::struct_excessive_bools)]
+#[allow(clippy::struct_field_names)]
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Entry {
