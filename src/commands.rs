@@ -317,15 +317,8 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             password,
             dir,
         } => {
-            use crate::unzip_osb::{unzip_osb, unzip_osb_using_password};
-            match password {
-                Some(password) => unzip_osb_using_password(
-                    file.as_str(),
-                    dir.unwrap_or_default().as_str(),
-                    password.as_str(),
-                ),
-                None => unzip_osb(file.as_str(), dir.unwrap_or_default().as_str()),
-            }
+            use crate::unzip_osb::unzip_osb;
+            unzip_osb(file.as_str(), dir.unwrap_or_default().as_str(), password)
         }
     }
 
