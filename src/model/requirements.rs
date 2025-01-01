@@ -49,10 +49,12 @@ impl Sortable for Requirement<'_> {
         match self {
             Requirement::PropertyCatalogue(item) => item.get_name(),
             Requirement::DataCatalogue(item) => item.get_name(),
-            Requirement::DataFormReference(item) => item.get_name(),
-            Requirement::UnterformularReference(item) => item.get_name(),
-            Requirement::DataFormSubform(item) => item.get_name(),
-            Requirement::UnterformularSubform(item) => item.get_name(),
+            Requirement::DataFormReference(item) | Requirement::DataFormSubform(item) => {
+                item.get_name()
+            }
+            Requirement::UnterformularReference(item) | Requirement::UnterformularSubform(item) => {
+                item.get_name()
+            }
             Requirement::ExternalPropertyCatalogue(name)
             | Requirement::ExternalDataCatalogue(name)
             | Requirement::ExternalDataFormReference(name)
@@ -68,10 +70,12 @@ impl Display for Requirement<'_> {
         let str = match self {
             Requirement::PropertyCatalogue(item) => item.to_listed_string(),
             Requirement::DataCatalogue(item) => item.to_listed_string(),
-            Requirement::DataFormReference(item) => item.to_listed_string(),
-            Requirement::UnterformularReference(item) => item.to_listed_string(),
-            Requirement::DataFormSubform(item) => item.to_listed_string(),
-            Requirement::UnterformularSubform(item) => item.to_listed_string(),
+            Requirement::DataFormReference(item) | Requirement::DataFormSubform(item) => {
+                item.to_listed_string()
+            }
+            Requirement::UnterformularReference(item) | Requirement::UnterformularSubform(item) => {
+                item.to_listed_string()
+            }
             Requirement::ExternalPropertyCatalogue(name) => {
                 format!("Merkmalskatalog (-) '{name}' - hier nicht enthalten")
             }
