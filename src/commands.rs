@@ -25,7 +25,6 @@ use crate::profile::Profile;
 use clap::CommandFactory;
 use clap_complete::{generate, Shell};
 use console::style;
-use dialoguer::Confirm;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -56,18 +55,8 @@ pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
             compact,
             sorted,
             strip,
-            interactive,
             fix,
-        } => handle_modify(
-            inputfile,
-            profile,
-            outputfile,
-            compact,
-            sorted,
-            strip,
-            interactive,
-            fix,
-        )?,
+        } => handle_modify(inputfile, profile, outputfile, compact, sorted, strip, fix)?,
         SubCommand::Diff {
             inputfile_a,
             inputfile_b,
@@ -221,7 +210,6 @@ fn handle_modify(
     compact: bool,
     sorted: bool,
     strip: bool,
-    interactive: bool,
     fix: bool,
 ) -> Result<(), Box<dyn Error>> {
     let mut data: OnkostarEditor = InputFile::read(inputfile, None)?.try_into()?;
@@ -234,38 +222,6 @@ fn handle_modify(
         };
 
         data.apply_profile(&profile);
-    }
-
-    let mut compact = compact;
-    let mut sorted = sorted;
-    let mut strip = strip;
-
-    if interactive {
-        compact = matches!(
-            Confirm::new()
-                .with_prompt("Kompakte Ausgabe, ohne Einrücken?")
-                .default(compact)
-                .interact(),
-            Ok(true)
-        );
-
-        sorted = matches!(
-            Confirm::new()
-                .with_prompt("Sortiere Kataloge und Formulare nach Name und Abhängigkeiten?")
-                .default(sorted)
-                .interact(),
-            Ok(true)
-        );
-
-        strip = matches!(
-            Confirm::new()
-                .with_prompt(
-                    "Entferne Einträge aus der Systembibliothek die nicht importiert werden?",
-                )
-                .default(strip)
-                .interact(),
-            Ok(true)
-        );
     }
 
     if fix {

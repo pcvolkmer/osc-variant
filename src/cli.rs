@@ -86,12 +86,6 @@ pub enum SubCommand {
         )]
         strip: bool,
         #[arg(
-            short = 'i',
-            long = "interactive",
-            help = "Starte interaktiven Dialog zum Modifizieren von OSC-Dateien"
-        )]
-        interactive: bool,
-        #[arg(
             long = "fix",
             help = "Erweiterte Problembehandlung und Reparatur der OSC-Datei"
         )]
