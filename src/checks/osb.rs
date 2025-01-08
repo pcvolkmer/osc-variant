@@ -32,7 +32,7 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
         Ok(file) => file,
         Err(err) => {
             return Err(CheckNotice::Error {
-                description: format!("Kann Datei nicht lesen: {}", err),
+                description: format!("Kann Datei nicht lesen: {err}"),
                 line: None,
             });
         }
@@ -42,7 +42,7 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
         Ok(file) => file,
         Err(err) => {
             return Err(CheckNotice::Error {
-                description: format!("Kann Datei nicht lesen: {}", err),
+                description: format!("Kann Datei nicht lesen: {err}"),
                 line: None,
             });
         }
@@ -73,9 +73,9 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
                             result.push(CheckNotice::Ok(format!(
                                 "Keine Probleme in '{}' erkannt",
                                 zip_file.name()
-                            )))
+                            )));
                         }
-                        result.append(check_result)
+                        result.append(check_result);
                     }
                     Err(_) => result.push(CheckNotice::Warning {
                         description: format!(
@@ -94,7 +94,7 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
                         zip_file.name()
                     ),
                     line: None,
-                })
+                });
             }
         } else {
             return Err(CheckNotice::Error {

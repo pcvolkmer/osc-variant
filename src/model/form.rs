@@ -550,7 +550,7 @@ mod tests {
         assert_eq!(
             onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
             "B"
-        )
+        );
     }
 
     #[test]
@@ -586,7 +586,7 @@ mod tests {
         assert_eq!(
             onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
             ""
-        )
+        );
     }
 
     #[test]
@@ -883,7 +883,7 @@ mod tests {
         assert_eq!(
             onkostar_editor.editor.unterformular[0].entries.entry[1].default_value,
             "2024-03-18"
-        )
+        );
     }
 
     #[test]
@@ -919,7 +919,7 @@ mod tests {
         assert_eq!(
             onkostar_editor.editor.unterformular[0].entries.entry[1].default_value,
             ""
-        )
+        );
     }
 
     #[test]

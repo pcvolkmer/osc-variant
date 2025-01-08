@@ -141,9 +141,9 @@ mod tests {
                 assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
                 assert!(profile.forms[0].menu_category.is_some());
                 assert_eq!(profile.forms[0].form_references.len(), 1);
-                assert_eq!(profile.forms[0].form_fields.len(), 1)
+                assert_eq!(profile.forms[0].form_fields.len(), 1);
             }
-            Err(e) => panic!("Cannot deserialize profile: {}", e),
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
     }
 
@@ -186,7 +186,7 @@ mod tests {
                     Some("// Example code&#10;console.log(42);".to_string())
                 );
             }
-            Err(e) => panic!("Cannot deserialize profile: {}", e),
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
     }
 
@@ -215,7 +215,7 @@ mod tests {
                         true
                     }));
             }
-            Err(e) => panic!("Cannot deserialize profile: {}", e),
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
     }
 
@@ -240,7 +240,7 @@ mod tests {
                 assert_eq!(profile.forms[0].form_references[0].anzeige, None);
                 assert_eq!(profile.forms[0].form_references[0].anzeige_auswahl, None);
             }
-            Err(e) => panic!("Cannot deserialize profile: {}", e),
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
     }
 
@@ -289,7 +289,7 @@ mod tests {
                     Some("// Example code&#10;console.log(42);".to_string())
                 );
             }
-            Err(e) => panic!("Cannot deserialize profile: {}", e),
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
     }
 
@@ -312,7 +312,7 @@ mod tests {
                     Some("X".to_string())
                 );
             }
-            Err(e) => panic!("Cannot deserialize profile: {}", e),
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
     }
 
@@ -336,7 +336,7 @@ mod tests {
                 );
                 assert!(profile.forms[0].form_references[0].remove_filter);
             }
-            Err(e) => panic!("Cannot deserialize profile: {}", e),
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
     }
 
@@ -357,7 +357,7 @@ mod tests {
                 assert_eq!(profile.forms[0].form_fields[0].name, "formularfeld_to_mod");
                 assert!(profile.forms[0].form_fields[0].remove_filter);
             }
-            Err(e) => panic!("Cannot deserialize profile: {}", e),
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
     }
 }

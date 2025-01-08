@@ -75,9 +75,7 @@ pub fn unzip_osb(path: &str, dir: &str, password: Option<String>) {
     };
 
     for i in 0..archive.len() {
-        let mut file = if let Ok(file) = archive.by_index_decrypt(i, password.as_bytes()) {
-            file
-        } else {
+        let Ok(mut file) = archive.by_index_decrypt(i, password.as_bytes()) else {
             println!(
                 "{: <6}Abbruch! - Kann Datei nicht entpacken",
                 style("[ERR]").red()
@@ -92,10 +90,27 @@ pub fn unzip_osb(path: &str, dir: &str, password: Option<String>) {
 
         started!(outpath.display());
 
-        if !file.is_dir() {
+        if file.is_dir() {
+            if !outpath.exists() {
+                match fs::create_dir_all(&outpath) {
+                    Ok(()) => {}
+                    Err(err) => {
+                        error!(outpath.display(), err);
+                        continue;
+                    }
+                }
+            }
+            ok!(outpath.display());
+        } else {
             if let Some(p) = outpath.parent() {
                 if !p.exists() {
-                    fs::create_dir_all(p).unwrap();
+                    match fs::create_dir_all(p) {
+                        Ok(()) => {}
+                        Err(err) => {
+                            error!(outpath.display(), err);
+                            continue;
+                        }
+                    }
                 }
             }
             let mut outfile = match fs::File::create(&outpath) {
@@ -110,17 +125,6 @@ pub fn unzip_osb(path: &str, dir: &str, password: Option<String>) {
                 Err(err) => {
                     error!(outpath.display(), err);
                     continue;
-                }
-            }
-            ok!(outpath.display());
-        } else {
-            if !outpath.exists() {
-                match fs::create_dir_all(&outpath) {
-                    Ok(_) => {}
-                    Err(err) => {
-                        error!(outpath.display(), err);
-                        continue;
-                    }
                 }
             }
             ok!(outpath.display());
