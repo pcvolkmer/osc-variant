@@ -506,6 +506,8 @@ pub struct DataFormEntries {
     entry_name: Option<Vec<String>>,
 }
 
+#[allow(clippy::unwrap_used)]
+#[allow(clippy::panic)]
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;

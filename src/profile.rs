@@ -112,6 +112,7 @@ pub struct MenuCategory {
     pub column: String,
 }
 
+#[allow(clippy::panic)]
 #[cfg(test)]
 mod tests {
     use crate::profile::{Profile, WithScriptsCode};
