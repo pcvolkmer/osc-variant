@@ -61,7 +61,7 @@ pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, Check
         progress_bar.inc(1);
         if let Ok(mut zip_file) = archive.by_index_decrypt(i, password.as_bytes()) {
             progress_bar.set_message(zip_file.name().to_string());
-            if zip_file.is_file() && zip_file.name().ends_with(".osc") {
+            if zip_file.is_file() && zip_file.name().to_lowercase().ends_with(".osc") {
                 let mut buf = String::new();
                 let _ = zip_file.read_to_string(&mut buf);
                 match osc::check(&buf) {
