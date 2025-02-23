@@ -124,14 +124,14 @@ impl InputFile {
                                 result.push(InputFile::Osc {
                                     filename: zip_file.name().to_string(),
                                     content: buf,
-                                })
+                                });
                             } else {
                                 let mut buf = BytesMut::new();
                                 let _ = zip_file.read(&mut buf);
                                 result.push(InputFile::Other {
                                     filename: zip_file.name().to_string(),
                                     content: buf.to_vec(),
-                                })
+                                });
                             }
                         } else {
                             return Err(FileError::Parsing(
