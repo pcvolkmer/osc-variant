@@ -89,7 +89,7 @@ impl InputFile {
         .to_string()
     }
 
-    pub fn read(filename: String, _password: Option<String>) -> Result<Self, FileError> {
+    pub fn read(filename: String, password: Option<String>) -> Result<Self, FileError> {
         if let Some(extension) = Path::new(filename.as_str()).extension() {
             return match extension.to_str() {
                 Some("osc") => match fs::read_to_string(filename.clone()) {
@@ -114,7 +114,7 @@ impl InputFile {
 
                     let mut result = vec![];
 
-                    let password = _password.unwrap_or_else(|| deobfuscate(env!("OSB_KEY").trim()));
+                    let password = password.unwrap_or_else(|| deobfuscate(env!("OSB_KEY").trim()));
 
                     for i in 0..archive.len() {
                         if let Ok(mut zip_file) = archive.by_index_decrypt(i, password.as_bytes()) {
