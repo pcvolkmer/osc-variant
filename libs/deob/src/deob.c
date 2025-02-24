@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2023-2024 the original author or authors.
+ * Copyright (C) 2023-2025 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "deob.h"
 
 void deob(char *in) {
-    char *d = malloc(LD*sizeof(char));
+    char *d = malloc((LD+2)*sizeof(char));
     const long long s[2] = {S0, S1};
     for (size_t i = 0; i < LD; i++) d[i] = (CS)[i];
     size_t l = strlen(in) / 2;
