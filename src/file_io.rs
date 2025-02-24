@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2024 the original author or authors.
+ * Copyright (C) 2025 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,7 @@ impl InputFile {
         .to_string()
     }
 
+    #[allow(unused_variables)]
     pub fn read(filename: String, password: Option<String>) -> Result<Self, FileError> {
         if let Some(extension) = Path::new(filename.as_str()).extension() {
             return match extension.to_str() {
