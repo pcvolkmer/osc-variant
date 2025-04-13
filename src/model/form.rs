@@ -44,6 +44,9 @@ pub struct DataFormType;
 #[derive(Debug)]
 pub struct UnterformularType;
 
+#[derive(Debug)]
+pub struct DataFormReferenceType;
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Form<Type> {
