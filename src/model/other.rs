@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use crate::model::form::{DataFormType, Form};
+use crate::model::form::{DataFormReferenceType, Form};
 use crate::model::{Ansicht, Filter, FormEntry, Ordner, RefEntries, Script, Sortable};
 use serde::{Deserialize, Serialize};
 
@@ -579,5 +579,5 @@ impl Sortable for Entry {
 #[serde(deny_unknown_fields)]
 pub struct ReferencedDataForm {
     #[serde(rename = "ReferencedDataForm", default)]
-    program_module: Vec<Form<DataFormType>>,
+    program_module: Vec<Form<DataFormReferenceType>>,
 }
