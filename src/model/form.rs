@@ -54,25 +54,32 @@ pub struct Form<Type> {
     _type: PhantomData<Type>,
 
     #[serde(rename = "DataCatalogues")]
-    data_catalogues: DataCatalogues,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    data_catalogues: Option<DataCatalogues>,
     #[serde(rename = "Category")]
     category: String,
     #[serde(rename = "Name")]
     name: String,
     #[serde(rename = "Version")]
-    version: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    version: Option<String>,
     #[serde(rename = "MenuEntry")]
-    menu_entry: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    menu_entry: Option<String>,
     #[serde(rename = "Title")]
-    title: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    title: Option<String>,
     #[serde(rename = "Description")]
-    description: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<String>,
     #[serde(rename = "Note")]
-    note: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    note: Option<String>,
     #[serde(rename = "Readonly")]
     readonly: bool,
     #[serde(rename = "Active")]
-    active: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    active: Option<bool>,
     #[serde(rename = "TudokPosition")]
     tudok_position: String,
     #[serde(rename = "Aktenbereich")]
@@ -85,9 +92,11 @@ pub struct Form<Type> {
     #[serde(skip_serializing_if = "Option::is_none")]
     hotkey: Option<String>,
     #[serde(rename = "Summary")]
-    summary: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    summary: Option<String>,
     #[serde(rename = "BigSummary")]
-    big_summary: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    big_summary: Option<String>,
     #[serde(rename = "KalenderSchnipsel")]
     #[serde(skip_serializing_if = "Option::is_none")]
     kalender_schnipsel: Option<String>,
@@ -184,15 +193,20 @@ pub struct Form<Type> {
     #[serde(skip_serializing_if = "Option::is_none")]
     seitenanzahl_sichtbar: Option<bool>,
     #[serde(rename = "Entries")]
-    entries: Entries<Entry>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    entries: Option<Entries<Entry>>,
     #[serde(rename = "PlausibilityRules")]
-    plausibility_rules: PlausibilityRules<DataFormEntries>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    plausibility_rules: Option<PlausibilityRules<DataFormEntries>>,
     #[serde(rename = "Haeufigkeiten")]
-    haeufigkeiten: Haeufigkeiten,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    haeufigkeiten: Option<Haeufigkeiten>,
     #[serde(rename = "Kennzahlen")]
-    kennzahlen: Kennzahlen,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    kennzahlen: Option<Kennzahlen>,
     #[serde(rename = "Ordner")]
-    ordner: Ordner,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ordner: Option<Ordner>,
     #[serde(rename = "MenuCategory")]
     #[serde(skip_serializing_if = "Option::is_none")]
     menu_category: Option<MenuCategory>,
@@ -208,28 +222,30 @@ impl<Type: 'static> FormEntryContainer for Form<Type> {
     fn apply_profile(&mut self, profile: &Profile) {
         profile.forms.iter().for_each(|profile_form| {
             if self.name == profile_form.name {
-                self.entries.entry.iter_mut().for_each(|entry| {
-                    profile_form
-                        .form_references
-                        .iter()
-                        .for_each(|form_reference| {
-                            apply_profile_to_form_entry(entry, form_reference);
-                        });
+                if let Some(ref mut entries) = self.entries {
+                    entries.entry.iter_mut().for_each(|entry| {
+                        profile_form
+                            .form_references
+                            .iter()
+                            .for_each(|form_reference| {
+                                apply_profile_to_form_entry(entry, form_reference);
+                            });
 
-                    // Hide form field using filter set to "false" if requested and change default value
-                    profile_form
-                        .form_fields
-                        .iter()
-                        .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
+                        // Hide form field using filter set to "false" if requested and change default value
+                        profile_form
+                            .form_fields
+                            .iter()
+                            .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
 
-                    if let Some(menu_category) = &profile_form.menu_category {
-                        self.menu_category = Some(MenuCategory {
-                            name: menu_category.name.clone(),
-                            position: menu_category.position.clone(),
-                            column: menu_category.column.clone(),
-                        });
-                    }
-                });
+                        if let Some(menu_category) = &profile_form.menu_category {
+                            self.menu_category = Some(MenuCategory {
+                                name: menu_category.name.clone(),
+                                position: menu_category.position.clone(),
+                                column: menu_category.column.clone(),
+                            });
+                        }
+                    });
+                }
             }
         });
     }
@@ -261,23 +277,30 @@ impl<Type: 'static> Sortable for Form<Type> {
     }
 
     fn sorted(&mut self) -> &Self {
-        self.data_catalogues.data_catalogue.sort_unstable();
+        if let Some(ref mut data_catalogues) = self.data_catalogues {
+            data_catalogues.data_catalogue.sort_unstable();
+        }
 
-        self.entries.entry.sort_unstable_by_key(Entry::sorting_key);
+        if let Some(ref mut entries) = self.entries {
+            entries.entry.sort_unstable_by_key(Entry::sorting_key);
 
-        self.entries.entry.iter_mut().for_each(|item| {
-            item.sorted();
-        });
+            entries.entry.iter_mut().for_each(|item| {
+                item.sorted();
+            });
+        }
 
-        if let Some(ref mut plausibility_rule) = self.plausibility_rules.plausibility_rule {
-            plausibility_rule.sort_unstable_by_key(|item| item.bezeichnung.clone());
+        if let Some(ref mut plausibility_rules) = self.plausibility_rules {
+            if let Some(ref mut plausibility_rule) = plausibility_rules.plausibility_rule {
+                plausibility_rule.sort_unstable_by_key(|item| item.bezeichnung.clone());
 
-            for item in plausibility_rule {
-                if let Some(ref mut data_form_entry_names) = item.data_form_entries.entry_name {
-                    data_form_entry_names.sort_unstable();
+                for item in plausibility_rule {
+                    if let Some(ref mut data_form_entry_names) = item.data_form_entries.entry_name {
+                        data_form_entry_names.sort_unstable();
+                    }
                 }
             }
         }
+
         self
     }
 }
@@ -315,94 +338,105 @@ where
     Self: Listable + 'static,
 {
     fn requires_form_reference(&self, name: &str) -> bool {
-        self.entries
-            .entry
-            .iter()
-            .map(|item| {
-                item.type_ == "formReference"
-                    && match item.referenced_data_form.as_ref() {
-                        Some(refname) => refname == name,
-                        _ => false,
-                    }
-            })
-            .filter(|&it| it)
-            .last()
-            .unwrap_or_default()
+        if let Some(ref entries) = self.entries {
+            entries
+                .entry
+                .iter()
+                .map(|item| {
+                    item.type_ == "formReference"
+                        && match item.referenced_data_form.as_ref() {
+                            Some(refname) => refname == name,
+                            _ => false,
+                        }
+                })
+                .filter(|&it| it)
+                .last()
+                .unwrap_or_default()
+        } else {
+            false
+        }
     }
 
     fn requires_subform(&self, name: &str) -> bool {
-        self.entries
-            .entry
-            .iter()
-            .map(|item| {
-                item.type_ == "subform"
-                    && match item.referenced_data_form.as_ref() {
-                        Some(refname) => refname == name,
-                        _ => false,
-                    }
-            })
-            .filter(|&it| it)
-            .last()
-            .unwrap_or_default()
+        if let Some(ref entries) = self.entries {
+            entries
+                .entry
+                .iter()
+                .map(|item| {
+                    item.type_ == "subform"
+                        && match item.referenced_data_form.as_ref() {
+                            Some(refname) => refname == name,
+                            _ => false,
+                        }
+                })
+                .filter(|&it| it)
+                .last()
+                .unwrap_or_default()
+        } else {
+            false
+        }
     }
 
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement<'a>> {
-        let mut result = self
-            .data_catalogues
-            .data_catalogue
-            .iter()
-            .collect::<HashSet<_>>()
-            .into_iter()
-            .map(|entry| match all.find_data_catalogue(entry.as_str()) {
-                Some(contained) => Requirement::DataCatalogue(contained),
-                None => Requirement::ExternalDataCatalogue(entry.to_string()),
-            })
-            .collect::<Vec<_>>();
+        let mut result = match self.data_catalogues {
+            Some(ref data_catalogues) => data_catalogues
+                .data_catalogue
+                .iter()
+                .collect::<HashSet<_>>()
+                .into_iter()
+                .map(|entry| match all.find_data_catalogue(entry.as_str()) {
+                    Some(contained) => Requirement::DataCatalogue(contained),
+                    None => Requirement::ExternalDataCatalogue(entry.to_string()),
+                })
+                .collect::<Vec<_>>(),
+            None => vec![],
+        };
+
         result.sort_unstable_by_key(Requirement::sorting_key);
 
-        let referenced_forms = &mut self
-            .entries
-            .entry
-            .iter()
-            .filter(|&entry| entry.get_type() == "formReference")
-            .filter_map(|entry| match &entry.referenced_data_form {
-                Some(name) => Some(name),
-                None => None,
-            })
-            .collect::<HashSet<_>>()
-            .into_iter()
-            .map(|entry| match all.find_data_form(entry.as_str()) {
-                Some(contained) => Requirement::DataFormReference(contained),
-                None => match all.find_unterformular(entry.as_str()) {
-                    Some(contained) => Requirement::UnterformularReference(contained),
-                    None => Requirement::ExternalUnterformularReference(entry.to_string()),
-                },
-            })
-            .collect::<Vec<_>>();
-        referenced_forms.sort_unstable_by_key(Requirement::sorting_key);
-        result.append(referenced_forms);
+        if let Some(ref entries) = self.entries {
+            let referenced_forms = &mut entries
+                .entry
+                .iter()
+                .filter(|&entry| entry.get_type() == "formReference")
+                .filter_map(|entry| match &entry.referenced_data_form {
+                    Some(name) => Some(name),
+                    None => None,
+                })
+                .collect::<HashSet<_>>()
+                .into_iter()
+                .map(|entry| match all.find_data_form(entry.as_str()) {
+                    Some(contained) => Requirement::DataFormReference(contained),
+                    None => match all.find_unterformular(entry.as_str()) {
+                        Some(contained) => Requirement::UnterformularReference(contained),
+                        None => Requirement::ExternalUnterformularReference(entry.to_string()),
+                    },
+                })
+                .collect::<Vec<_>>();
+            referenced_forms.sort_unstable_by_key(Requirement::sorting_key);
+            result.append(referenced_forms);
 
-        let sub_forms = &mut self
-            .entries
-            .entry
-            .iter()
-            .filter(|&entry| entry.get_type() == "subform")
-            .filter_map(|entry| match &entry.referenced_data_form {
-                Some(name) => Some(name),
-                None => None,
-            })
-            .collect::<HashSet<_>>()
-            .into_iter()
-            .map(|entry| match all.find_data_form(entry.as_str()) {
-                Some(contained) => Requirement::DataFormSubform(contained),
-                None => match all.find_unterformular(entry.as_str()) {
-                    Some(contained) => Requirement::UnterformularSubform(contained),
-                    None => Requirement::ExternalUnterformularSubform(entry.to_string()),
-                },
-            })
-            .collect::<Vec<_>>();
-        sub_forms.sort_unstable_by_key(Requirement::sorting_key);
-        result.append(sub_forms);
+            let sub_forms = &mut entries
+                .entry
+                .iter()
+                .filter(|&entry| entry.get_type() == "subform")
+                .filter_map(|entry| match &entry.referenced_data_form {
+                    Some(name) => Some(name),
+                    None => None,
+                })
+                .collect::<HashSet<_>>()
+                .into_iter()
+                .map(|entry| match all.find_data_form(entry.as_str()) {
+                    Some(contained) => Requirement::DataFormSubform(contained),
+                    None => match all.find_unterformular(entry.as_str()) {
+                        Some(contained) => Requirement::UnterformularSubform(contained),
+                        None => Requirement::ExternalUnterformularSubform(entry.to_string()),
+                    },
+                })
+                .collect::<Vec<_>>();
+            sub_forms.sort_unstable_by_key(Requirement::sorting_key);
+            result.append(sub_forms);
+        }
 
         result
     }
@@ -410,19 +444,26 @@ where
 
 impl<Type: 'static> FolderContent for Form<Type> {
     fn get_library_folder(&self) -> String {
-        self.ordner.bibliothek.name.to_string()
+        match &self.ordner {
+            Some(ordner) => ordner.bibliothek.name.to_string(),
+            None => String::new(),
+        }
     }
 }
 
 impl<Type> Form<Type> {
     fn common_check(&self) -> Vec<CheckNotice> {
-        let missing_forms = self
-            .entries
-            .entry
-            .iter()
-            .filter(|entry| entry.type_ == "formReference" && entry.referenced_data_form.is_none())
-            .map(|entry| format!("'{}'", entry.get_name()))
-            .collect::<Vec<_>>();
+        let missing_forms = match self.entries {
+            Some(ref entries) => entries
+                .entry
+                .iter()
+                .filter(|entry| {
+                    entry.type_ == "formReference" && entry.referenced_data_form.is_none()
+                })
+                .map(|entry| format!("'{}'", entry.get_name()))
+                .collect::<Vec<_>>(),
+            None => vec![],
+        };
 
         let mut result = vec![];
 
@@ -445,25 +486,29 @@ impl<Type> Form<Type> {
 
 impl Checkable for Form<DataFormType> {
     fn check(&self) -> Vec<CheckNotice> {
-        let mut result = if self
-            .entries
-            .entry
-            .iter()
-            .filter(|entry| entry.procedure_date_status != "none")
-            .count()
-            == 0
-        {
-            vec![ErrorWithCode {
-                code: "2023-0002".to_string(),
-                description: format!(
-                    "Formular '{}' hat keine Angabe zum Prozedurdatum",
-                    self.name
-                ),
-                line: None,
-                example: None,
-            }]
-        } else {
-            vec![]
+        let mut result = match self.entries {
+            Some(ref entries) => {
+                if entries
+                    .entry
+                    .iter()
+                    .filter(|entry| entry.procedure_date_status != "none")
+                    .count()
+                    == 0
+                {
+                    vec![ErrorWithCode {
+                        code: "2023-0002".to_string(),
+                        description: format!(
+                            "Formular '{}' hat keine Angabe zum Prozedurdatum",
+                            self.name
+                        ),
+                        line: None,
+                        example: None,
+                    }]
+                } else {
+                    vec![]
+                }
+            }
+            None => vec![],
         };
 
         result.append(&mut self.common_check());
@@ -516,7 +561,7 @@ mod tests {
     use std::str::FromStr;
 
     use crate::model::onkostar_editor::OnkostarEditor;
-    use crate::model::{Filter, RefEntries, Script};
+    use crate::model::Script;
     use crate::profile::Profile;
 
     #[test]
@@ -537,25 +582,14 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].name,
-            "Auswahl"
-        );
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
-            ""
-        );
-
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].name,
-            "Auswahl"
-        );
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
-            "B"
-        );
+        let Some(actual) = &onkostar_editor.editor.data_form[0].entries else {
+            panic!()
+        };
+
+        assert_eq!(actual.entry[2].name, "Auswahl");
+        assert_eq!(actual.entry[2].default_value, "B");
     }
 
     #[test]
@@ -573,25 +607,14 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].name,
-            "Auswahl"
-        );
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
-            ""
-        );
-
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].name,
-            "Auswahl"
-        );
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].default_value,
-            ""
-        );
+        let Some(actual) = &onkostar_editor.editor.data_form[0].entries else {
+            panic!()
+        };
+
+        assert_eq!(actual.entry[2].name, "Auswahl");
+        assert_eq!(actual.entry[2].default_value, "");
     }
 
     #[test]
@@ -664,15 +687,15 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
-            None
-        );
-
         onkostar_editor.apply_profile(&profile);
 
+        let actual = match &onkostar_editor.editor.data_form[0].entries {
+            Some(entries) => entries,
+            None => panic!(),
+        };
+
         assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            actual.entry[2].scripts,
             Some(Script {
                 code: "// Example code&#10;console.log(42);".into(),
                 valid: true
@@ -700,15 +723,15 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
-            None
-        );
-
         onkostar_editor.apply_profile(&profile);
 
+        let actual = match &onkostar_editor.editor.data_form[0].entries {
+            Some(entries) => entries,
+            None => panic!(),
+        };
+
         assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].scripts,
+            actual.entry[2].scripts,
             Some(Script {
                 code: "// Example code&#10;console.log(42);".into(),
                 valid: true
@@ -737,51 +760,20 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
-            None
-        );
-
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
-            None
-        );
-
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
-            Some(Filter {
-                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
-                valid: true,
-                ref_entries: Some(RefEntries { ref_entry: None })
-            })
-        );
-
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
-            None
-        );
-
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
-            None
-        );
+        let actual = match &onkostar_editor.editor.data_form[0].entries {
+            Some(entries) => entries,
+            None => panic!(),
+        };
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
-            None
-        );
+        assert_eq!(actual.entry[0].filter, None);
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
-            None
-        );
+        assert_eq!(actual.entry[1].filter, None);
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
-            None
-        );
+        assert_eq!(actual.entry[2].filter, None);
+
+        assert_eq!(actual.entry[3].filter, None);
     }
 
     #[test]
@@ -805,51 +797,20 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
-            None
-        );
-
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
-            None
-        );
-
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
-            Some(Filter {
-                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
-                valid: true,
-                ref_entries: Some(RefEntries { ref_entry: None })
-            })
-        );
-
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
-            None
-        );
-
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[0].filter,
-            None
-        );
+        let actual = match &onkostar_editor.editor.data_form[0].entries {
+            Some(entries) => entries,
+            None => panic!(),
+        };
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[1].filter,
-            None
-        );
+        assert_eq!(actual.entry[0].filter, None);
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[2].filter,
-            None
-        );
+        assert_eq!(actual.entry[1].filter, None);
 
-        assert_eq!(
-            onkostar_editor.editor.data_form[0].entries.entry[3].filter,
-            None
-        );
+        assert_eq!(actual.entry[2].filter, None);
+
+        assert_eq!(actual.entry[3].filter, None);
     }
 
     #[test]
@@ -870,25 +831,14 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].name,
-            "Termin"
-        );
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].default_value,
-            ""
-        );
-
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].name,
-            "Termin"
-        );
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].default_value,
-            "2024-03-18"
-        );
+        let Some(actual) = &onkostar_editor.editor.unterformular[0].entries else {
+            panic!()
+        };
+
+        assert_eq!(actual.entry[1].name, "Termin");
+        assert_eq!(actual.entry[1].default_value, "2024-03-18");
     }
 
     #[test]
@@ -906,25 +856,14 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].name,
-            "Termin"
-        );
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].default_value,
-            ""
-        );
-
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].name,
-            "Termin"
-        );
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].default_value,
-            ""
-        );
+        let Some(actual) = &onkostar_editor.editor.unterformular[0].entries else {
+            panic!()
+        };
+
+        assert_eq!(actual.entry[1].name, "Termin");
+        assert_eq!(actual.entry[1].default_value, "");
     }
 
     #[test]
@@ -969,15 +908,14 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].scripts,
-            None
-        );
-
         onkostar_editor.apply_profile(&profile);
 
+        let Some(actual) = &onkostar_editor.editor.unterformular[0].entries else {
+            panic!()
+        };
+
         assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].scripts,
+            actual.entry[1].scripts,
             Some(Script {
                 code: "// Example code&#10;console.log(42);".into(),
                 valid: true
@@ -1005,15 +943,14 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].scripts,
-            None
-        );
-
         onkostar_editor.apply_profile(&profile);
 
+        let Some(actual) = &onkostar_editor.editor.unterformular[0].entries else {
+            panic!()
+        };
+
         assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].scripts,
+            actual.entry[1].scripts,
             Some(Script {
                 code: "// Example code&#10;console.log(42);".into(),
                 valid: true
@@ -1042,31 +979,14 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[0].filter,
-            None
-        );
-
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].filter,
-            Some(Filter {
-                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
-                valid: true,
-                ref_entries: Some(RefEntries { ref_entry: None })
-            })
-        );
-
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[0].filter,
-            None
-        );
+        let Some(actual) = &onkostar_editor.editor.unterformular[0].entries else {
+            panic!()
+        };
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].filter,
-            None
-        );
+        assert_eq!(actual.entry[0].filter, None);
+        assert_eq!(actual.entry[1].filter, None);
     }
 
     #[test]
@@ -1090,30 +1010,13 @@ mod tests {
         assert!(profile.is_ok());
         let profile = profile.unwrap();
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[0].filter,
-            None
-        );
-
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].filter,
-            Some(Filter {
-                condition: "getGlobalSetting('mehrere_mtb_in_mtbepisode') = 'true'".into(),
-                valid: true,
-                ref_entries: Some(RefEntries { ref_entry: None })
-            })
-        );
-
         onkostar_editor.apply_profile(&profile);
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[0].filter,
-            None
-        );
+        let Some(actual) = &onkostar_editor.editor.unterformular[0].entries else {
+            panic!()
+        };
 
-        assert_eq!(
-            onkostar_editor.editor.unterformular[0].entries.entry[1].filter,
-            None
-        );
+        assert_eq!(actual.entry[0].filter, None);
+        assert_eq!(actual.entry[1].filter, None);
     }
 }
