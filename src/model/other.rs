@@ -506,7 +506,7 @@ pub struct Entry {
     einfuegen_verhindern: Option<String>,
     #[serde(rename = "DataFormReferences", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub data_form: Option<ReferencedDataForm>,
+    pub data_form_references: Option<ReferencedDataForm>,
 }
 
 impl FormEntry for Entry {
@@ -579,5 +579,5 @@ impl Sortable for Entry {
 #[serde(deny_unknown_fields)]
 pub struct ReferencedDataForm {
     #[serde(rename = "ReferencedDataForm", default)]
-    program_module: Vec<Form<DataFormReferenceType>>,
+    referenced_data_form: Vec<Form<DataFormReferenceType>>,
 }
