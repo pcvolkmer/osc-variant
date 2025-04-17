@@ -579,5 +579,5 @@ impl Sortable for Entry {
 #[serde(deny_unknown_fields)]
 pub struct ReferencedDataForm {
     #[serde(rename = "ReferencedDataForm", default)]
-    referenced_data_form: Vec<Form<DataFormReferenceType>>,
+    pub referenced_data_form: Vec<Form<DataFormReferenceType>>,
 }

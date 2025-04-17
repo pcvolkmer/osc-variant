@@ -31,10 +31,11 @@ pub enum Requirement<'a> {
     DataCatalogue(&'a DataCatalogue),
     ExternalPropertyCatalogue(String),
     ExternalDataCatalogue(String),
+
     DataFormReference(&'a Form<DataFormType>),
     UnterformularReference(&'a Form<UnterformularType>),
-    #[allow(dead_code)]
     ExternalDataFormReference(String),
+    #[allow(dead_code)]
     ExternalUnterformularReference(String),
 
     DataFormSubform(&'a Form<DataFormType>),

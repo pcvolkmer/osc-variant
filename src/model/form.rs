@@ -17,15 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use console::style;
-use serde::{Deserialize, Serialize};
-use std::any::TypeId;
-use std::cmp::Ordering;
-use std::collections::HashSet;
-use std::fmt::Debug;
-use std::marker::PhantomData;
-
-use crate::checks::CheckNotice::ErrorWithCode;
+use crate::checks::CheckNotice::{ErrorWithCode, Warning};
 use crate::checks::{CheckNotice, Checkable};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::other::Entry;
@@ -37,6 +29,13 @@ use crate::model::{
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
+use console::style;
+use serde::{Deserialize, Serialize};
+use std::any::TypeId;
+use std::cmp::Ordering;
+use std::collections::HashSet;
+use std::fmt::Debug;
+use std::marker::PhantomData;
 
 #[derive(Debug)]
 pub struct DataFormType;
@@ -409,12 +408,36 @@ where
                     Some(contained) => Requirement::DataFormReference(contained),
                     None => match all.find_unterformular(entry.as_str()) {
                         Some(contained) => Requirement::UnterformularReference(contained),
-                        None => Requirement::ExternalUnterformularReference(entry.to_string()),
+                        None => Requirement::ExternalDataFormReference(entry.to_string()),
                     },
                 })
                 .collect::<Vec<_>>();
+
+            //
+            let new_referenced_forms = &mut entries
+                .entry
+                .iter()
+                .flat_map(|entry| &entry.data_form_references)
+                .flat_map(|rdf| {
+                    rdf.referenced_data_form
+                        .iter()
+                        .map(|x| x.name.to_string())
+                        .collect::<Vec<_>>()
+                })
+                .map(|entry| match all.find_data_form(entry.as_str()) {
+                    Some(contained) => Requirement::DataFormReference(contained),
+                    None => match all.find_unterformular(entry.as_str()) {
+                        Some(contained) => Requirement::UnterformularReference(contained),
+                        None => Requirement::ExternalDataFormReference(entry.to_string()),
+                    },
+                })
+                .collect::<Vec<_>>();
+            referenced_forms.append(new_referenced_forms);
             referenced_forms.sort_unstable_by_key(Requirement::sorting_key);
+
+            referenced_forms.dedup_by_key(|requirement| requirement.sorting_key());
             result.append(referenced_forms);
+            //
 
             let sub_forms = &mut entries
                 .entry
@@ -453,7 +476,21 @@ impl<Type: 'static> FolderContent for Form<Type> {
 
 impl<Type> Form<Type> {
     fn common_check(&self) -> Vec<CheckNotice> {
-        let missing_forms = match self.entries {
+        let missing_forms_in_refs = match self.entries {
+            Some(ref entries) => entries
+                .entry
+                .iter()
+                .filter(|entry| {
+                    entry.type_ == "formReference"
+                        && entry.referenced_data_form.is_none()
+                        && entry.data_form_references.is_none()
+                })
+                .map(|entry| format!("'{}'", entry.get_name()))
+                .collect::<Vec<_>>(),
+            None => vec![],
+        };
+
+        let missing_forms_in_refs_legacy = match self.entries {
             Some(ref entries) => entries
                 .entry
                 .iter()
@@ -467,16 +504,26 @@ impl<Type> Form<Type> {
 
         let mut result = vec![];
 
-        if !missing_forms.is_empty() {
+        if !missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
             result.push(ErrorWithCode {
                 code: "2024-0005".to_string(),
                 description: format!(
                     "Formular '{}' hat Formularverweise ohne Angabe des Formulars in: {}",
                     self.name,
-                    missing_forms.join(", ")
+                    missing_forms_in_refs.join(", ")
                 ),
                 line: None,
                 example: None,
+            });
+        }
+
+        if missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
+            result.push(Warning {
+                description: format!(
+                    "Formular '{}' hat Formularverweise, die erst in neueren Onkostar-Versionen ab 2.14.0 funktionieren",
+                    self.name
+                ),
+                line: None,
             });
         }
 
