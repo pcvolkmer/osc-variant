@@ -50,13 +50,15 @@ pub struct PlausibilityRule<T> {
     #[serde(rename = "Type")]
     type_: String,
     #[serde(rename = "Message")]
-    message: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    message: Option<String>,
     #[serde(rename = "Description")]
     description: String,
     #[serde(rename = "Bezeichnung")]
     bezeichnung: String,
     #[serde(rename = "Formula")]
-    formula: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    formula: Option<String>,
     #[serde(rename = "Active")]
     active: bool,
     #[serde(rename = "Editable")]
