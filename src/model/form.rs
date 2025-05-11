@@ -349,7 +349,7 @@ where
                         }
                 })
                 .filter(|&it| it)
-                .last()
+                .next_back()
                 .unwrap_or_default()
         } else {
             false
@@ -369,7 +369,7 @@ where
                         }
                 })
                 .filter(|&it| it)
-                .last()
+                .next_back()
                 .unwrap_or_default()
         } else {
             false
