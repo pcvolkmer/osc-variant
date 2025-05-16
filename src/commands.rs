@@ -261,7 +261,7 @@ fn handle_modify(
         None => {
             println!("{output}");
         }
-    };
+    }
 
     Ok(())
 }
