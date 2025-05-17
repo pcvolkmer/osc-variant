@@ -19,7 +19,7 @@
  */
 
 use crate::model::form::{DataFormReferenceType, Form};
-use crate::model::{Ansicht, Comparable, Filter, FormEntry, Ordner, RefEntries, Script, Sortable};
+use crate::model::{Ansicht, Filter, FormEntry, Ordner, RefEntries, Script, Sortable};
 use serde::{Deserialize, Serialize};
 
 // Ablaufschema ...
