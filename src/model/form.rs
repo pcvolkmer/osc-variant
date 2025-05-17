@@ -586,6 +586,72 @@ impl Checkable for Form<UnterformularType> {
     }
 }
 
+impl Form<DataFormReferenceType> {
+    /// Create a new minimal form reference with given form name
+    pub fn new_form_reference(reference_name: &str) -> Self {
+        Self {
+            _type: PhantomData::<DataFormReferenceType>,
+            data_catalogues: None,
+            category: "0".to_string(),
+            name: reference_name.to_string(),
+            version: None,
+            menu_entry: None,
+            title: None,
+            description: None,
+            note: None,
+            readonly: false,
+            active: None,
+            tudok_position: "0".to_string(),
+            aktenbereich: None,
+            befragung_relevant: None,
+            hotkey: None,
+            summary: None,
+            big_summary: None,
+            kalender_schnipsel: None,
+            mail_template: None,
+            erkrankung_text: None,
+            erkrankung_text_long: None,
+            erkrankung_prozedur_text: None,
+            erkrankung_summary: None,
+            erkrankung_big_summary: None,
+            kontext: None,
+            datenart: None,
+            show_history_button: None,
+            tudok_readonly: None,
+            vitalstatus_relevant: None,
+            auto_nummerierung: None,
+            zwischenspeichern: None,
+            zurueckblaettern: None,
+            datenbankexport: None,
+            datenschutz_relevant: None,
+            konferenz_relevant: None,
+            drucken: None,
+            hat_unterformulare: false,
+            script_beim_schliessen: None,
+            script_beim_speichern: None,
+            script_beim_neuanlegen: None,
+            script_beim_bearbeiten: None,
+            script_beim_kopieren: None,
+            script_beim_import: None,
+            script_beim_anonymisieren: None,
+            sid: "".to_string(),
+            guid: "".to_string(),
+            revision: 0,
+            max_anzahl: None,
+            verknuepft_guid: None,
+            seitenanzahl_sichtbar: None,
+            entries: None,
+            plausibility_rules: None,
+            haeufigkeiten: None,
+            kennzahlen: None,
+            ordner: None,
+            menu_category: None,
+            punkte_kategorien: None,
+            ansichten: None,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DataCatalogues {

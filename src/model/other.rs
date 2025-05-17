@@ -19,7 +19,7 @@
  */
 
 use crate::model::form::{DataFormReferenceType, Form};
-use crate::model::{Ansicht, Filter, FormEntry, Ordner, RefEntries, Script, Sortable};
+use crate::model::{Ansicht, Comparable, Filter, FormEntry, Ordner, RefEntries, Script, Sortable};
 use serde::{Deserialize, Serialize};
 
 // Ablaufschema ...
@@ -519,7 +519,21 @@ impl FormEntry for Entry {
     }
 
     fn update_referenced_data_form(&mut self, value: String) {
-        self.referenced_data_form = Some(value);
+        self.referenced_data_form = Some(value.to_string());
+
+        // Add new minimal form reference if not already present
+        if let Some(ref mut form) = self.data_form_references {
+            if !form
+                .referenced_data_form
+                .iter()
+                .map(super::Comparable::get_name)
+                .collect::<Vec<String>>()
+                .contains(&value)
+            {
+                form.referenced_data_form
+                    .push(Form::new_form_reference(&value));
+            }
+        }
     }
 
     fn update_anzeige(&mut self, value: String) {
