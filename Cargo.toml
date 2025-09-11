@@ -36,9 +36,9 @@ clap = { version = "4.5", features = ["std", "help", "usage", "derive", "error-c
 clap_complete = "4.5"
 
 [profile.release]
-opt-level = "s"
+opt-level = "z"
 codegen-units = 1
-lto = "thin"
+lto = true
 strip = true
 panic = "abort"
 
