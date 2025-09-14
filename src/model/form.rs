@@ -802,9 +802,8 @@ mod tests {
 
         onkostar_editor.apply_profile(&profile);
 
-        let actual = match &onkostar_editor.editor.data_form[0].entries {
-            Some(entries) => entries,
-            None => panic!(),
+        let Some(actual) = &onkostar_editor.editor.data_form[0].entries else {
+            panic!()
         };
 
         assert_eq!(
@@ -838,9 +837,8 @@ mod tests {
 
         onkostar_editor.apply_profile(&profile);
 
-        let actual = match &onkostar_editor.editor.data_form[0].entries {
-            Some(entries) => entries,
-            None => panic!(),
+        let Some(actual) = &onkostar_editor.editor.data_form[0].entries else {
+            panic!()
         };
 
         assert_eq!(
@@ -875,9 +873,8 @@ mod tests {
 
         onkostar_editor.apply_profile(&profile);
 
-        let actual = match &onkostar_editor.editor.data_form[0].entries {
-            Some(entries) => entries,
-            None => panic!(),
+        let Some(actual) = &onkostar_editor.editor.data_form[0].entries else {
+            panic!()
         };
 
         assert_eq!(actual.entry[0].filter, None);
@@ -912,9 +909,8 @@ mod tests {
 
         onkostar_editor.apply_profile(&profile);
 
-        let actual = match &onkostar_editor.editor.data_form[0].entries {
-            Some(entries) => entries,
-            None => panic!(),
+        let Some(actual) = &onkostar_editor.editor.data_form[0].entries else {
+            panic!()
         };
 
         assert_eq!(actual.entry[0].filter, None);
