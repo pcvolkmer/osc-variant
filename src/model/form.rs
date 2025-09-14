@@ -23,9 +23,9 @@ use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::other::Entry;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
-    apply_profile_to_form_entry, apply_profile_to_form_field, Ansichten, Comparable, Entries,
-    FolderContent, FormEntry, FormEntryContainer, Kennzahlen, Listable, MenuCategory,
-    PlausibilityRules, PunkteKategorien, Script, Sortable,
+    apply_profile_to_form_entry, apply_profile_to_form_field, Ansichten, Comparable, Entries, FolderContent, FormEntry,
+    FormEntryContainer, Kennzahlen, Listable, MenuCategory, PlausibilityRules, PunkteKategorien,
+    Script, Sortable,
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
@@ -220,31 +220,31 @@ pub struct Form<Type> {
 impl<Type: 'static> FormEntryContainer for Form<Type> {
     fn apply_profile(&mut self, profile: &Profile) {
         profile.forms.iter().for_each(|profile_form| {
-            if self.name == profile_form.name {
-                if let Some(ref mut entries) = self.entries {
-                    entries.entry.iter_mut().for_each(|entry| {
-                        profile_form
-                            .form_references
-                            .iter()
-                            .for_each(|form_reference| {
-                                apply_profile_to_form_entry(entry, form_reference);
-                            });
+            if self.name == profile_form.name
+                && let Some(ref mut entries) = self.entries
+            {
+                entries.entry.iter_mut().for_each(|entry| {
+                    profile_form
+                        .form_references
+                        .iter()
+                        .for_each(|form_reference| {
+                            apply_profile_to_form_entry(entry, form_reference);
+                        });
 
-                        // Hide form field using filter set to "false" if requested and change default value
-                        profile_form
-                            .form_fields
-                            .iter()
-                            .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
+                    // Hide form field using filter set to "false" if requested and change default value
+                    profile_form
+                        .form_fields
+                        .iter()
+                        .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
 
-                        if let Some(menu_category) = &profile_form.menu_category {
-                            self.menu_category = Some(MenuCategory {
-                                name: menu_category.name.clone(),
-                                position: menu_category.position.clone(),
-                                column: menu_category.column.clone(),
-                            });
-                        }
-                    });
-                }
+                    if let Some(menu_category) = &profile_form.menu_category {
+                        self.menu_category = Some(MenuCategory {
+                            name: menu_category.name.clone(),
+                            position: menu_category.position.clone(),
+                            column: menu_category.column.clone(),
+                        });
+                    }
+                });
             }
         });
     }
@@ -288,14 +288,14 @@ impl<Type: 'static> Sortable for Form<Type> {
             });
         }
 
-        if let Some(ref mut plausibility_rules) = self.plausibility_rules {
-            if let Some(ref mut plausibility_rule) = plausibility_rules.plausibility_rule {
-                plausibility_rule.sort_unstable_by_key(|item| item.bezeichnung.clone());
+        if let Some(ref mut plausibility_rules) = self.plausibility_rules
+            && let Some(ref mut plausibility_rule) = plausibility_rules.plausibility_rule
+        {
+            plausibility_rule.sort_unstable_by_key(|item| item.bezeichnung.clone());
 
-                for item in plausibility_rule {
-                    if let Some(ref mut data_form_entry_names) = item.data_form_entries.entry_name {
-                        data_form_entry_names.sort_unstable();
-                    }
+            for item in plausibility_rule {
+                if let Some(ref mut data_form_entry_names) = item.data_form_entries.entry_name {
+                    data_form_entry_names.sort_unstable();
                 }
             }
         }
@@ -996,9 +996,11 @@ mod tests {
 
         onkostar_editor.apply_profile(&profile);
 
-        assert!(&onkostar_editor.editor.unterformular[0]
-            .menu_category
-            .is_none());
+        assert!(
+            &onkostar_editor.editor.unterformular[0]
+                .menu_category
+                .is_none()
+        );
     }
 
     #[test]

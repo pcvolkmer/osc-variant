@@ -522,17 +522,16 @@ impl FormEntry for Entry {
         self.referenced_data_form = Some(value.to_string());
 
         // Add new minimal form reference if not already present
-        if let Some(ref mut form) = self.data_form_references {
-            if !form
+        if let Some(ref mut form) = self.data_form_references
+            && !form
                 .referenced_data_form
                 .iter()
                 .map(super::Comparable::get_name)
                 .collect::<Vec<String>>()
                 .contains(&value)
-            {
-                form.referenced_data_form
-                    .push(Form::new_form_reference(&value));
-            }
+        {
+            form.referenced_data_form
+                .push(Form::new_form_reference(&value));
         }
     }
 
@@ -578,13 +577,13 @@ impl Sortable for Entry {
     where
         Self: Sized,
     {
-        if let Some(ref mut filter) = self.filter {
-            if let Some(ref mut ref_entries) = filter.ref_entries {
-                if let Some(ref mut ref_entry) = ref_entries.ref_entry {
-                    ref_entry.sort_unstable();
-                }
-            }
+        if let Some(ref mut filter) = self.filter
+            && let Some(ref mut ref_entries) = filter.ref_entries
+            && let Some(ref mut ref_entry) = ref_entries.ref_entry
+        {
+            ref_entry.sort_unstable();
         }
+
         self
     }
 }
