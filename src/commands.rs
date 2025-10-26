@@ -162,7 +162,7 @@ fn handle_list(
             return Err(Box::new(FileError::Reading(
                 filename,
                 "Nur OSB- und OSC-Dateien werden unterstützt".to_string(),
-            )))
+            )));
         }
     }
     Ok(())
@@ -190,13 +190,13 @@ fn handle_tree(
                 filename,
                 "Nur OSC-Dateien werden unterstützt. OSB-Dateien erzeugen eine zu lange Ausgabe."
                     .to_string(),
-            )))
+            )));
         }
         InputFile::Yaml { filename, .. } | InputFile::Other { filename, .. } => {
             return Err(Box::new(FileError::Reading(
                 filename,
                 "Nur OSC-Dateien werden unterstützt".to_string(),
-            )))
+            )));
         }
     }
 
@@ -250,9 +250,8 @@ fn handle_modify(
         .to_string()
         .add(
             buf
-                // Replace &apos; and &quot; as used in original file
-                .replace("&apos;", "'")
-                .replace("&quot;", "\"")
+                // Use &quot; as used in original file
+                .replace("\"", "&quot;")
                 .as_str(),
         );
 
