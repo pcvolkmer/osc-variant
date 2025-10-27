@@ -249,10 +249,7 @@ fn handle_modify(
     let output = &"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         .to_string()
         .add(
-            buf
-                // Use &quot; as used in original file
-                .replace("\"", "&quot;")
-                .as_str(),
+            buf.as_str(),
         );
 
     match outputfile {
