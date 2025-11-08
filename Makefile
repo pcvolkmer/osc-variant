@@ -33,6 +33,10 @@ linux-package: linux-binary-x86_64
 	tar -czvf osc-variant-$(VERSION)_linux.tar.gz osc-variant/
 	rm -rf osc-variant || true
 
+.PHONY: linux-deb
+linux-deb: linux-binary-x86_64
+	cargo deb --features unzip-osb --target=x86_64-unknown-linux-gnu --deb-version $(VERSION)
+
 binary-all: win-binary-x86_64 linux-binary-x86_64
 
 .PHONY: win-binary-x86_64
