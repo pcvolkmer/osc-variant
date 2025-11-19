@@ -195,8 +195,7 @@ pub fn print() {
             .bold()
     );
 
-    for problem in vec![
-        Problem {
+    for problem in [Problem {
             code: "2023-0001",
             name: "Unterformular mit Markierung 'hat Unterformulare'",
             description: "  Aktuell gibt es keine Unterformulare in Unterformularen, daher\n  \
@@ -220,7 +219,7 @@ pub fn print() {
                 "  Treten Leerzeichen am Ende der Plausibilitätsregel-Bezeichnung auf,\n  \
             führt dies zu Fehlern beim Import der OSC-Datei.\n\n  \
             Das Problem wird beim Verwenden des Unterbefehls 'modify' automatisch\n  \
-            behoben und Leerzeichen entfernt. 
+            behoben und Leerzeichen entfernt.
             ",
             fixable: true,
         },
@@ -234,7 +233,7 @@ pub fn print() {
             auftreten.\n\n  \
             In diesem Fall kann ein erneuter/zweiter Import helfen, da das Onkostar in\n  \
             diesem Fall alle Formulare importiert hat und der Formularverweis dann \n  \
-            gespeichert werden kann. 
+            gespeichert werden kann.
             ",
             fixable: false,
         },
@@ -246,8 +245,7 @@ pub fn print() {
             Dieses Problem muss manuell behoben werden.
             ",
             fixable: false,
-        },
-    ] {
+        }] {
         println!("{problem}\n");
     }
 }

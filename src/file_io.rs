@@ -84,9 +84,8 @@ impl InputFile {
             InputFile::Osb { filename, .. }
             | InputFile::Osc { filename, .. }
             | InputFile::Yaml { filename, .. }
-            | InputFile::Other { filename, .. } => filename,
+            | InputFile::Other { filename, .. } => filename.clone(),
         }
-        .to_string()
     }
 
     #[allow(unused_variables)]

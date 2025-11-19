@@ -106,7 +106,7 @@ impl Requires for DataCatalogue {
             .iter()
             .filter(|&entry| entry.property_catalogue.is_some())
             .map(|entry| match &entry.property_catalogue {
-                Some(entry) => entry.to_string(),
+                Some(entry) => entry.clone(),
                 _ => String::new(),
             })
             .collect::<HashSet<_>>()
@@ -141,7 +141,7 @@ impl Requires for DataCatalogue {
 
 impl FolderContent for DataCatalogue {
     fn get_library_folder(&self) -> String {
-        self.ordner.bibliothek.name.to_string()
+        self.ordner.bibliothek.name.clone()
     }
 }
 
