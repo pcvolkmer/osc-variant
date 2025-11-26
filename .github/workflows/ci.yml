@@ -1,4 +1,4 @@
-name: build and upload assets
+name: CI
 
 on:
   pull_request:
@@ -17,14 +17,15 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    name: Build and Test
+  test:
+    name: Run Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Run tests
         run: cargo test --verbose
   linuxbuild:
+    name: Create Linux Package
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -43,6 +44,7 @@ jobs:
           files: |
             *linux.tar.gz
   windowsbuild:
+    name: Create Windows Package
     runs-on: windows-latest
     permissions:
       contents: write
