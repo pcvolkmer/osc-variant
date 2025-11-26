@@ -34,7 +34,7 @@ impl Profile {
     pub fn embedded_profile(name: &str) -> Result<Profile, String> {
         let s = match name {
             "UKA" => include_str!("../examples/dnpm-uka.yml"),
-            "UKM" => include_str!("../examples/dnpm-ukm.yml"),
+            "UKM" | "UMR" => include_str!("../examples/dnpm-ukm.yml"),
             "UKR" => include_str!("../examples/dnpm-ukr.yml"),
             "UKW" => include_str!("../examples/dnpm-ukw.yml"),
             "UMG" => include_str!("../examples/dnpm-umg.yml"),
@@ -206,15 +206,17 @@ mod tests {
                 assert_eq!(profile.forms.len(), 1);
                 assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
                 assert!(profile.forms[0].menu_category.is_some());
-                assert!(profile.forms[0]
-                    .menu_category
-                    .as_ref()
-                    .is_some_and(|menu_category| {
-                        assert_eq!(menu_category.name, "DNPM");
-                        assert_eq!(menu_category.position, "3.0");
-                        assert_eq!(menu_category.column, "1");
-                        true
-                    }));
+                assert!(
+                    profile.forms[0]
+                        .menu_category
+                        .as_ref()
+                        .is_some_and(|menu_category| {
+                            assert_eq!(menu_category.name, "DNPM");
+                            assert_eq!(menu_category.position, "3.0");
+                            assert_eq!(menu_category.column, "1");
+                            true
+                        })
+                );
             }
             Err(e) => panic!("Cannot deserialize profile: {e}"),
         }
