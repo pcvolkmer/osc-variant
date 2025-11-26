@@ -1,0 +1,49 @@
+name: build and upload assets
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+env:
+  # Use invalid OSB key to packages with ZIP support but without valid build in password
+  OSB_KEY: "invalid"
+
+jobs:
+  linuxbuild:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: cargo test --verbose
+      - run: make linux-package
+      - name: Release
+        uses: actions/upload-artifact@v5
+        with:
+          path: |
+            *linux.tar.gz
+  windowsbuild:
+    runs-on: windows-latest
+    permissions:
+      packages: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: cargo test --verbose
+      - run: make win-package
+      - name: Release
+        uses: actions/upload-artifact@v5
+        with:
+          path: |
+            *win64.zip
