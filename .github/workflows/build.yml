@@ -26,9 +26,9 @@ jobs:
         run: cargo test --verbose
       - run: make linux-package
       - name: Release
-        uses: actions/upload-artifact@v5
+        uses: softprops/action-gh-release@v2
         with:
-          path: |
+          files: |
             *linux.tar.gz
   windowsbuild:
     runs-on: windows-latest
@@ -43,7 +43,7 @@ jobs:
         run: cargo test --verbose
       - run: make win-package
       - name: Release
-        uses: actions/upload-artifact@v5
+        uses: softprops/action-gh-release@v2
         with:
-          path: |
+          files: |
             *win64.zip
