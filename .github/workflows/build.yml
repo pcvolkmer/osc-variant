@@ -1,0 +1,51 @@
+name: build and upload assets
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+env:
+  # Use invalid OSB key to packages with ZIP support but without valid build in password
+  OSB_KEY: "invalid"
+
+jobs:
+  linuxbuild:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: cargo test --verbose
+      - run: make linux-package
+      - name: Release
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *linux.tar.gz
+  windowsbuild:
+    runs-on: windows-latest
+    permissions:
+      packages: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: cargo test --verbose
+      - run: make win-package
+      - name: Release
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *win64.zip
