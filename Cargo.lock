@@ -220,7 +220,7 @@ checksum = "da692b8d1080ea3045efaab14434d40468c3d8657e42abddfffca87b428f4c1b"
 
 [[package]]
 name = "deob"
-version = "0.1.2"
+version = "0.10.1"
 dependencies = [
  "cc",
 ]
@@ -451,7 +451,7 @@ checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 
 [[package]]
 name = "osc-variant"
-version = "0.10.0"
+version = "0.10.1"
 dependencies = [
  "base16ct",
  "bytes",
