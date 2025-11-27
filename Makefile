@@ -35,7 +35,7 @@ linux-package: linux-binary-x86_64
 
 .PHONY: linux-deb
 linux-deb: linux-binary-x86_64
-	cargo deb --features unzip-osb --target=x86_64-unknown-linux-gnu --deb-version $(VERSION)
+	cargo deb --no-build --strip --target=x86_64-unknown-linux-gnu --output=.
 
 binary-all: win-binary-x86_64 linux-binary-x86_64
 
