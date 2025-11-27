@@ -36,13 +36,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run tests
         run: cargo test --verbose
-      - run: make linux-package
+      - run: make linux-package linux-deb
       - name: Release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
             *linux.tar.gz
+            *amd65.deb
   windowsbuild:
     name: Create Windows Package
     runs-on: windows-latest
