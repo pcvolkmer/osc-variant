@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.10.2](https://github.com/pcvolkmer/osc-variant/compare/v0.10.1...v0.10.2) (2025-11-27)
+
+
+### Features
+
+* build deb package ([#56](https://github.com/pcvolkmer/osc-variant/issues/56)) ([7cb0e01](https://github.com/pcvolkmer/osc-variant/commit/7cb0e012067e50dce325fe95c191abfc3d756b24))
+* make property catalogue guid optional ([#54](https://github.com/pcvolkmer/osc-variant/issues/54)) ([1f0cec7](https://github.com/pcvolkmer/osc-variant/commit/1f0cec731edf2cebdefaca1657d45be6c42a5ef7))
+
 ## [0.10.1](https://github.com/pcvolkmer/osc-variant/compare/v0.10.0...v0.10.1) (2025-11-26)
 
 
