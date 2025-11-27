@@ -41,7 +41,8 @@ pub struct PropertyCatalogue {
     #[serde(rename = "SID")]
     sid: String,
     #[serde(rename = "GUID")]
-    guid: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    guid: Option<String>,
     #[serde(rename = "Revision")]
     revision: u16,
     #[serde(rename = "Versions")]
