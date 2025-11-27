@@ -35,17 +35,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup
-        run: cargo install cargo-deb
+        run: sudo apt update && sudo apt install rpm && cargo install cargo-deb && cargo install cargo-generate-rpm
       - name: Run tests
         run: cargo test --verbose
-      - run: make linux-package linux-deb
+      - run: make linux-package linux-deb linux-rpm
       - name: Release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            *linux.tar.gz
-            *amd65.deb
+            *.tar.gz
+            *.deb
+            *.rpm
   windowsbuild:
     name: Create Windows Package
     runs-on: windows-latest

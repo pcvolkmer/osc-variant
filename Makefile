@@ -37,6 +37,10 @@ linux-package: linux-binary-x86_64
 linux-deb: linux-binary-x86_64
 	cargo deb --no-build --strip --target=x86_64-unknown-linux-gnu --output=.
 
+.PHONY: linux-rpm
+linux-deb: linux-binary-x86_64
+	cargo generate-rpm --target=x86_64-unknown-linux-gnu --output=.
+
 binary-all: win-binary-x86_64 linux-binary-x86_64
 
 .PHONY: win-binary-x86_64
