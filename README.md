@@ -126,7 +126,7 @@ Die im Ordner [`examples/`](/examples) enthaltenen Profile für Standorte sind i
 und die Dateien müssen nicht explizit als Datei vorliegen:
 
 * `--profile examples/dnpm-uka.yml` => `--profile UKA` für **Aachen**
-* `--profile examples/dnpm-ukm.yml` => `--profile UKM` für **Marburg**
+* `--profile examples/dnpm-ukm.yml` => `--profile UKM` oder `--profile UMR` für **Marburg**
 * `--profile examples/dnpm-ukr.yml` => `--profile UKR` für **Regensburg**
 * `--profile examples/dnpm-ukw.yml` => `--profile UKW` für **Würzburg**
 * `--profile examples/dnpm-umg.yml` => `--profile UMG` für **Göttingen**
@@ -142,8 +142,8 @@ osc-variant unzip-osb OSBIB-6.10.osb
 
 Dieser Befehl kennt die beiden optionalen Parameter
 
-* `-d`: Optionale Angabe des Zielverzeichnisses. Wenn keine Angabe vorhanden ist, wird das aktuelle Verzeichnis
-  verwendet.
+* `-d`/`--dir`: Optionale Angabe des Zielverzeichnisses.
+  Wenn keine Angabe vorhanden ist, wird das aktuelle Verzeichnis verwendet.
 * `-p`/`--password`: Optionale Angabe des Passworts zum Entpacken der OSB-Datei.
 
 Dies setzt voraus, dass die Anwendung mit dem Feature `unzip-osb` compiliert wurde.
