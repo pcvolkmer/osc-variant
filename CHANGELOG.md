@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.4](https://github.com/pcvolkmer/osc-variant/compare/v0.10.3...v0.10.4) (2025-11-28)
+
+
+### Bug Fixes
+
+* recipe name in Makefile ([#61](https://github.com/pcvolkmer/osc-variant/issues/61)) ([a8c1744](https://github.com/pcvolkmer/osc-variant/commit/a8c17442885e08a2636d6501b2e777cf4889ec26))
+
 ## [0.10.3](https://github.com/pcvolkmer/osc-variant/compare/v0.10.2...v0.10.3) (2025-11-28)
 
 
