@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.3](https://github.com/pcvolkmer/osc-variant/compare/v0.10.2...v0.10.3) (2025-11-28)
+
+
+### Features
+
+* add long argument name for unzip dir ([#59](https://github.com/pcvolkmer/osc-variant/issues/59)) ([92e9d63](https://github.com/pcvolkmer/osc-variant/commit/92e9d6337b763b45824125f4df4b5930456193b4))
+
 ## [0.10.2](https://github.com/pcvolkmer/osc-variant/compare/v0.10.1...v0.10.2) (2025-11-27)
 
 
