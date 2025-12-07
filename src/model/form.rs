@@ -23,9 +23,9 @@ use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::other::Entry;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
-    apply_profile_to_form_entry, apply_profile_to_form_field, Ansichten, Comparable, Entries, FolderContent, FormEntry,
-    FormEntryContainer, Kennzahlen, Listable, MenuCategory, PlausibilityRules, PunkteKategorien,
-    Script, Sortable,
+    Ansichten, Comparable, Entries, FolderContent, FormEntry, FormEntryContainer, Kennzahlen,
+    Listable, MenuCategory, PlausibilityRules, PunkteKategorien, Script, Sortable,
+    apply_profile_to_form_entry, apply_profile_to_form_field,
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use crate::profile::Profile;
@@ -250,7 +250,10 @@ impl<Type: 'static> FormEntryContainer for Form<Type> {
     }
 }
 
-impl<Type: 'static> Listable for Form<Type> {
+impl<Type: 'static> Listable for Form<Type>
+where
+    Form<Type>: Comparable,
+{
     fn to_listed_string(&self) -> String {
         format!(
             "{} ({}) '{}' in Revision '{}'",
@@ -673,8 +676,8 @@ pub struct DataFormEntries {
 mod tests {
     use std::str::FromStr;
 
-    use crate::model::onkostar_editor::OnkostarEditor;
     use crate::model::Script;
+    use crate::model::onkostar_editor::OnkostarEditor;
     use crate::profile::Profile;
 
     #[test]

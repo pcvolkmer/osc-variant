@@ -18,15 +18,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+use crate::model::requirements::Requires;
+use crate::profile::{FormField, FormReference, Profile, WithScriptsCode};
+use console::style;
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
-
-use serde::{Deserialize, Serialize};
-
-use crate::model::requirements::Requires;
-use crate::profile::{FormField, FormReference, Profile, WithScriptsCode};
 
 pub mod data_catalogue;
 pub mod form;
@@ -354,8 +353,19 @@ pub trait FormEntryContainer {
     fn apply_profile(&mut self, profile: &Profile);
 }
 
-pub trait Listable {
+pub trait Listable
+where
+    Self: Comparable,
+{
     fn to_listed_string(&self) -> String;
+
+    fn to_verbose_listed_string(&self) -> String {
+        format!(
+            "{} {}",
+            self.to_listed_string(),
+            style(format!("[{}]", &self.get_hash()[..7])).dim()
+        )
+    }
 }
 
 pub trait Sortable {
@@ -375,7 +385,7 @@ pub trait Comparable: Debug {
     fn get_hash(&self) -> String {
         let mut h = DefaultHasher::new();
         format!("{self:?}").hash(&mut h);
-        h.finish().to_string()
+        format!("{:x}", h.finish())
     }
     fn compare_by_requirement(_: &Self, _: &Self) -> Ordering
     where
