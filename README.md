@@ -65,6 +65,9 @@ Mit der Option `--filter` kann die Ausgabe eingeschränkt werden.
 
 *Bei Verwendung der OSB-Funktionalität kann die Eingabe eines Passworts erforderlich sein.*
 
+Die Option `-v` sorgt dafür, dass die eine Prüfsumme für Kataloge und Formulare berechnet und angezeigt wird.
+Dadurch können inhaltliche Unterschiede bei identischer Revisionsnummer erkannt werden.
+
 #### Unterbefehl `tree`
 
 Zum Auflisten der Inhalte mit allen Abhängigkeiten, z.B. Daten- und Merkmalskataloge und bei Formularen wird der Befehl
@@ -86,6 +89,9 @@ Für Formularverweise und Unterformulare werden dabei die verwendeten Datenkatal
 Achtung! Dies erzeugt eine sehr umfangreiche Ausgabe.
 
 Mit der Option `--filter` kann auch hier die Ausgabe eingeschränkt werden.
+
+Wie bei `list` sorgt auch hier die Option `-v` dafür,
+dass die eine Prüfsumme für Kataloge und Formulare berechnet und angezeigt wird.
 
 #### Unterbefehl `diff`
 

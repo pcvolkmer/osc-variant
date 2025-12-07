@@ -27,6 +27,9 @@ use clap_complete::Shell;
 pub struct Cli {
     #[command(subcommand)]
     pub cmd: SubCommand,
+
+    #[arg(short = 'v', global = true, help = "Zeige umfangreichere Ausgaben")]
+    pub verbose: bool,
 }
 
 #[derive(Subcommand)]

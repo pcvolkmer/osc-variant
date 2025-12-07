@@ -17,13 +17,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use crate::checks::{check_file, print, CheckNotice};
+use crate::checks::{CheckNotice, check_file, print};
 use crate::cli::{Cli, SubCommand};
 use crate::file_io::{FileError, FileReader, InputFile};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 use clap::CommandFactory;
-use clap_complete::{generate, Shell};
+use clap_complete::{Shell, generate};
 use console::style;
 use quick_xml::se::Serializer;
 use serde::Serialize;
@@ -35,19 +35,19 @@ use std::io::Write;
 use std::ops::Add;
 use std::path::{Path, PathBuf};
 
-pub fn handle(command: SubCommand) -> Result<(), Box<dyn Error>> {
+pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> {
     match command {
         SubCommand::Completion { shell } => handle_completion(shell),
         SubCommand::List {
             inputfile,
             sorted,
             filter,
-        } => handle_list(inputfile, sorted, filter)?,
+        } => handle_list(inputfile, sorted, filter, verbose)?,
         SubCommand::Tree {
             inputfile,
             sorted,
             filter,
-        } => handle_tree(inputfile, sorted, filter)?,
+        } => handle_tree(inputfile, sorted, filter, verbose)?,
         SubCommand::Modify {
             inputfile,
             profile,
@@ -106,6 +106,7 @@ fn handle_list(
     inputfile: String,
     sorted: bool,
     filter: Option<String>,
+    verbose: bool,
 ) -> Result<(), Box<dyn Error>> {
     match InputFile::read(inputfile, None)? {
         osc @ InputFile::Osc { .. } => {
@@ -114,10 +115,10 @@ fn handle_list(
                 content.sorted();
             }
             if let Some(name) = filter {
-                OnkostarEditor::print_list_filtered(&mut content, name.as_str());
+                OnkostarEditor::print_list_filtered(&mut content, name.as_str(), verbose);
                 return Ok(());
             }
-            content.print_list();
+            content.print_list(verbose);
         }
         InputFile::Osb { content, .. } => {
             for file in content {
@@ -141,10 +142,14 @@ fn handle_list(
                             content.sorted();
                         }
                         if let Some(name) = filter {
-                            OnkostarEditor::print_list_filtered(&mut content, name.as_str());
+                            OnkostarEditor::print_list_filtered(
+                                &mut content,
+                                name.as_str(),
+                                verbose,
+                            );
                             return Ok(());
                         }
-                        content.print_list();
+                        content.print_list(verbose);
                         println!();
                     }
                     _ => {
@@ -172,6 +177,7 @@ fn handle_tree(
     inputfile: String,
     sorted: bool,
     filter: Option<String>,
+    verbose: bool,
 ) -> Result<(), Box<dyn Error>> {
     match InputFile::read(inputfile, None)? {
         osc @ InputFile::Osc { .. } => {
@@ -180,10 +186,10 @@ fn handle_tree(
                 content.sorted();
             }
             if let Some(name) = filter {
-                OnkostarEditor::print_tree_filtered(&mut content, name.as_str());
+                OnkostarEditor::print_tree_filtered(&mut content, name.as_str(), verbose);
                 return Ok(());
             }
-            OnkostarEditor::print_tree(&content);
+            OnkostarEditor::print_tree(&content, verbose);
         }
         InputFile::Osb { filename, .. } => {
             return Err(Box::new(FileError::Reading(
@@ -248,9 +254,7 @@ fn handle_modify(
 
     let output = &"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         .to_string()
-        .add(
-            buf.as_str(),
-        );
+        .add(buf.as_str());
 
     match outputfile {
         Some(filename) => write_outputfile(filename, output)?,

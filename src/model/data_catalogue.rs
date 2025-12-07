@@ -121,10 +121,14 @@ impl Requires for DataCatalogue {
         result
     }
 
-    fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor) -> String {
+    fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor, verbose: bool) -> String {
         format!(
             "{}\n{}",
-            self.to_listed_string(),
+            if verbose {
+                self.to_verbose_listed_string()
+            } else {
+                self.to_listed_string()
+            },
             self.get_required_entries(all)
                 .iter()
                 .filter_map(|entry| match entry {

@@ -34,6 +34,6 @@ mod unzip_osb;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let cli = Cli::parse();
-    handle(cli.cmd)?;
+    handle(cli.cmd, cli.verbose)?;
     Ok(())
 }
