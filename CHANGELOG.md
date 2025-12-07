@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.5](https://github.com/pcvolkmer/osc-variant/compare/v0.10.4...v0.10.5) (2025-12-07)
+
+
+### Features
+
+* add more verbose output ([#63](https://github.com/pcvolkmer/osc-variant/issues/63)) ([46d4156](https://github.com/pcvolkmer/osc-variant/commit/46d4156bb6044f221382b8cdd6b417d3a81a37b4))
+
 ## [0.10.4](https://github.com/pcvolkmer/osc-variant/compare/v0.10.3...v0.10.4) (2025-11-28)
 
 
