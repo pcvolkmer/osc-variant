@@ -61,7 +61,7 @@ impl Sortable for Requirement<'_> {
             | Requirement::ExternalDataFormReference(name)
             | Requirement::ExternalDataFormSubform(name)
             | Requirement::ExternalUnterformularReference(name)
-            | Requirement::ExternalUnterformularSubform(name) => name.to_string(),
+            | Requirement::ExternalUnterformularSubform(name) => name.clone(),
         }
     }
 }

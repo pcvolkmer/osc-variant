@@ -338,7 +338,7 @@ where
             entry.hide();
         }
         if let Some(new_default_value) = &form_field.default_value {
-            entry.update_default_value(new_default_value.to_string());
+            entry.update_default_value(new_default_value.clone());
         }
         if let Some(scripts_code) = &form_field.escaped_scripts_code() {
             entry.update_scripts_code(scripts_code.clone());

@@ -94,7 +94,7 @@ impl Comparable for PropertyCatalogue {
 
 impl FolderContent for PropertyCatalogue {
     fn get_library_folder(&self) -> String {
-        self.ordner.bibliothek.name.to_string()
+        self.ordner.bibliothek.name.clone()
     }
 }
 
