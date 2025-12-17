@@ -519,7 +519,7 @@ impl FormEntry for Entry {
     }
 
     fn update_referenced_data_form(&mut self, value: String) {
-        self.referenced_data_form = Some(value.to_string());
+        self.referenced_data_form = Some(value.clone());
 
         // Add new minimal form reference if not already present
         if let Some(ref mut form) = self.data_form_references

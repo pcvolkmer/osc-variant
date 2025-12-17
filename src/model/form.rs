@@ -388,7 +388,7 @@ where
                 .into_iter()
                 .map(|entry| match all.find_data_catalogue(entry.as_str()) {
                     Some(contained) => Requirement::DataCatalogue(contained),
-                    None => Requirement::ExternalDataCatalogue(entry.to_string()),
+                    None => Requirement::ExternalDataCatalogue(entry.clone()),
                 })
                 .collect::<Vec<_>>(),
             None => vec![],
@@ -411,7 +411,7 @@ where
                     Some(contained) => Requirement::DataFormReference(contained),
                     None => match all.find_unterformular(entry.as_str()) {
                         Some(contained) => Requirement::UnterformularReference(contained),
-                        None => Requirement::ExternalDataFormReference(entry.to_string()),
+                        None => Requirement::ExternalDataFormReference(entry.clone()),
                     },
                 })
                 .collect::<Vec<_>>();
@@ -424,14 +424,14 @@ where
                 .flat_map(|rdf| {
                     rdf.referenced_data_form
                         .iter()
-                        .map(|x| x.name.to_string())
+                        .map(|x| x.name.clone())
                         .collect::<Vec<_>>()
                 })
                 .map(|entry| match all.find_data_form(entry.as_str()) {
                     Some(contained) => Requirement::DataFormReference(contained),
                     None => match all.find_unterformular(entry.as_str()) {
                         Some(contained) => Requirement::UnterformularReference(contained),
-                        None => Requirement::ExternalDataFormReference(entry.to_string()),
+                        None => Requirement::ExternalDataFormReference(entry.clone()),
                     },
                 })
                 .collect::<Vec<_>>();
@@ -456,7 +456,7 @@ where
                     Some(contained) => Requirement::DataFormSubform(contained),
                     None => match all.find_unterformular(entry.as_str()) {
                         Some(contained) => Requirement::UnterformularSubform(contained),
-                        None => Requirement::ExternalUnterformularSubform(entry.to_string()),
+                        None => Requirement::ExternalUnterformularSubform(entry.clone()),
                     },
                 })
                 .collect::<Vec<_>>();
@@ -471,7 +471,7 @@ where
 impl<Type: 'static> FolderContent for Form<Type> {
     fn get_library_folder(&self) -> String {
         match &self.ordner {
-            Some(ordner) => ordner.bibliothek.name.to_string(),
+            Some(ordner) => ordner.bibliothek.name.clone(),
             None => String::new(),
         }
     }
