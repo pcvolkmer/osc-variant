@@ -34,7 +34,7 @@ impl Profile {
     pub fn embedded_profile(name: &str) -> Result<Profile, String> {
         let s = match name {
             "UKA" => include_str!("../examples/dnpm-uka.yml"),
-            "UKM" | "UMR" => include_str!("../examples/dnpm-ukm.yml"),
+            "UKM" | "UMR" => include_str!("../examples/dnpm-umr.yml"),
             "UKR" => include_str!("../examples/dnpm-ukr.yml"),
             "UKW" => include_str!("../examples/dnpm-ukw.yml"),
             "UMG" => include_str!("../examples/dnpm-umg.yml"),
