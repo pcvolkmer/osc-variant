@@ -13,6 +13,11 @@ forms:
       - name: referstemtb
         referenced_data_form: 'MR.MTB_Empfehlung'
         anzeige_auswahl: 'MTB vom {Datum}'
+        script_code: |
+          // Kein Überschreiben "Protokollauszug"
+          // Nicht in der Form in "MR.MTB_Empfehlung" vorhanden.
+          var datum = getFieldValue('referstemtb').Datum;
+          setFieldValue('datum', datum);
       - name: reftkhumangenber
         referenced_data_form: 'MR.MTB_Empfehlung'
         anzeige_auswahl: 'MTB vom {Datum}'
