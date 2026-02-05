@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.6](https://github.com/pcvolkmer/osc-variant/compare/v0.10.5...v0.10.6) (2026-02-05)
+
+
+### Features
+
+* update profile for UKGM - Marburg ([#67](https://github.com/pcvolkmer/osc-variant/issues/67)) ([8aa2aa5](https://github.com/pcvolkmer/osc-variant/commit/8aa2aa5f83bc2e03feb224d0e5acb7828abf1207))
+
 ## [0.10.5](https://github.com/pcvolkmer/osc-variant/compare/v0.10.4...v0.10.5) (2025-12-07)
 
 
