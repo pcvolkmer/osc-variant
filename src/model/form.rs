@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2023-2024 the original author or authors.
+ * Copyright (C) 2023-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,22 @@ use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::marker::PhantomData;
+
+#[derive(serde::Serialize)]
+pub(crate) struct Notice {
+    #[serde(rename = "Formular")]
+    pub(crate) form: String,
+    #[serde(rename = "Formularfeldbeschreibung")]
+    pub(crate) form_field_description: String,
+    #[serde(rename = "Formularfeld")]
+    pub(crate) form_field: String,
+    #[serde(rename = "GUID")]
+    pub(crate) guid: String,
+    #[serde(rename = "Hinweis als HTML")]
+    pub(crate) html: String,
+    #[serde(skip)]
+    pub(crate) position: f32,
+}
 
 #[derive(Debug)]
 pub struct DataFormType;
@@ -478,6 +494,36 @@ impl<Type: 'static> FolderContent for Form<Type> {
 }
 
 impl<Type> Form<Type> {
+    pub fn get_notices(&self) -> Vec<Notice> {
+        if let Some(entries) = &self.entries {
+            entries
+                .entry
+                .iter()
+                .filter(|entry| {
+                    entry.type_ != "subform"
+                        && entry.type_ != "section"
+                        && if let Some(filter) = &entry.filter {
+                            filter.condition.trim() != "false"
+                        } else {
+                            true
+                        }
+                })
+                .flat_map(|entry| {
+                    Some(Notice {
+                        form: self.name.clone(),
+                        form_field: entry.name.clone(),
+                        form_field_description: entry.description.clone(),
+                        guid: entry.guid.clone(),
+                        html: entry.hinweis.clone().unwrap_or_default(),
+                        position: entry.position,
+                    })
+                })
+                .collect()
+        } else {
+            vec![]
+        }
+    }
+
     fn common_check(&self) -> Vec<CheckNotice> {
         let missing_forms_in_refs = match self.entries {
             Some(ref entries) => entries

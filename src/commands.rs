@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2024 the original author or authors.
+ * Copyright (C) 2023-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ use console::style;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
+use std::cmp::Ordering;
 use std::error::Error;
 use std::fs;
 use std::fs::OpenOptions;
@@ -68,6 +69,7 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
             list,
             password,
         } => handle_check(file, list, password),
+        SubCommand::ExportNoticeCsv { inputfile } => handle_export_notice_csv(&inputfile)?,
         #[cfg(feature = "unzip-osb")]
         SubCommand::UnzipOsb {
             file,
@@ -328,6 +330,50 @@ fn handle_check(file: Option<String>, list: bool, password: Option<String>) {
             }
         }
     }
+}
+
+fn handle_export_notice_csv(inputfile: &str) -> Result<(), Box<dyn Error>> {
+    let data = &mut FileReader::<OnkostarEditor>::read(inputfile)?;
+    let mut notices = data
+        .editor
+        .data_form
+        .iter()
+        .flat_map(super::model::form::Form::get_notices)
+        .filter(|notice| !notice.guid.is_empty())
+        .collect::<Vec<_>>();
+
+    let subform_notices = data
+        .editor
+        .unterformular
+        .iter()
+        .flat_map(super::model::form::Form::get_notices)
+        .filter(|notice| !notice.guid.is_empty())
+        .collect::<Vec<_>>();
+
+    notices.extend(subform_notices);
+
+    notices.sort_by(|notice1, notice2| {
+        if notice1.position < notice2.position {
+            Ordering::Less
+        } else {
+            Ordering::Greater
+        }
+    });
+    notices.sort_by_key(|notice| notice.form.clone());
+
+    let mut writer = csv::WriterBuilder::new()
+        .has_headers(true)
+        .escape(b'"')
+        .delimiter(b';')
+        .from_writer(vec![]);
+
+    for notice in notices {
+        let _ = writer.serialize(notice);
+    }
+
+    println!("{}", String::from_utf8(writer.into_inner()?)?);
+
+    Ok(())
 }
 
 #[cfg(feature = "unzip-osb")]

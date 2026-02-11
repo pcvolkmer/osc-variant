@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2024 the original author or authors.
+ * Copyright (C) 2023-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -308,7 +308,7 @@ pub struct Entry {
     #[serde(rename = "Name")]
     pub(crate) name: String,
     #[serde(rename = "Description")]
-    description: String,
+    pub(crate) description: String,
     #[serde(rename = "Active")]
     active: bool,
     #[serde(rename = "Readonly")]
@@ -316,7 +316,7 @@ pub struct Entry {
     #[serde(rename = "Printable")]
     printable: bool,
     #[serde(rename = "Position")]
-    position: String,
+    pub(crate) position: f32,
     #[serde(rename = "Note")]
     note: String,
     #[serde(rename = "Beschriftung1")]
@@ -400,7 +400,7 @@ pub struct Entry {
     in_uebersicht_anzeigen: bool,
     #[serde(rename = "Hinweis")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    hinweis: Option<String>,
+    pub(crate) hinweis: Option<String>,
     #[serde(rename = "Vorschlagskategorie")]
     #[serde(skip_serializing_if = "Option::is_none")]
     vorschlagskategorie: Option<String>,
@@ -495,7 +495,7 @@ pub struct Entry {
     #[serde(rename = "SID")]
     sid: String,
     #[serde(rename = "GUID")]
-    guid: String,
+    pub(crate) guid: String,
     #[serde(rename = "Revision")]
     revision: u16,
     #[serde(rename = "vorherigeWerte")]
