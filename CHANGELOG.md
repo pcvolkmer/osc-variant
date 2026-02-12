@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0](https://github.com/pcvolkmer/osc-variant/compare/v0.10.6...v0.11.0) (2026-02-12)
+
+
+### Features
+
+* export csv file with form field notices ([#70](https://github.com/pcvolkmer/osc-variant/issues/70)) ([358aa68](https://github.com/pcvolkmer/osc-variant/commit/358aa688e923f57eb118b14895b3a4a9a2eb6d6a))
+
+
+### Miscellaneous Chores
+
+* release 0.11.0 ([dccee9c](https://github.com/pcvolkmer/osc-variant/commit/dccee9cf8231a3987c9d6d111896c44fc147c0fc))
+
 ## [0.10.6](https://github.com/pcvolkmer/osc-variant/compare/v0.10.5...v0.10.6) (2026-02-05)
 
 
