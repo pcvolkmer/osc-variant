@@ -10,28 +10,30 @@ else
 endif
 VERSION := "$(GITTAG)$(GITDEV)"
 
+NAME := osc-variant
+
 package-all: win-package linux-package
 
 .PHONY: win-package
 win-package: win-binary-x86_64
-	mkdir osc-variant || true
-	cp target/x86_64-pc-windows-gnu/release/osc-variant.exe osc-variant/
-	cp -r examples osc-variant/
-	cp README.md osc-variant/
-	cp LICENSE.txt osc-variant/
+	mkdir $(NAME) || true
+	cp target/x86_64-pc-windows-gnu/release/$(NAME).exe $(NAME)/
+	cp -r examples $(NAME)/
+	cp README.md $(NAME)/
+	cp LICENSE $(NAME)/
 	# first try (linux) zip command, then powershell sub command to create ZIP file
-	zip osc-variant-$(VERSION)_win64.zip osc-variant/* osc-variant/examples/* || powershell Compress-ARCHIVE osc-variant osc-variant-$(VERSION)_win64.zip
-	rm -rf osc-variant || true
+	zip $(NAME)-$(VERSION)_win64.zip $(NAME)/* $(NAME)/examples/* || powershell Compress-ARCHIVE $(NAME) $(NAME)-$(VERSION)_win64.zip
+	rm -rf $(NAME) || true
 
 .PHONY: linux-package
 linux-package: linux-binary-x86_64
-	mkdir osc-variant || true
-	cp target/x86_64-unknown-linux-gnu/release/osc-variant osc-variant/
-	cp -r examples osc-variant/
-	cp README.md osc-variant/
-	cp LICENSE.txt osc-variant/
-	tar -czvf osc-variant-$(VERSION)_linux.tar.gz osc-variant/
-	rm -rf osc-variant || true
+	mkdir $(NAME) || true
+	cp target/x86_64-unknown-linux-gnu/release/$(NAME) $(NAME)/
+	cp -r examples $(NAME)/
+	cp README.md $(NAME)/
+	cp LICENSE $(NAME)/
+	tar -czvf osc-variant-$(VERSION)_linux.tar.gz $(NAME)/
+	rm -rf $(NAME) || true
 
 .PHONY: linux-deb
 linux-deb: linux-binary-x86_64
@@ -58,6 +60,6 @@ install:
 .PHONY: clean
 clean:
 	cargo clean
-	rm -rf osc-variant 2>/dev/null || true
+	rm -rf $(NAME) 2>/dev/null || true
 	rm *_win64.zip 2>/dev/null || true
 	rm *_linux.tar.gz 2>/dev/null || true
