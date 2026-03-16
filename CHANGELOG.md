@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/pcvolkmer/osc-variant/compare/v0.11.0...v0.11.1) (2026-03-16)
+
+
+### Bug Fixes
+
+* use position format as is ([#72](https://github.com/pcvolkmer/osc-variant/issues/72)) ([2703b72](https://github.com/pcvolkmer/osc-variant/commit/2703b72319debf344c82b9d67a40a95203ebb25c))
+
 ## [0.11.0](https://github.com/pcvolkmer/osc-variant/compare/v0.10.6...v0.11.0) (2026-02-12)
 
 
