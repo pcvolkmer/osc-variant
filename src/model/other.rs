@@ -231,7 +231,7 @@ pub struct Modul {
     #[serde(rename = "Typ")]
     pub typ: i32,
     #[serde(rename = "Position")]
-    pub position: f64,
+    pub position: String,
     #[serde(rename = "Konfiguration")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub konfiguration: Option<String>,
@@ -316,7 +316,7 @@ pub struct Entry {
     #[serde(rename = "Printable")]
     printable: bool,
     #[serde(rename = "Position")]
-    pub(crate) position: f32,
+    pub(crate) position: String,
     #[serde(rename = "Note")]
     note: String,
     #[serde(rename = "Beschriftung1")]

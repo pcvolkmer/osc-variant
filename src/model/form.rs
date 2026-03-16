@@ -50,7 +50,7 @@ pub(crate) struct Notice {
     #[serde(rename = "Hinweis als HTML")]
     pub(crate) html: String,
     #[serde(skip)]
-    pub(crate) position: f32,
+    pub(crate) position: String,
 }
 
 #[derive(Debug)]
@@ -515,7 +515,7 @@ impl<Type> Form<Type> {
                         form_field_description: entry.description.clone(),
                         guid: entry.guid.clone(),
                         html: entry.hinweis.clone().unwrap_or_default(),
-                        position: entry.position,
+                        position: entry.position.clone(),
                     })
                 })
                 .collect()
