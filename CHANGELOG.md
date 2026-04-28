@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.4](https://github.com/pcvolkmer/osc-variant/compare/v0.11.3...v0.11.4) (2026-04-28)
+
+
+### Bug Fixes
+
+* UTF-8 recognition ([#79](https://github.com/pcvolkmer/osc-variant/issues/79)) ([0a46ccb](https://github.com/pcvolkmer/osc-variant/commit/0a46ccbdff99cc35003c392a813a0d94582bcd05))
+
 ## [0.11.3](https://github.com/pcvolkmer/osc-variant/compare/v0.11.2...v0.11.3) (2026-04-28)
 
 
