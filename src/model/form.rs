@@ -37,7 +37,7 @@ use std::collections::HashSet;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 
-#[derive(serde::Serialize)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
 pub(crate) struct Notice {
     #[serde(rename = "Formular")]
     pub(crate) form: String,
@@ -263,6 +263,18 @@ impl<Type: 'static> FormEntryContainer for Form<Type> {
                 });
             }
         });
+    }
+
+    fn apply_notices(&mut self, notices: Vec<Notice>) {
+        if let Some(ref mut entries) = self.entries {
+            entries.entry.iter_mut().for_each(|entry| {
+                for notice in &notices {
+                    if entry.guid == notice.guid && !notice.html.trim().is_empty() {
+                        entry.hinweis = Some(notice.html.trim().to_string());
+                    }
+                }
+            });
+        }
     }
 }
 

@@ -72,6 +72,8 @@ pub enum SubCommand {
         inputfile: String,
         #[arg(long = "profile", help = "Profildatei (optional)")]
         profile: Option<String>,
+        #[arg(long = "notices", help = "CSV-Datei mit Ausfüllhinweisen (optional)")]
+        noticefile: Option<String>,
         #[arg(long = "output", help = "Ausgabedatei (optional)")]
         outputfile: Option<String>,
         #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
@@ -120,7 +122,7 @@ pub enum SubCommand {
         )]
         list: bool,
     },
-    #[command(about = "Exportiere CSV-Datei mit Ausfüllhinwiesen")]
+    #[command(about = "Exportiere CSV-Datei mit Ausfüllhinweisen")]
     ExportNoticeCsv { inputfile: String },
     #[cfg(feature = "unzip-osb")]
     #[command(about = "Entpackt eine OSB-Datei")]
