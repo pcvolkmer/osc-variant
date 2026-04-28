@@ -266,14 +266,31 @@ impl<Type: 'static> FormEntryContainer for Form<Type> {
     }
 
     fn apply_notices(&mut self, notices: Vec<Notice>) {
+        let mut has_updates = false;
+
         if let Some(ref mut entries) = self.entries {
             entries.entry.iter_mut().for_each(|entry| {
                 for notice in &notices {
                     if entry.guid == notice.guid && !notice.html.trim().is_empty() {
+                       match entry.hinweis {
+                           Some(ref mut hinweis) => {
+                                if hinweis.trim() != notice.html.trim() {
+                                    has_updates = true;
+                                    entry.revision += 1;
+                                    *hinweis = notice.html.trim().to_string();
+                                }
+                           },
+                           None => entry.hinweis = Some(notice.html.trim().to_string()),
+                       }
+
                         entry.hinweis = Some(notice.html.trim().to_string());
                     }
                 }
             });
+        }
+
+        if has_updates {
+            self.revision += 1;
         }
     }
 }
