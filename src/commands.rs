@@ -20,11 +20,15 @@
 use crate::checks::{CheckNotice, check_file, print};
 use crate::cli::{Cli, SubCommand};
 use crate::file_io::{FileError, FileReader, InputFile};
+use crate::model::FormEntryContainer;
+use crate::model::form::Notice;
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 use clap::CommandFactory;
 use clap_complete::{Shell, generate};
 use console::style;
+use encoding_rs::WINDOWS_1252;
+use encoding_rs::mem::is_utf8_latin1;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -35,8 +39,6 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::path::{Path, PathBuf};
-use crate::model::form::Notice;
-use crate::model::FormEntryContainer;
 
 pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> {
     match command {
@@ -60,7 +62,9 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
             sorted,
             strip,
             fix,
-        } => handle_modify(inputfile, profile, noticefile, outputfile, compact, sorted, strip, fix)?,
+        } => handle_modify(
+            inputfile, profile, noticefile, outputfile, compact, sorted, strip, fix,
+        )?,
         SubCommand::Diff {
             inputfile_a,
             inputfile_b,
@@ -249,23 +253,36 @@ fn handle_modify(
     }
 
     if let Some(noticefile) = noticefile {
+        let content = fs::read(&noticefile)?;
+        let content = if is_utf8_latin1(content.as_slice()) {
+            String::from_utf8(content)?
+        } else {
+            let (cow, _, err) = WINDOWS_1252.decode(&content.as_slice());
+            if err {
+                return Err(Box::new(FileError::Reading(
+                    noticefile,
+                    "Es werden nur UTF-8 oder Windows-1252 codierte CSV-Dateien mit Ausfüllhinweisen unterstützt"
+                        .to_string(),
+                )));
+            }
+            cow.into_owned()
+        };
+
         let notices = csv::ReaderBuilder::new()
             .has_headers(true)
             .delimiter(b';')
-            .from_path(noticefile)?
+            .from_reader(content.as_bytes())
             .deserialize::<Notice>()
             .filter_map(Result::ok)
             .filter(|notice| !notice.html.trim().is_empty())
             .collect::<Vec<_>>();
 
-        data
-            .editor
+        data.editor
             .data_form
             .iter_mut()
             .for_each(|form| form.apply_notices(notices.clone()));
 
-        data
-            .editor
+        data.editor
             .unterformular
             .iter_mut()
             .for_each(|form| form.apply_notices(notices.clone()));
