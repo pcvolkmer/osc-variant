@@ -20,11 +20,15 @@
 use crate::checks::{CheckNotice, check_file, print};
 use crate::cli::{Cli, SubCommand};
 use crate::file_io::{FileError, FileReader, InputFile};
+use crate::model::FormEntryContainer;
+use crate::model::form::Notice;
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::profile::Profile;
 use clap::CommandFactory;
 use clap_complete::{Shell, generate};
 use console::style;
+use encoding_rs::WINDOWS_1252;
+use encoding_rs::mem::is_utf8_latin1;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -35,10 +39,6 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::path::{Path, PathBuf};
-use encoding_rs::mem::is_utf8_latin1;
-use encoding_rs::{WINDOWS_1251, WINDOWS_1252};
-use crate::model::form::Notice;
-use crate::model::FormEntryContainer;
 
 pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> {
     match command {
@@ -62,7 +62,9 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
             sorted,
             strip,
             fix,
-        } => handle_modify(inputfile, profile, noticefile, outputfile, compact, sorted, strip, fix)?,
+        } => handle_modify(
+            inputfile, profile, noticefile, outputfile, compact, sorted, strip, fix,
+        )?,
         SubCommand::Diff {
             inputfile_a,
             inputfile_b,
@@ -275,14 +277,12 @@ fn handle_modify(
             .filter(|notice| !notice.html.trim().is_empty())
             .collect::<Vec<_>>();
 
-        data
-            .editor
+        data.editor
             .data_form
             .iter_mut()
             .for_each(|form| form.apply_notices(notices.clone()));
 
-        data
-            .editor
+        data.editor
             .unterformular
             .iter_mut()
             .for_each(|form| form.apply_notices(notices.clone()));
