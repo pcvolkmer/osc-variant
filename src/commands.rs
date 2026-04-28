@@ -28,7 +28,6 @@ use clap::CommandFactory;
 use clap_complete::{Shell, generate};
 use console::style;
 use encoding_rs::WINDOWS_1252;
-use encoding_rs::mem::is_utf8_latin1;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -254,18 +253,19 @@ fn handle_modify(
 
     if let Some(noticefile) = noticefile {
         let content = fs::read(&noticefile)?;
-        let content = if is_utf8_latin1(content.as_slice()) {
-            String::from_utf8(content)?
-        } else {
-            let (cow, _, err) = WINDOWS_1252.decode(&content.as_slice());
-            if err {
-                return Err(Box::new(FileError::Reading(
-                    noticefile,
-                    "Es werden nur UTF-8 oder Windows-1252 codierte CSV-Dateien mit Ausfüllhinweisen unterstützt"
-                        .to_string(),
-                )));
+        let content = match String::from_utf8(content.clone()) {
+            Ok(content) => content,
+            Err(_) => {
+                let (cow, _, err) = WINDOWS_1252.decode(&content);
+                if err {
+                    return Err(Box::new(FileError::Reading(
+                        noticefile,
+                        "Es werden nur UTF-8 oder Windows-1252 codierte CSV-Dateien mit Ausfüllhinweisen unterstützt"
+                            .to_string(),
+                    )));
+                }
+                cow.into_owned()
             }
-            cow.into_owned()
         };
 
         let notices = csv::ReaderBuilder::new()
