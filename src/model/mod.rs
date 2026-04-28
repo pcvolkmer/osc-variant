@@ -26,6 +26,7 @@ use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
+use crate::model::form::Notice;
 
 pub mod data_catalogue;
 pub mod form;
@@ -351,6 +352,8 @@ where
 
 pub trait FormEntryContainer {
     fn apply_profile(&mut self, profile: &Profile);
+
+    fn apply_notices(&mut self, notices: Vec<Notice>);
 }
 
 pub trait Listable

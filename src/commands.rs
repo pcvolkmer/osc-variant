@@ -35,6 +35,8 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::path::{Path, PathBuf};
+use crate::model::form::Notice;
+use crate::model::FormEntryContainer;
 
 pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> {
     match command {
@@ -52,12 +54,13 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
         SubCommand::Modify {
             inputfile,
             profile,
+            noticefile,
             outputfile,
             compact,
             sorted,
             strip,
             fix,
-        } => handle_modify(inputfile, profile, outputfile, compact, sorted, strip, fix)?,
+        } => handle_modify(inputfile, profile, noticefile, outputfile, compact, sorted, strip, fix)?,
         SubCommand::Diff {
             inputfile_a,
             inputfile_b,
@@ -214,6 +217,7 @@ fn handle_tree(
 fn handle_modify(
     inputfile: String,
     profile: Option<String>,
+    noticefile: Option<String>,
     outputfile: Option<String>,
     compact: bool,
     sorted: bool,
@@ -242,6 +246,29 @@ fn handle_modify(
 
     if strip {
         data.strip_system_library_content();
+    }
+
+    if let Some(noticefile) = noticefile {
+        let notices = csv::ReaderBuilder::new()
+            .has_headers(true)
+            .delimiter(b';')
+            .from_path(noticefile)?
+            .deserialize::<Notice>()
+            .filter_map(Result::ok)
+            .filter(|notice| !notice.html.trim().is_empty())
+            .collect::<Vec<_>>();
+
+        data
+            .editor
+            .data_form
+            .iter_mut()
+            .for_each(|form| form.apply_notices(notices.clone()));
+
+        data
+            .editor
+            .unterformular
+            .iter_mut()
+            .for_each(|form| form.apply_notices(notices.clone()));
     }
 
     let mut buf = String::new();
