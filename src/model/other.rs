@@ -497,7 +497,7 @@ pub struct Entry {
     #[serde(rename = "GUID")]
     pub(crate) guid: String,
     #[serde(rename = "Revision")]
-    revision: u16,
+    pub(crate) revision: u16,
     #[serde(rename = "vorherigeWerte")]
     #[serde(skip_serializing_if = "Option::is_none")]
     vorherige_werte: Option<String>,
