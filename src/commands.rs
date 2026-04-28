@@ -35,6 +35,8 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::path::{Path, PathBuf};
+use encoding_rs::mem::is_utf8_latin1;
+use encoding_rs::{WINDOWS_1251, WINDOWS_1252};
 use crate::model::form::Notice;
 use crate::model::FormEntryContainer;
 
@@ -249,10 +251,25 @@ fn handle_modify(
     }
 
     if let Some(noticefile) = noticefile {
+        let content = fs::read(&noticefile)?;
+        let content = if is_utf8_latin1(content.as_slice()) {
+            String::from_utf8(content)?
+        } else {
+            let (cow, _, err) = WINDOWS_1252.decode(&content.as_slice());
+            if err {
+                return Err(Box::new(FileError::Reading(
+                    noticefile,
+                    "Es werden nur UTF-8 oder Windows-1252 codierte CSV-Dateien mit Ausfüllhinweisen unterstützt"
+                        .to_string(),
+                )));
+            }
+            cow.into_owned()
+        };
+
         let notices = csv::ReaderBuilder::new()
             .has_headers(true)
             .delimiter(b';')
-            .from_path(noticefile)?
+            .from_reader(content.as_bytes())
             .deserialize::<Notice>()
             .filter_map(Result::ok)
             .filter(|notice| !notice.html.trim().is_empty())
