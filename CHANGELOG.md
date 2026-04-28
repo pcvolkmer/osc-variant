@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.3](https://github.com/pcvolkmer/osc-variant/compare/v0.11.2...v0.11.3) (2026-04-28)
+
+
+### Features
+
+* decode Windows-1252 CSV files ([#78](https://github.com/pcvolkmer/osc-variant/issues/78)) ([b99a936](https://github.com/pcvolkmer/osc-variant/commit/b99a93600a6ee3b43f6f3a2f67dce24d1e8e1eb2))
+* increment revision on notice updates ([#76](https://github.com/pcvolkmer/osc-variant/issues/76)) ([f0a3206](https://github.com/pcvolkmer/osc-variant/commit/f0a32069685ddb4e3c2a642d6a84697d0538d234))
+
 ## [0.11.2](https://github.com/pcvolkmer/osc-variant/compare/v0.11.1...v0.11.2) (2026-04-28)
 
 
