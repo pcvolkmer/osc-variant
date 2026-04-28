@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/pcvolkmer/osc-variant/compare/v0.11.1...v0.11.2) (2026-04-28)
+
+
+### Features
+
+* import notices from CSV file ([#74](https://github.com/pcvolkmer/osc-variant/issues/74)) ([c775cf2](https://github.com/pcvolkmer/osc-variant/commit/c775cf2820317ab0a5b120896dba60a8aeddd91b))
+
 ## [0.11.1](https://github.com/pcvolkmer/osc-variant/compare/v0.11.0...v0.11.1) (2026-03-16)
 
 
