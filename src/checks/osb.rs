@@ -24,7 +24,7 @@ use std::path::Path;
 
 use indicatif::{ProgressBar, ProgressStyle};
 
-use crate::checks::{osc, CheckNotice};
+use crate::checks::{CheckNotice, osc};
 
 #[cfg(feature = "unzip-osb")]
 pub fn check_file(file: &Path, password: &str) -> Result<Vec<CheckNotice>, CheckNotice> {

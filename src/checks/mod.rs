@@ -195,7 +195,8 @@ pub fn print() {
             .bold()
     );
 
-    for problem in [Problem {
+    for problem in [
+        Problem {
             code: "2023-0001",
             name: "Unterformular mit Markierung 'hat Unterformulare'",
             description: "  Aktuell gibt es keine Unterformulare in Unterformularen, daher\n  \
@@ -245,7 +246,8 @@ pub fn print() {
             Dieses Problem muss manuell behoben werden.
             ",
             fixable: false,
-        }] {
+        },
+    ] {
         println!("{problem}\n");
     }
 }

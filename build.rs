@@ -19,8 +19,8 @@
  */
 
 use clap::CommandFactory;
-use clap_complete::generate_to;
 use clap_complete::Shell::Bash;
+use clap_complete::generate_to;
 use std::fs;
 use std::io::Error;
 

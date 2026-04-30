@@ -18,6 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+use crate::model::form::Notice;
 use crate::model::requirements::Requires;
 use crate::profile::{FormField, FormReference, Profile, WithScriptsCode};
 use console::style;
@@ -26,7 +27,6 @@ use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
-use crate::model::form::Notice;
 
 pub mod data_catalogue;
 pub mod form;

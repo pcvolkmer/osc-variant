@@ -272,16 +272,16 @@ impl<Type: 'static> FormEntryContainer for Form<Type> {
             entries.entry.iter_mut().for_each(|entry| {
                 for notice in &notices {
                     if entry.guid == notice.guid && !notice.html.trim().is_empty() {
-                       match entry.hinweis {
-                           Some(ref mut hinweis) => {
+                        match entry.hinweis {
+                            Some(ref mut hinweis) => {
                                 if hinweis.trim() != notice.html.trim() {
                                     has_updates = true;
                                     entry.revision += 1;
                                     *hinweis = notice.html.trim().to_string();
                                 }
-                           },
-                           None => entry.hinweis = Some(notice.html.trim().to_string()),
-                       }
+                            }
+                            None => entry.hinweis = Some(notice.html.trim().to_string()),
+                        }
 
                         entry.hinweis = Some(notice.html.trim().to_string());
                     }

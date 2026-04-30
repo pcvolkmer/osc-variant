@@ -48,11 +48,13 @@ impl Display for FileError {
             f,
             "{}",
             match &self {
-                FileError::Reading(filename, err) => format!("Kann Datei '{filename}' nicht lesen: {err}"),
-                FileError::Writing(filename, err) => format!("Kann Datei '{filename}' nicht schreiben: {err}"),
+                FileError::Reading(filename, err) =>
+                    format!("Kann Datei '{filename}' nicht lesen: {err}"),
+                FileError::Writing(filename, err) =>
+                    format!("Kann Datei '{filename}' nicht schreiben: {err}"),
                 FileError::Parsing(filename, err) => format!(
                     "Die Datei '{filename}' wird nicht unterstützt, ist fehlerhaft oder enthält zusätzliche Inhalte\n{err}"
-                )
+                ),
             }
         )
     }

@@ -48,7 +48,7 @@ pub fn check(content: &str) -> Result<Vec<CheckNotice>, CheckNotice> {
             return Err(CheckNotice::Error {
                 description: format!("Interner Fehler: {err}"),
                 line: None,
-            })
+            });
         }
     };
     result.append(inner_checks);
