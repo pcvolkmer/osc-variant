@@ -93,6 +93,10 @@ impl Comparable for DataCatalogue {
         self.name.clone()
     }
 
+    fn get_guid(&self) -> String {
+        self.guid.clone()
+    }
+
     fn get_revision(&self) -> u16 {
         self.revision
     }

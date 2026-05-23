@@ -360,6 +360,10 @@ where
         self.name.clone()
     }
 
+    fn get_guid(&self) -> String {
+        self.guid.clone()
+    }
+
     fn get_revision(&self) -> u16 {
         self.revision
     }
@@ -523,7 +527,7 @@ impl<Type: 'static> FolderContent for Form<Type> {
 }
 
 impl<Type> Form<Type> {
-    pub fn get_notices(&self) -> Vec<Notice> {
+    pub(crate) fn get_notices(&self) -> Vec<Notice> {
         if let Some(entries) = &self.entries {
             entries
                 .entry

@@ -384,6 +384,7 @@ pub trait Sortable {
 
 pub trait Comparable: Debug {
     fn get_name(&self) -> String;
+    fn get_guid(&self) -> String;
     fn get_revision(&self) -> u16;
     fn get_hash(&self) -> String {
         let mut h = DefaultHasher::new();

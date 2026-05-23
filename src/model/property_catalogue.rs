@@ -87,6 +87,10 @@ impl Comparable for PropertyCatalogue {
         self.name.clone()
     }
 
+    fn get_guid(&self) -> String {
+        self.guid.clone().unwrap_or_default().clone()
+    }
+
     fn get_revision(&self) -> u16 {
         self.revision
     }

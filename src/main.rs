@@ -23,6 +23,7 @@ use crate::commands::handle;
 use clap::Parser;
 use std::error::Error;
 
+pub mod bundles;
 mod checks;
 mod cli;
 mod commands;

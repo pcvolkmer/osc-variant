@@ -17,14 +17,19 @@ clap = { version = "4.6", features = ["std", "help", "usage", "derive", "error-c
 clap_complete = "4.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
+serde_json = "1.0"
 csv = "1.4"
-quick-xml = { version = "0.39", features = ["escape-html", "serialize"], default-features = false }
+quick-xml = { version = "0.40", features = ["escape-html", "serialize"], default-features = false }
 console = "0.16"
 indicatif = "0.18"
 bytes = "1.11"
 sha2 = { version = "0.11", default-features = false }
 base16ct = { version = "1.0", features = ["alloc"] }
 encoding_rs = "0.8"
+semver = "1.0"
+regex = "1.12.3"
+git2 = { version = "0.21", features = ["https"] }
+dirs = "6.0"
 # Optional dependencies
 deob = { path = "libs/deob", version = "0.11.4", optional = true }
 zip = { version = "8.6", optional = true }
