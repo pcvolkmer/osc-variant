@@ -211,6 +211,7 @@ pub struct BundleVersionSpec {
 impl FromStr for BundleVersionSpec {
     type Err = String;
 
+    #[allow(clippy::expect_used)]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut parts = s.split('@');
         let bundle_name = parts.next().ok_or("Bundle-Name fehlt")?;
