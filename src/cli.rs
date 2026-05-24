@@ -17,9 +17,10 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 use clap::{Parser, Subcommand};
 use clap_complete::Shell;
+use regex::Regex;
+use std::str::FromStr;
 
 #[derive(Parser)]
 #[command(author, version, about)]
@@ -103,7 +104,8 @@ pub enum SubCommand {
         #[arg(long = "strict", help = "Strikter Vergleich des Inhalts")]
         strict: bool,
     },
-    #[command(about = if cfg!(feature = "unzip-osb") { "Prüfe eine OSB- oder OSC-Datei auf bekannte Problemen" } else { "Prüfe eine OSC-Datei auf bekannte Problemen" })]
+    #[command(about = if cfg!(feature = "unzip-osb") { "Prüfe eine OSB- oder OSC-Datei auf bekannte Problemen" } else { "Prüfe eine OSC-Datei auf bekannte Problemen" }
+    )]
     Check {
         #[arg(help = "Die zu prüfende Datei", group = "check-file", required = true)]
         file: Option<String>,
@@ -124,6 +126,8 @@ pub enum SubCommand {
     },
     #[command(about = "Exportiere CSV-Datei mit Ausfüllhinweisen")]
     ExportNoticeCsv { inputfile: String },
+    #[command(subcommand, about = "Befehle zur Nutzung von Bundles")]
+    Bundle(BundleSubCommand),
     #[cfg(feature = "unzip-osb")]
     #[command(about = "Entpackt eine OSB-Datei")]
     UnzipOsb {
@@ -137,4 +141,93 @@ pub enum SubCommand {
         #[arg(short = 'd', long = "dir", help = "Zielverzeichnis (Optional)")]
         dir: Option<String>,
     },
+}
+
+#[derive(Subcommand)]
+pub enum BundleSubCommand {
+    #[cfg(feature = "bundle-edit")]
+    #[command(about = "Erstelle ein Bundle")]
+    Create {
+        #[arg(help = "Name des Bundles)")]
+        bundle_name: String,
+        #[arg(short = 'm', long = "message", help = "Beschreibung des Bundles")]
+        description: String,
+        #[arg(long = "license", help = "Lizenz des Bundles")]
+        license: Option<String>,
+        #[arg(long = "repository", help = "Quellcode-Repository des Bundles")]
+        repository: Option<String>,
+    },
+    #[cfg(feature = "bundle-edit")]
+    #[command(about = "Füge OSC-Datei als Bundle-Version hinzu")]
+    AddVersion {
+        #[arg(help = "Name des Bundles)")]
+        bundle_name: String,
+        file: String,
+        #[arg(long = "tag", help = "Versions-Tag der Bundle-Version (Optional)")]
+        tag: Option<String>,
+        #[arg(
+            short = 'm',
+            long = "message",
+            requires = "tag",
+            help = "Beschreibung der Bundle-Version (Optional)"
+        )]
+        message: Option<String>,
+    },
+    #[command(about = "Liste alle Bundles auf")]
+    List {
+        #[arg(help = "Maximale Anzahl", default_value_t = 10)]
+        limit: usize,
+    },
+    #[command(about = "Suche nach einem Bundle")]
+    Search {
+        #[arg(help = "Name des Bundles)")]
+        bundle_name: String,
+        #[arg(help = "Maximale Anzahl", default_value_t = 10)]
+        limit: usize,
+    },
+    #[command(about = "Infos zu einem Bundle")]
+    Info {
+        #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
+        spec: BundleVersionSpec,
+    },
+    #[command(about = "Exportiere ein Bundle als OSC-Datei")]
+    Export {
+        #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
+        spec: BundleVersionSpec,
+        #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
+        compact: bool,
+    },
+    #[cfg(feature = "bundle-edit")]
+    #[command(about = "Räume das Repository auf")]
+    Cleanup,
+}
+
+#[derive(Clone)]
+pub struct BundleVersionSpec {
+    pub bundle_name: String,
+    pub version_tag: Option<String>,
+}
+
+impl FromStr for BundleVersionSpec {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.split('@');
+        let bundle_name = parts.next().ok_or("Bundle-Name fehlt")?;
+        let version_tag = parts.next().map(ToString::to_string);
+        Ok(BundleVersionSpec {
+            bundle_name: bundle_name.to_string(),
+            version_tag: if let Some(version_tag) = version_tag {
+                // Ensure strict semver as default
+                let numbers = Regex::new(r"^\d").expect("Regex fehlerhaft");
+                if numbers.is_match(&version_tag) {
+                    Some(format!("={version_tag}"))
+                } else {
+                    Some(version_tag)
+                }
+            } else {
+                None
+            },
+        })
+    }
 }

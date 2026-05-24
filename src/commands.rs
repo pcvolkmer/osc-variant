@@ -17,8 +17,11 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+#[cfg(feature = "bundle-edit")]
+use crate::bundles::{add_bundle_version, cleanup_bundle_objects, create_bundle};
+use crate::bundles::{bundle_info, export_bundle_versions, search_bundle_versions};
 use crate::checks::{CheckNotice, check_file, print};
-use crate::cli::{Cli, SubCommand};
+use crate::cli::{BundleSubCommand, BundleVersionSpec, Cli, SubCommand};
 use crate::file_io::{FileError, FileReader, InputFile};
 use crate::model::FormEntryContainer;
 use crate::model::form::Notice;
@@ -76,6 +79,34 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
             password,
         } => handle_check(file, list, password),
         SubCommand::ExportNoticeCsv { inputfile } => handle_export_notice_csv(&inputfile)?,
+        SubCommand::Bundle(command) => match command {
+            #[cfg(feature = "bundle-edit")]
+            BundleSubCommand::Create {
+                bundle_name,
+                description,
+                license,
+                repository,
+            } => handle_create_bundle(bundle_name, description, license, repository)?,
+            #[cfg(feature = "bundle-edit")]
+            BundleSubCommand::AddVersion {
+                bundle_name,
+                file,
+                tag,
+                message,
+            } => handle_add_bundle_version(bundle_name, file, tag, message)?,
+            BundleSubCommand::List { limit } => handle_search_bundle(String::new(), limit)?,
+            BundleSubCommand::Search { bundle_name, limit } => {
+                handle_search_bundle(bundle_name, limit)?;
+            }
+            BundleSubCommand::Info { spec } => {
+                handle_bundle_info(spec)?;
+            }
+            BundleSubCommand::Export { spec, compact } => {
+                handle_export_bundle_version(spec, compact)?;
+            }
+            #[cfg(feature = "bundle-edit")]
+            BundleSubCommand::Cleanup => handle_cleanup_bundle_objects()?,
+        },
         #[cfg(feature = "unzip-osb")]
         SubCommand::UnzipOsb {
             file,
@@ -417,6 +448,110 @@ fn handle_export_notice_csv(inputfile: &str) -> Result<(), Box<dyn Error>> {
 
     println!("{}", String::from_utf8(writer.into_inner()?)?);
 
+    Ok(())
+}
+
+#[cfg(feature = "bundle-edit")]
+fn handle_create_bundle(
+    name: String,
+    description: String,
+    license: Option<String>,
+    repository: Option<String>,
+) -> Result<(), Box<dyn Error>> {
+    create_bundle(&name, &description, license, repository).map_err(Box::new)?;
+    Ok(())
+}
+
+#[cfg(feature = "bundle-edit")]
+fn handle_add_bundle_version(
+    name: String,
+    file: String,
+    tag: Option<String>,
+    message: Option<String>,
+) -> Result<(), Box<dyn Error>> {
+    let data = &mut FileReader::<OnkostarEditor>::read(&file)?;
+    add_bundle_version(&name, data, tag, message).map_err(Box::new)?;
+    Ok(())
+}
+
+fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>> {
+    let matches = search_bundle_versions(&name).map_err(Box::new)?;
+    for match_str in matches.iter().take(limit) {
+        println!("{match_str}");
+    }
+    if matches.len() > limit {
+        println!("... und {} weitere Treffer", matches.len() - limit);
+    }
+    Ok(())
+}
+
+fn handle_bundle_info(spec: BundleVersionSpec) -> Result<(), Box<dyn Error>> {
+    let bundle_info = bundle_info(&spec).map_err(Box::new)?;
+
+    println!("{}", style(bundle_info.name).bold().green().bright());
+    if let Some(value) = bundle_info.description {
+        println!("{value}");
+    }
+
+    if bundle_info.version == bundle_info.latest_version {
+        println!(
+            "{} {}",
+            style("Version:").green().bright(),
+            bundle_info.version
+        );
+    } else {
+        println!(
+            "{} {} {}",
+            style("Version:").green().bright(),
+            bundle_info.version,
+            style(format!("(neueste Version: {})", bundle_info.latest_version)).yellow()
+        );
+    }
+    println!(
+        "{} {} mit {} {}",
+        style("Exportiert:").green().bright(),
+        bundle_info.info_xml.datum_xml,
+        bundle_info.info_xml.name,
+        bundle_info.info_xml.version
+    );
+    if let Some(value) = bundle_info.license {
+        println!("{} {}", style("Lizenz:").green().bright(), value);
+    }
+    if let Some(value) = bundle_info.repository {
+        println!("{} {}", style("Repository:").green().bright(), value);
+    }
+    Ok(())
+}
+
+fn handle_export_bundle_version(
+    spec: BundleVersionSpec,
+    compact: bool,
+) -> Result<(), Box<dyn Error>> {
+    let data = export_bundle_versions(&spec)?;
+
+    let mut buf = String::new();
+
+    let mut serializer = Serializer::new(&mut buf);
+
+    if !compact {
+        serializer.indent(' ', 2);
+    }
+
+    data.serialize(serializer)
+        .map_err(|_| FileError::Writing("Cannot serialize result".to_string(), String::new()))?;
+
+    let output = &"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        .to_string()
+        .add(buf.as_str());
+
+    println!("{output}");
+
+    Ok(())
+}
+
+#[cfg(feature = "bundle-edit")]
+fn handle_cleanup_bundle_objects() -> Result<(), Box<dyn Error>> {
+    cleanup_bundle_objects()?;
     Ok(())
 }
 

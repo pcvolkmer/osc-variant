@@ -22,10 +22,7 @@ use std::cmp::Ordering;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-use console::style;
-use quick_xml::de::from_str;
-use serde::{Deserialize, Serialize};
-
+use crate::bundles::BundleVersion;
 use crate::checks::{CheckNotice, Checkable};
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::form::{DataFormType, Form, UnterformularType};
@@ -34,12 +31,15 @@ use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{Comparable, FolderContent, FormEntryContainer, Listable, Sortable};
 use crate::profile::Profile;
+use console::style;
+use quick_xml::de::from_str;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct OnkostarEditor {
     #[serde(rename = "InfoXML")]
-    info_xml: InfoXML,
+    pub info_xml: InfoXML,
     #[serde(rename = "Editor")]
     pub editor: Editor,
 }
@@ -503,20 +503,30 @@ impl Checkable for OnkostarEditor {
 #[serde(deny_unknown_fields)]
 pub struct InfoXML {
     #[serde(rename = "DatumXML")]
-    datum_xml: String,
+    pub datum_xml: String,
     #[serde(rename = "Name")]
-    name: String,
+    pub name: String,
     #[serde(rename = "Version")]
-    version: String,
+    pub version: String,
+}
+
+impl InfoXML {
+    pub fn from_bundle_version(bundle_version: &BundleVersion) -> Self {
+        Self {
+            datum_xml: bundle_version.info_xml.datum_xml.clone(),
+            name: bundle_version.info_xml.name.clone(),
+            version: bundle_version.info_xml.version.clone(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Editor {
     #[serde(rename = "PropertyCatalogue", default)]
-    property_catalogue: Vec<PropertyCatalogue>,
+    pub property_catalogue: Vec<PropertyCatalogue>,
     #[serde(rename = "DataCatalogue", default)]
-    data_catalogue: Vec<DataCatalogue>,
+    pub data_catalogue: Vec<DataCatalogue>,
     #[serde(rename = "Unterformular", default)]
     pub unterformular: Vec<Form<UnterformularType>>,
     #[serde(rename = "DataForm", default)]

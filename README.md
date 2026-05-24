@@ -31,13 +31,15 @@ Anwendung zum Anpassen einer OSC-Datei an einen Standort
 Usage: osc-variant <COMMAND>
 
 Commands:
-sha256sum  Berechne SHA256 Prüfsumme für die angegebene Datei
-list       Zeigt alle enthaltenen Kataloge und Formulare mit Revision an.
-tree       Zeigt Kataloge und Formulare mit Revision und Abhängigkeiten an.
-modify     Modifiziert die angegebene Datei anhand der Profildatei
-diff       Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte
-check      Prüfe eine OSC-Datei auf bekannte Problemen
-help       Print this message or the help of the given subcommand(s)
+  sha256sum          Berechne SHA256 Prüfsumme für die angegebene Datei
+  list               Zeigt alle enthaltenen Kataloge und Formulare mit Revision an.
+  tree               Zeigt Kataloge und Formulare mit Revision und Abhängigkeiten an.
+  modify             Modifiziert die angegebene Datei anhand der Profildatei
+  diff               Vergleiche zwei Dateien anhand der Revision der enthaltenen Inhalte
+  check              Prüfe eine OSC-Datei auf bekannte Problemen
+  export-notice-csv  Exportiere CSV-Datei mit Ausfüllhinweisen
+  bundle             Befehle zur Nutzung von Bundles
+  help               Print this message or the help of the given subcommand(s)
 
 Options:
 -h, --help     Print help
@@ -173,6 +175,28 @@ Eine Liste mit bekannten Problemen wird mit `check --list` ausgegeben.
 *Bei Verwendung der OSB-Funktionalität kann die Eingabe eines Passworts erforderlich sein.*
 
 Weitere Informationen hier: [Checks](docs/checks.md)
+
+#### Unterbefehl `export-notice-csv`
+
+Dies exportiert eine CSV-Datei mit den Ausfüllhinweisen für die angegebene OSC-Datei.
+
+#### Unterbefehl `bundle`
+
+Dieser Unterbefehl ermöglicht das Erstellen von OSC-Dateien als Bundle in einem Git-Repository und hat weitere
+Unterbefehle:
+
+```
+Commands:
+  list    Liste alle Bundles auf
+  search  Suche nach einem Bundle
+  info    Infos zu einem Bundle
+  export  Exportiere ein Bundle als OSC-Datei
+```
+
+Die lokale Kopie des Repositorys wird bei der ersten Verwendung automatisch erstellt und bei folgender Nutzung
+von Bundles aktualisiert.
+
+Hierdurch ist es möglich, weitere OSC-Dateien aus einem zentralen Repository zu beziehen.
 
 #### Kompakte Ausgabe
 
