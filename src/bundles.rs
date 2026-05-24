@@ -90,26 +90,38 @@ struct Object {
     revision: u16,
 }
 
-#[derive(Debug)]
-enum RepoError {
+pub enum BundleError {
     InitializationError,
     UpdateError,
+    Other(String),
 }
 
-impl Display for RepoError {
+impl Debug for BundleError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        Display::fmt(self, f)
+    }
+}
+
+impl Display for BundleError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            RepoError::InitializationError => write!(f, "Initialisierung fehlgeschlagen"),
-            RepoError::UpdateError => write!(f, "Aktualisierung fehlgeschlagen"),
+            BundleError::InitializationError => {
+                write!(f, "Fehler beim Initialisieren des Bundles-Repositorys")
+            }
+            BundleError::UpdateError => write!(
+                f,
+                "Fehler beim Aktualisieren des Bundles-Repositorys. Verbleibe auf altem Stand."
+            ),
+            BundleError::Other(err) => write!(f, "{err}"),
         }
     }
 }
 
-impl std::error::Error for RepoError {}
+impl std::error::Error for BundleError {}
 
 fn get_repo_path(path: &str) -> PathBuf {
     if let Ok(repo_dir) = std::env::var("OSC_VARIANT_REPO_DIR") {
-        PathBuf::from(format!("{}/repo/{path}", repo_dir))
+        PathBuf::from(format!("{repo_dir}/repo/{path}"))
     } else {
         PathBuf::from(format!(
             "{}/.osc-variant/repo/{path}",
@@ -118,40 +130,62 @@ fn get_repo_path(path: &str) -> PathBuf {
     }
 }
 
-fn update_bundle_repo() -> Result<(), RepoError> {
+fn update_bundle_repo() -> Result<(), BundleError> {
     if let Ok(repo) = git2::Repository::open(get_repo_path("")) {
         let mut remote = repo
             .find_remote("origin")
-            .map_err(|_| RepoError::UpdateError)?;
+            .map_err(|_| BundleError::UpdateError)?;
         remote
             .fetch(&["main"], None, None)
-            .map_err(|_| RepoError::UpdateError)?;
+            .map_err(|_| BundleError::UpdateError)?;
 
         let fetch_head = repo
             .find_reference("refs/remotes/origin/main")
-            .map_err(|_| RepoError::UpdateError)?;
+            .map_err(|_| BundleError::UpdateError)?;
         let commit = repo
             .reference_to_annotated_commit(&fetch_head)
-            .map_err(|_| RepoError::UpdateError)?;
+            .map_err(|_| BundleError::UpdateError)?;
         let mut reference = repo
             .find_reference("refs/heads/main")
-            .map_err(|_| RepoError::UpdateError)?;
+            .map_err(|_| BundleError::UpdateError)?;
         reference
             .set_target(commit.id(), "main")
-            .map_err(|_| RepoError::UpdateError)?;
+            .map_err(|_| BundleError::UpdateError)?;
         repo.set_head("refs/heads/main")
-            .map_err(|_| RepoError::UpdateError)?;
+            .map_err(|_| BundleError::UpdateError)?;
         repo.checkout_head(Some(CheckoutBuilder::default().force()))
-            .map_err(|_| RepoError::UpdateError)?;
+            .map_err(|_| BundleError::UpdateError)?;
     } else {
         git2::Repository::clone(
             "https://git.dnpm.dev/public/os-forms.git",
             get_repo_path(""),
         )
-        .map_err(|_| RepoError::InitializationError)?;
+        .map_err(|_| BundleError::InitializationError)?;
     }
 
     Ok(())
+}
+
+macro_rules! update_bundle_repo_or_exit {
+    () => {
+        match update_bundle_repo() {
+            Err(err @ BundleError::UpdateError) => {
+                eprintln!("{err}");
+            }
+            Err(err) => return Err(err),
+            Ok(()) => {}
+        }
+    };
+}
+
+fn read_index_or_empty() -> Result<Index, BundleError> {
+    match fs::read_to_string(get_repo_path("/index.json")) {
+        Ok(json) => match serde_json::from_str(&json) {
+            Ok(index) => Ok(index),
+            Err(err) => Err(BundleError::Other(err.to_string())),
+        },
+        Err(_) => Ok(Index { bundles: vec![] }),
+    }
 }
 
 fn add_item<T>(item: &T) -> Result<Object, ()>
@@ -187,32 +221,21 @@ pub fn create_bundle(
     description: &str,
     license: Option<String>,
     repository: Option<String>,
-) -> Result<(), String> {
-    match update_bundle_repo() {
-        Ok(()) => {}
-        Err(RepoError::UpdateError) => {
-            eprintln!(
-                "Fehler beim Aktualisieren des Bundles-Repositorys. Verbleibe auf altem Stand."
-            );
-        }
-        Err(RepoError::InitializationError) => {
-            return Err("Fehler beim Initialisieren des Bundles-Repositorys".to_string());
-        }
-    }
+) -> Result<(), BundleError> {
+    update_bundle_repo_or_exit!();
 
     let regex = Regex::new(r"^[a-zA-Z0-9_\-]{5,24}$").expect("Invalid regex");
     if !regex.is_match(name) {
-        return Err("Der Bundle-Name muss zwischen 5 und 24 Zeichen lang sein und darf nur aus Buchstaben, Zahlen und Unter- und Bindestrichen bestehen".to_string());
+        return Err(BundleError::Other("Der Bundle-Name muss zwischen 5 und 24 Zeichen lang sein und darf nur aus Buchstaben, Zahlen und Unter- und Bindestrichen bestehen".to_string()));
     }
 
-    let mut index = match fs::read_to_string(get_repo_path("/index.json")) {
-        Ok(json) => serde_json::from_str(&json).map_err(|err| err.to_string())?,
-        Err(_) => Index { bundles: vec![] },
-    };
+    let mut index = read_index_or_empty()?;
 
     if index.bundles.iter().any(|b| b.name == name) {
-        return Err(format!("Bundle '{}' existiert bereits", name));
-    };
+        return Err(BundleError::Other(format!(
+            "Bundle '{name}' existiert bereits"
+        )));
+    }
 
     index.bundles.push(Bundle {
         name: name.to_string(),
@@ -226,8 +249,10 @@ pub fn create_bundle(
         versions: vec![],
     });
 
-    let json = serde_json::to_string_pretty(&index).map_err(|err| err.to_string())?;
-    fs::write(get_repo_path("/index.json"), json).map_err(|err| err.to_string())?;
+    let json =
+        serde_json::to_string_pretty(&index).map_err(|err| BundleError::Other(err.to_string()))?;
+    fs::write(get_repo_path("/index.json"), json)
+        .map_err(|err| BundleError::Other(err.to_string()))?;
 
     Ok(())
 }
@@ -237,32 +262,23 @@ pub fn add_bundle_version(
     data: &mut OnkostarEditor,
     tag: Option<String>,
     message: Option<String>,
-) -> Result<(), String> {
-    match update_bundle_repo() {
-        Ok(()) => {}
-        Err(RepoError::UpdateError) => {
-            eprintln!(
-                "Fehler beim Aktualisieren des Bundles-Repositorys. Verbleibe auf altem Stand."
-            );
-        }
-        Err(RepoError::InitializationError) => {
-            return Err("Fehler beim Initialisieren des Bundles-Repositorys".to_string());
-        }
-    }
+) -> Result<(), BundleError> {
+    update_bundle_repo_or_exit!();
 
     if let Some(tag) = &tag
-        && semver::Version::parse(&tag).is_err()
+        && semver::Version::parse(tag).is_err()
     {
-        return Err("Versions-Tag muss eine SemVer-Version sein".to_string());
+        return Err(BundleError::Other(
+            "Versions-Tag muss eine SemVer-Version sein".to_string(),
+        ));
     }
 
-    let mut index = match fs::read_to_string(get_repo_path("/index.json")) {
-        Ok(json) => serde_json::from_str(&json).map_err(|err| err.to_string())?,
-        Err(_) => Index { bundles: vec![] },
-    };
+    let mut index = read_index_or_empty()?;
 
     let Some(bundle) = index.bundles.iter_mut().find(|b| b.name == name) else {
-        return Err(format!("Bundle '{}' existiert noch nicht", name));
+        return Err(BundleError::Other(format!(
+            "Bundle '{name}' existiert noch nicht"
+        )));
     };
 
     if bundle
@@ -270,12 +286,12 @@ pub fn add_bundle_version(
         .iter()
         .any(|bundle_tag| bundle_tag.tag.is_some() && bundle_tag.tag == tag)
     {
-        return Err(format!(
+        return Err(BundleError::Other(format!(
             "Versions-Tag '{}' des Bundles '{}' existiert bereits",
             tag.unwrap_or_default(),
             name
-        ));
-    };
+        )));
+    }
 
     let mut bundle_version_content = BundleVersionContent {
         name: name.to_string(),
@@ -325,8 +341,8 @@ pub fn add_bundle_version(
         },
     });
 
-    let json =
-        serde_json::to_string_pretty(&bundle_version_content).map_err(|err| err.to_string())?;
+    let json = serde_json::to_string_pretty(&bundle_version_content)
+        .map_err(|err| BundleError::Other(err.to_string()))?;
     fs::write(
         get_repo_path(&format!(
             "versions/{}.json",
@@ -334,33 +350,20 @@ pub fn add_bundle_version(
         )),
         json,
     )
-    .map_err(|err| err.to_string())?;
+    .map_err(|err| BundleError::Other(err.to_string()))?;
 
-    let json = serde_json::to_string_pretty(&index).map_err(|err| err.to_string())?;
-    fs::write(get_repo_path("/index.json"), json).map_err(|err| err.to_string())?;
+    let json =
+        serde_json::to_string_pretty(&index).map_err(|err| BundleError::Other(err.to_string()))?;
+    fs::write(get_repo_path("/index.json"), json)
+        .map_err(|err| BundleError::Other(err.to_string()))?;
 
     Ok(())
 }
 
-pub fn search_bundle_versions(name: &str) -> Result<Vec<String>, String> {
-    match update_bundle_repo() {
-        Ok(()) => {}
-        Err(RepoError::UpdateError) => {
-            eprintln!(
-                "Fehler beim Aktualisieren des Bundles-Repositorys. Verbleibe auf altem Stand."
-            );
-        }
-        Err(RepoError::InitializationError) => {
-            return Err("Fehler beim Initialisieren des Bundles-Repositorys".to_string());
-        }
-    }
+pub fn search_bundle_versions(name: &str) -> Result<Vec<String>, BundleError> {
+    update_bundle_repo_or_exit!();
 
-    let index = match fs::read_to_string(get_repo_path("/index.json")) {
-        Ok(json) => serde_json::from_str(&json).map_err(|err| err.to_string())?,
-        Err(_) => Index { bundles: vec![] },
-    };
-
-    let mut matches = index.bundles;
+    let mut matches = read_index_or_empty()?.bundles;
     matches.sort_by_key(|bundle| bundle.name.clone());
     let matches = matches
         .iter()
@@ -392,28 +395,13 @@ pub fn search_bundle_versions(name: &str) -> Result<Vec<String>, String> {
 }
 
 #[allow(clippy::expect_used)]
-pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor, String> {
-    match update_bundle_repo() {
-        Ok(()) => {}
-        Err(RepoError::UpdateError) => {
-            eprintln!(
-                "Fehler beim Aktualisieren des Bundles-Repositorys. Verbleibe auf altem Stand."
-            );
-        }
-        Err(RepoError::InitializationError) => {
-            return Err("Fehler beim Initialisieren des Bundles-Repositorys".to_string());
-        }
-    }
-
-    let index = match fs::read_to_string(get_repo_path("/index.json")) {
-        Ok(json) => serde_json::from_str(&json).map_err(|err| err.to_string())?,
-        Err(_) => Index { bundles: vec![] },
-    };
+pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor, BundleError> {
+    update_bundle_repo_or_exit!();
 
     let id_regex =
         Regex::new(r"^[0-9a-f]{7,64}").expect("Invalid regex pattern for bundle version ID");
 
-    if let Some(bundle_version) = index
+    if let Some(bundle_version) = read_index_or_empty()?
         .bundles
         .iter()
         .flat_map(|bundle| &bundle.versions)
@@ -436,36 +424,28 @@ pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor
             .property_catalogues
             .iter()
             .map(|item| item.checksum.clone())
-            .filter_map(|id| {
-                fs::read_to_string(get_repo_path(&format!("/objects/{}.json", id))).ok()
-            })
+            .filter_map(|id| fs::read_to_string(get_repo_path(&format!("/objects/{id}.json"))).ok())
             .filter_map(|json| serde_json::from_str::<PropertyCatalogue>(&json).ok())
             .collect::<Vec<_>>();
         let data_catalogue = bundle_version_content
             .data_catalogues
             .iter()
             .map(|item| item.checksum.clone())
-            .filter_map(|id| {
-                fs::read_to_string(get_repo_path(&format!("/objects/{}.json", id))).ok()
-            })
+            .filter_map(|id| fs::read_to_string(get_repo_path(&format!("/objects/{id}.json"))).ok())
             .filter_map(|json| serde_json::from_str::<DataCatalogue>(&json).ok())
             .collect::<Vec<_>>();
         let data_form = bundle_version_content
             .data_forms
             .iter()
             .map(|item| item.checksum.clone())
-            .filter_map(|id| {
-                fs::read_to_string(get_repo_path(&format!("/objects/{}.json", id))).ok()
-            })
+            .filter_map(|id| fs::read_to_string(get_repo_path(&format!("/objects/{id}.json"))).ok())
             .filter_map(|json| serde_json::from_str::<Form<DataFormType>>(&json).ok())
             .collect::<Vec<_>>();
         let unterformular = bundle_version_content
             .sub_forms
             .iter()
             .map(|item| item.checksum.clone())
-            .filter_map(|id| {
-                fs::read_to_string(get_repo_path(&format!("/objects/{}.json", id))).ok()
-            })
+            .filter_map(|id| fs::read_to_string(get_repo_path(&format!("/objects/{id}.json"))).ok())
             .filter_map(|json| serde_json::from_str::<Form<UnterformularType>>(&json).ok())
             .collect::<Vec<_>>();
 
@@ -487,33 +467,21 @@ pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor
     }
 
     match spec.version_tag.as_ref() {
-        Some(version_tag) => Err(format!(
+        Some(version_tag) => Err(BundleError::Other(format!(
             "Bundle '{}' mit Version '{}' existiert nicht",
             spec.bundle_name, version_tag
-        )),
-        None => Err(format!("Bundle '{}' existiert nicht", spec.bundle_name)),
+        ))),
+        None => Err(BundleError::Other(format!(
+            "Bundle '{}' existiert nicht",
+            spec.bundle_name
+        ))),
     }
 }
 
-pub fn cleanup_bundle_objects() -> Result<(), String> {
-    match update_bundle_repo() {
-        Ok(()) => {}
-        Err(RepoError::UpdateError) => {
-            eprintln!(
-                "Fehler beim Aktualisieren des Bundles-Repositorys. Verbleibe auf altem Stand."
-            );
-        }
-        Err(RepoError::InitializationError) => {
-            return Err("Fehler beim Initialisieren des Bundles-Repositorys".to_string());
-        }
-    }
+pub fn cleanup_bundle_objects() -> Result<(), BundleError> {
+    update_bundle_repo_or_exit!();
 
-    let index = match fs::read_to_string(get_repo_path("/index.json")) {
-        Ok(json) => serde_json::from_str(&json).map_err(|err| err.to_string())?,
-        Err(_) => Index { bundles: vec![] },
-    };
-
-    let bundle_versions = index
+    let bundle_versions = read_index_or_empty()?
         .bundles
         .iter()
         .flat_map(|bundle| &bundle.versions)
@@ -524,7 +492,7 @@ pub fn cleanup_bundle_objects() -> Result<(), String> {
         .iter()
         .filter_map(|bundle_version| {
             if let Ok(json) =
-                fs::read_to_string(get_repo_path(&format!("/versions/{}.json", bundle_version)))
+                fs::read_to_string(get_repo_path(&format!("/versions/{bundle_version}.json")))
                 && let Ok(bundle_version_content) =
                     serde_json::from_str::<BundleVersionContent>(&json)
             {
@@ -559,27 +527,27 @@ pub fn cleanup_bundle_objects() -> Result<(), String> {
         .collect::<Vec<_>>();
 
     fs::read_dir(get_repo_path("/objects"))
-        .map_err(|err| err.to_string())?
+        .map_err(|err| BundleError::Other(err.to_string()))?
         .filter_map(Result::ok)
         .filter_map(|entry| entry.file_name().into_string().ok())
         .map(|filename| filename.replace(".json", ""))
         .for_each(|id| {
             if !used_objects.contains(&id) {
                 fs::remove_file(get_repo_path(&format!("/objects/{id}.json")))
-                    .map_err(|err| err.to_string())
+                    .map_err(|err| BundleError::Other(err.to_string()))
                     .unwrap_or_default();
             }
         });
 
     fs::read_dir(get_repo_path("/versions"))
-        .map_err(|err| err.to_string())?
+        .map_err(|err| BundleError::Other(err.to_string()))?
         .filter_map(Result::ok)
         .filter_map(|entry| entry.file_name().into_string().ok())
         .map(|filename| filename.replace(".json", ""))
         .for_each(|id| {
             if !bundle_versions.contains(&id) {
                 fs::remove_file(get_repo_path(&format!("/versions/{id}.json")))
-                    .map_err(|err| err.to_string())
+                    .map_err(|err| BundleError::Other(err.to_string()))
                     .unwrap_or_default();
             }
         });

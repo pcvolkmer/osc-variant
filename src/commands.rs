@@ -95,10 +95,10 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
             } => handle_add_bundle_version(bundle_name, file, tag, message)?,
             BundleSubCommand::List { limit } => handle_search_bundle(String::new(), limit)?,
             BundleSubCommand::Search { bundle_name, limit } => {
-                handle_search_bundle(bundle_name, limit)?
+                handle_search_bundle(bundle_name, limit)?;
             }
             BundleSubCommand::Export { spec, compact } => {
-                handle_export_bundle_version(spec, compact)?
+                handle_export_bundle_version(spec, compact)?;
             }
             BundleSubCommand::Cleanup => handle_cleanup_bundle_objects()?,
         },
@@ -452,8 +452,7 @@ fn handle_create_bundle(
     license: Option<String>,
     repository: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
-    create_bundle(&name, &description, license, repository)
-        .map_err(|err| Box::new(FileError::Writing(name, err)))?;
+    create_bundle(&name, &description, license, repository).map_err(Box::new)?;
     Ok(())
 }
 
@@ -464,14 +463,12 @@ fn handle_add_bundle_version(
     message: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
     let data = &mut FileReader::<OnkostarEditor>::read(&file)?;
-    add_bundle_version(&name, data, tag, message)
-        .map_err(|err| Box::new(FileError::Writing(name, err)))?;
+    add_bundle_version(&name, data, tag, message).map_err(Box::new)?;
     Ok(())
 }
 
 fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>> {
-    let matches =
-        search_bundle_versions(&name).map_err(|err| Box::new(FileError::Reading(name, err)))?;
+    let matches = search_bundle_versions(&name).map_err(Box::new)?;
     for match_str in matches.iter().take(limit) {
         println!("{match_str}");
     }
