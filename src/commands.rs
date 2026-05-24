@@ -19,7 +19,7 @@
  */
 #[cfg(feature = "bundle-edit")]
 use crate::bundles::{add_bundle_version, cleanup_bundle_objects, create_bundle};
-use crate::bundles::{export_bundle_versions, search_bundle_versions};
+use crate::bundles::{bundle_info, export_bundle_versions, search_bundle_versions};
 use crate::checks::{CheckNotice, check_file, print};
 use crate::cli::{BundleSubCommand, BundleVersionSpec, Cli, SubCommand};
 use crate::file_io::{FileError, FileReader, InputFile};
@@ -97,6 +97,9 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
             BundleSubCommand::List { limit } => handle_search_bundle(String::new(), limit)?,
             BundleSubCommand::Search { bundle_name, limit } => {
                 handle_search_bundle(bundle_name, limit)?;
+            }
+            BundleSubCommand::Info { spec } => {
+                handle_bundle_info(spec)?;
             }
             BundleSubCommand::Export { spec, compact } => {
                 handle_export_bundle_version(spec, compact)?;
@@ -478,6 +481,44 @@ fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>
     }
     if matches.len() > limit {
         println!("... und {} weitere Treffer", matches.len() - limit);
+    }
+    Ok(())
+}
+
+fn handle_bundle_info(spec: BundleVersionSpec) -> Result<(), Box<dyn Error>> {
+    let bundle_info = bundle_info(&spec).map_err(Box::new)?;
+
+    println!("{}", style(bundle_info.name).bold().green().bright());
+    if let Some(value) = bundle_info.description {
+        println!("{value}");
+    }
+
+    if bundle_info.version == bundle_info.latest_version {
+        println!(
+            "{} {}",
+            style("Version:").green().bright(),
+            bundle_info.version
+        );
+    } else {
+        println!(
+            "{} {} {}",
+            style("Version:").green().bright(),
+            bundle_info.version,
+            style(format!("(neueste Version: {})", bundle_info.latest_version)).yellow()
+        );
+    }
+    println!(
+        "{} {} mit {} {}",
+        style("Exportiert:").green().bright(),
+        bundle_info.info_xml.datum_xml,
+        bundle_info.info_xml.name,
+        bundle_info.info_xml.version
+    );
+    if let Some(value) = bundle_info.license {
+        println!("{} {}", style("Lizenz:").green().bright(), value);
+    }
+    if let Some(value) = bundle_info.repository {
+        println!("{} {}", style("Repository:").green().bright(), value);
     }
     Ok(())
 }

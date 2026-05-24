@@ -19,6 +19,7 @@
  */
 use clap::{Parser, Subcommand};
 use clap_complete::Shell;
+use regex::Regex;
 use std::str::FromStr;
 
 #[derive(Parser)]
@@ -184,6 +185,11 @@ pub enum BundleSubCommand {
         #[arg(help = "Maximale Anzahl", default_value_t = 10)]
         limit: usize,
     },
+    #[command(about = "Infos zu einem Bundle")]
+    Info {
+        #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
+        spec: BundleVersionSpec,
+    },
     #[command(about = "Exportiere ein Bundle als OSC-Datei")]
     Export {
         #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
@@ -211,7 +217,17 @@ impl FromStr for BundleVersionSpec {
         let version_tag = parts.next().map(ToString::to_string);
         Ok(BundleVersionSpec {
             bundle_name: bundle_name.to_string(),
-            version_tag,
+            version_tag: if let Some(version_tag) = version_tag {
+                // Ensure strict semver as default
+                let numbers = Regex::new(r"^\d").expect("Regex fehlerhaft");
+                if numbers.is_match(&version_tag) {
+                    Some(format!("={version_tag}"))
+                } else {
+                    Some(version_tag)
+                }
+            } else {
+                None
+            },
         })
     }
 }

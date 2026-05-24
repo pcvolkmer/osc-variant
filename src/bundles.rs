@@ -26,6 +26,7 @@ use crate::model::property_catalogue::PropertyCatalogue;
 use console::style;
 use git2::build::CheckoutBuilder;
 use regex::Regex;
+use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::fmt::{Debug, Display, Formatter};
@@ -94,6 +95,16 @@ pub enum BundleError {
     InitializationError,
     UpdateError,
     Other(String),
+}
+
+pub struct BundleInfo {
+    pub name: String,
+    pub version: String,
+    pub latest_version: String,
+    pub info_xml: InfoXML,
+    pub description: Option<String>,
+    pub license: Option<String>,
+    pub repository: Option<String>,
 }
 
 impl Debug for BundleError {
@@ -394,6 +405,71 @@ pub fn search_bundle_versions(name: &str) -> Result<Vec<String>, BundleError> {
     Ok(matches)
 }
 
+pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> {
+    update_bundle_repo_or_exit!();
+
+    let bundle = read_index_or_empty()?
+        .bundles
+        .into_iter()
+        .find(|bundle_version| bundle_version.name.clone() == spec.bundle_name)
+        .ok_or(BundleError::Other(format!(
+            "Bundle '{}' existiert nicht",
+            spec.bundle_name
+        )))?;
+
+    let requested_version = bundle
+        .versions
+        .iter()
+        .rfind(|bundle_version| {
+            if let Some(spec) = &spec.version_tag
+                && let Some(tag) = &bundle_version.tag
+                && let Ok(version_spec) = VersionReq::parse(spec)
+                && let Ok(version_tag) = Version::parse(tag)
+            {
+                return version_spec.matches(&version_tag);
+            }
+            false
+        })
+        .ok_or(BundleError::Other(format!(
+            "Version '{}' für Bundle '{}' nicht gefunden",
+            spec.clone().version_tag.unwrap_or_default(),
+            spec.bundle_name
+        )))?;
+
+    let mut versions = bundle.versions.iter().collect::<Vec<_>>();
+    versions.sort_by(|&a, &b| {
+        let version_a: Version = a
+            .tag
+            .clone()
+            .unwrap_or_default()
+            .parse()
+            .unwrap_or(Version::new(0, 0, 0));
+        let version_b: Version = b
+            .tag
+            .clone()
+            .unwrap_or_default()
+            .parse()
+            .unwrap_or(Version::new(0, 0, 0));
+        version_a.cmp_precedence(&version_b)
+    });
+    let latest_version = versions.iter().last().ok_or(BundleError::Other(format!(
+        "Keine Versionen für Bundle '{}' gefunden",
+        spec.bundle_name
+    )))?;
+
+    let bundle_info = BundleInfo {
+        name: bundle.name.to_string(),
+        version: requested_version.tag.clone().unwrap_or_default(),
+        latest_version: latest_version.tag.clone().unwrap_or_default(),
+        info_xml: InfoXML::from_bundle_version(requested_version),
+        description: bundle.description.clone(),
+        license: bundle.license.clone(),
+        repository: bundle.repository.clone(),
+    };
+
+    Ok(bundle_info)
+}
+
 #[allow(clippy::expect_used)]
 pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor, BundleError> {
     update_bundle_repo_or_exit!();
@@ -408,7 +484,15 @@ pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor
         .filter(|bundle_version| bundle_version.name.clone() == spec.bundle_name)
         .rfind(|bundle_version| {
             spec.version_tag.is_none()
-                || bundle_version.tag == spec.version_tag
+                || if let Some(spec) = &spec.version_tag
+                    && let Some(tag) = &bundle_version.tag
+                    && let Ok(version_spec) = VersionReq::parse(spec)
+                    && let Ok(version_tag) = Version::parse(tag)
+                {
+                    return version_spec.matches(&version_tag);
+                } else {
+                    false
+                }
                 || id_regex.is_match(&spec.clone().version_tag.unwrap_or_default())
                     && bundle_version
                         .id
