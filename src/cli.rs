@@ -144,6 +144,7 @@ pub enum SubCommand {
 
 #[derive(Subcommand)]
 pub enum BundleSubCommand {
+    #[cfg(feature = "bundle-edit")]
     #[command(about = "Erstelle ein Bundle")]
     Create {
         #[arg(help = "Name des Bundles)")]
@@ -155,6 +156,7 @@ pub enum BundleSubCommand {
         #[arg(long = "repository", help = "Quellcode-Repository des Bundles")]
         repository: Option<String>,
     },
+    #[cfg(feature = "bundle-edit")]
     #[command(about = "Füge OSC-Datei als Bundle-Version hinzu")]
     AddVersion {
         #[arg(help = "Name des Bundles)")]
@@ -189,6 +191,7 @@ pub enum BundleSubCommand {
         #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
         compact: bool,
     },
+    #[cfg(feature = "bundle-edit")]
     #[command(about = "Räume das Repository auf")]
     Cleanup,
 }

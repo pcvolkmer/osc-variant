@@ -37,6 +37,7 @@ zip = { version = "8.6", optional = true }
 [features]
 # Requires env var OSB_KEY to be present at build time
 unzip-osb = ["dep:deob", "dep:zip"]
+bundle-edit = []
 
 [build-dependencies]
 clap = { version = "4.6", features = ["std", "help", "usage", "derive", "error-context"], default-features = false }

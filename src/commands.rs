@@ -17,10 +17,9 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use crate::bundles::{
-    add_bundle_version, cleanup_bundle_objects, create_bundle, export_bundle_versions,
-    search_bundle_versions,
-};
+#[cfg(feature = "bundle-edit")]
+use crate::bundles::{add_bundle_version, cleanup_bundle_objects, create_bundle};
+use crate::bundles::{export_bundle_versions, search_bundle_versions};
 use crate::checks::{CheckNotice, check_file, print};
 use crate::cli::{BundleSubCommand, BundleVersionSpec, Cli, SubCommand};
 use crate::file_io::{FileError, FileReader, InputFile};
@@ -81,12 +80,14 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
         } => handle_check(file, list, password),
         SubCommand::ExportNoticeCsv { inputfile } => handle_export_notice_csv(&inputfile)?,
         SubCommand::Bundle(command) => match command {
+            #[cfg(feature = "bundle-edit")]
             BundleSubCommand::Create {
                 bundle_name,
                 description,
                 license,
                 repository,
             } => handle_create_bundle(bundle_name, description, license, repository)?,
+            #[cfg(feature = "bundle-edit")]
             BundleSubCommand::AddVersion {
                 bundle_name,
                 file,
@@ -100,6 +101,7 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
             BundleSubCommand::Export { spec, compact } => {
                 handle_export_bundle_version(spec, compact)?;
             }
+            #[cfg(feature = "bundle-edit")]
             BundleSubCommand::Cleanup => handle_cleanup_bundle_objects()?,
         },
         #[cfg(feature = "unzip-osb")]
@@ -446,6 +448,7 @@ fn handle_export_notice_csv(inputfile: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+#[cfg(feature = "bundle-edit")]
 fn handle_create_bundle(
     name: String,
     description: String,
@@ -456,6 +459,7 @@ fn handle_create_bundle(
     Ok(())
 }
 
+#[cfg(feature = "bundle-edit")]
 fn handle_add_bundle_version(
     name: String,
     file: String,
@@ -504,6 +508,7 @@ fn handle_export_bundle_version(
     Ok(())
 }
 
+#[cfg(feature = "bundle-edit")]
 fn handle_cleanup_bundle_objects() -> Result<(), Box<dyn Error>> {
     cleanup_bundle_objects()?;
     Ok(())
