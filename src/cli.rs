@@ -126,7 +126,7 @@ pub enum SubCommand {
     },
     #[command(about = "Exportiere CSV-Datei mit Ausfüllhinweisen")]
     ExportNoticeCsv { inputfile: String },
-    #[command(subcommand)]
+    #[command(subcommand, about = "Befehle zur Nutzung von Bundles")]
     Bundle(BundleSubCommand),
     #[cfg(feature = "unzip-osb")]
     #[command(about = "Entpackt eine OSB-Datei")]
