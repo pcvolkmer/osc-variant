@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.0](https://github.com/pcvolkmer/osc-variant/compare/v0.11.4...v0.12.0) (2026-05-25)
+
+
+### Features
+
+* git-based form bundles ([#81](https://github.com/pcvolkmer/osc-variant/issues/81)) ([bfa59ba](https://github.com/pcvolkmer/osc-variant/commit/bfa59ba158f1e58d4de61729da9c65d6260bbbd4))
+
+
+### Miscellaneous Chores
+
+* release 0.12.0 ([bc49181](https://github.com/pcvolkmer/osc-variant/commit/bc4918139702806d58b4497552e1a4c20a5622a0))
+
 ## [0.11.4](https://github.com/pcvolkmer/osc-variant/compare/v0.11.3...v0.11.4) (2026-04-28)
 
 
