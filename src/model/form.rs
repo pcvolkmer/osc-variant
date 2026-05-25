@@ -400,8 +400,7 @@ where
                             _ => false,
                         }
                 })
-                .filter(|&it| it)
-                .next_back()
+                .rfind(|&it| it)
                 .unwrap_or_default()
         } else {
             false
@@ -420,8 +419,7 @@ where
                             _ => false,
                         }
                 })
-                .filter(|&it| it)
-                .next_back()
+                .rfind(|&it| it)
                 .unwrap_or_default()
         } else {
             false

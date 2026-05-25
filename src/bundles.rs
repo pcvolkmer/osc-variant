@@ -277,7 +277,7 @@ pub fn add_bundle_version(
     update_bundle_repo_or_exit!();
 
     if let Some(tag) = &tag
-        && semver::Version::parse(tag).is_err()
+        && Version::parse(tag).is_err()
     {
         return Err(BundleError::Other(
             "Versions-Tag muss eine SemVer-Version sein".to_string(),
@@ -458,7 +458,7 @@ pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> 
     )))?;
 
     let bundle_info = BundleInfo {
-        name: bundle.name.to_string(),
+        name: bundle.name,
         version: requested_version.tag.clone().unwrap_or_default(),
         latest_version: latest_version.tag.clone().unwrap_or_default(),
         info_xml: InfoXML::from_bundle_version(requested_version),

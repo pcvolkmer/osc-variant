@@ -284,19 +284,18 @@ fn handle_modify(
 
     if let Some(noticefile) = noticefile {
         let content = fs::read(&noticefile)?;
-        let content = match String::from_utf8(content.clone()) {
-            Ok(content) => content,
-            Err(_) => {
-                let (cow, _, err) = WINDOWS_1252.decode(&content);
-                if err {
-                    return Err(Box::new(FileError::Reading(
-                        noticefile,
-                        "Es werden nur UTF-8 oder Windows-1252 codierte CSV-Dateien mit Ausfüllhinweisen unterstützt"
-                            .to_string(),
-                    )));
-                }
-                cow.into_owned()
+        let content = if let Ok(content) = String::from_utf8(content.clone()) {
+            content
+        } else {
+            let (cow, _, err) = WINDOWS_1252.decode(&content);
+            if err {
+                return Err(Box::new(FileError::Reading(
+                    noticefile,
+                    "Es werden nur UTF-8 oder Windows-1252 codierte CSV-Dateien mit Ausfüllhinweisen unterstützt"
+                        .to_string(),
+                )));
             }
+            cow.into_owned()
         };
 
         let notices = csv::ReaderBuilder::new()
