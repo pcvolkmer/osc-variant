@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/pcvolkmer/osc-variant/compare/v0.12.0...v0.12.1) (2026-05-26)
+
+
+### Bug Fixes
+
+* show info for the latest version if no version is given ([f4f4baa](https://github.com/pcvolkmer/osc-variant/commit/f4f4baacc7aac7eb1807d7b4be9272f6048a663c))
+
 ## [0.12.0](https://github.com/pcvolkmer/osc-variant/compare/v0.11.4...v0.12.0) (2026-05-25)
 
 
