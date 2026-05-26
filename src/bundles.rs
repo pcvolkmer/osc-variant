@@ -421,6 +421,9 @@ pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> 
         .versions
         .iter()
         .rfind(|bundle_version| {
+            if spec.version_tag.is_none() {
+                return true;
+            }
             if let Some(spec) = &spec.version_tag
                 && let Some(tag) = &bundle_version.tag
                 && let Ok(version_spec) = VersionReq::parse(spec)
