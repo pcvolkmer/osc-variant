@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.2](https://github.com/pcvolkmer/osc-variant/compare/v0.12.1...v0.12.2) (2026-06-04)
+
+
+### Features
+
+* ignore labels when exporting notice csv file ([a614e56](https://github.com/pcvolkmer/osc-variant/commit/a614e568e7af6a994f0c4e39c465576d46edb617))
+
 ## [0.12.1](https://github.com/pcvolkmer/osc-variant/compare/v0.12.0...v0.12.1) (2026-05-26)
 
 
