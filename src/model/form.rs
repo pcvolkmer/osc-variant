@@ -533,6 +533,7 @@ impl<Type> Form<Type> {
                 .filter(|entry| {
                     entry.type_ != "subform"
                         && entry.type_ != "section"
+                        && entry.type_ != "label"
                         && if let Some(filter) = &entry.filter {
                             filter.condition.trim() != "false"
                         } else {
