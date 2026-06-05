@@ -17,7 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use crate::checks::CheckNotice::{ErrorWithCode, Warning};
+use crate::checks::CheckNotice::{ErrorWithCode, Info};
 use crate::checks::{CheckNotice, Checkable};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::other::Entry;
@@ -599,7 +599,7 @@ impl<Type> Form<Type> {
         }
 
         if missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
-            result.push(Warning {
+            result.push(Info {
                 description: format!(
                     "Formular '{}' hat Formularverweise, die erst in neueren Onkostar-Versionen ab 2.14.0 funktionieren",
                     self.name
