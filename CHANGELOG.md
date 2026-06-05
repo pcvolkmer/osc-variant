@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.3](https://github.com/pcvolkmer/osc-variant/compare/v0.12.2...v0.12.3) (2026-06-05)
+
+
+### Features
+
+* change new form reference severity to INFO ([#87](https://github.com/pcvolkmer/osc-variant/issues/87)) ([9e50924](https://github.com/pcvolkmer/osc-variant/commit/9e50924bcba08ab9f6b7a0f4107727f606b8daa3))
+* sort check results by severity ([#85](https://github.com/pcvolkmer/osc-variant/issues/85)) ([28f2f53](https://github.com/pcvolkmer/osc-variant/commit/28f2f538a7b3b652f89dc0b8a440405c65a2cdf8))
+
 ## [0.12.2](https://github.com/pcvolkmer/osc-variant/compare/v0.12.1...v0.12.2) (2026-06-04)
 
 
