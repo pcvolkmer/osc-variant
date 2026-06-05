@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2023-2024 the original author or authors.
+ * Copyright (C) 2023-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 use std::fmt::{Display, Formatter};
 use std::path::Path;
 
@@ -28,6 +27,7 @@ pub mod osb;
 pub mod osc;
 
 #[allow(dead_code)]
+#[derive(Debug)]
 pub enum CheckNotice {
     /// This will result in Error if importing file and has a support code
     ErrorWithCode {
@@ -53,6 +53,17 @@ pub enum CheckNotice {
     },
     /// Ok
     Ok(String),
+}
+
+impl CheckNotice {
+    fn variant_order(&self) -> u8 {
+        match self {
+            CheckNotice::ErrorWithCode { .. } | CheckNotice::Error { .. } => 1,
+            CheckNotice::Warning { .. } => 2,
+            CheckNotice::Info { .. } => 3,
+            CheckNotice::Ok(_) => 4,
+        }
+    }
 }
 
 impl Display for CheckNotice {
@@ -140,7 +151,7 @@ pub trait Fixable {
 #[allow(unused_variables)]
 #[allow(clippy::needless_pass_by_value)]
 pub fn check_file(file: &Path, password: Option<String>) -> Result<Vec<CheckNotice>, CheckNotice> {
-    match file.extension() {
+    let mut result = match file.extension() {
         Some(ex) => match ex.to_str() {
             #[cfg(feature = "unzip-osb")]
             Some("osb") => {
@@ -155,12 +166,16 @@ pub fn check_file(file: &Path, password: Option<String>) -> Result<Vec<CheckNoti
                 description: "Keine prüfbare Datei".to_string(),
                 line: None,
             }),
-        },
-        _ => Err(CheckNotice::Error {
-            description: "Keine prüfbare Datei".to_string(),
-            line: None,
-        }),
-    }
+        }?,
+        _ => {
+            return Err(CheckNotice::Error {
+                description: "Keine prüfbare Datei".to_string(),
+                line: None,
+            });
+        }
+    };
+    result.sort_by_key(CheckNotice::variant_order);
+    Ok(result)
 }
 
 pub fn print() {
