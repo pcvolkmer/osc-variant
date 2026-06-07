@@ -35,12 +35,16 @@ linux-package: linux-binary-x86_64
 	tar -czvf osc-variant-$(VERSION)_linux.tar.gz $(NAME)/
 	rm -rf $(NAME) || true
 
+.PHONY: linux-man
+linux-man:
+	pandoc -s man/osc-variant.1.md -t man -o man/osc-variant.1
+
 .PHONY: linux-deb
-linux-deb: linux-binary-x86_64
+linux-deb: linux-binary-x86_64 linux-man
 	cargo deb --no-build --strip --target=x86_64-unknown-linux-gnu --output=.
 
 .PHONY: linux-rpm
-linux-rpm: linux-binary-x86_64
+linux-rpm: linux-binary-x86_64 linux-man
 	cargo generate-rpm --target=x86_64-unknown-linux-gnu --output=.
 
 binary-all: win-binary-x86_64 linux-binary-x86_64
