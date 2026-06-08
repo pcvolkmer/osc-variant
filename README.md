@@ -67,7 +67,7 @@ Mit der Option `--filter` kann die Ausgabe eingeschränkt werden.
 
 *Bei Verwendung der OSB-Funktionalität kann die Eingabe eines Passworts erforderlich sein.*
 
-Die Option `-v` sorgt dafür, dass die eine Prüfsumme für Kataloge und Formulare berechnet und angezeigt wird.
+Die Option `-v` sorgt dafür, dass eine Prüfsumme für Kataloge und Formulare berechnet und angezeigt wird.
 Dadurch können inhaltliche Unterschiede bei identischer Revisionsnummer erkannt werden.
 
 #### Unterbefehl `tree`

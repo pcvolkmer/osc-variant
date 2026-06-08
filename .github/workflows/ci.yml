@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup
-        run: sudo apt update && sudo apt install rpm && cargo install cargo-deb && cargo install cargo-generate-rpm
+        run: sudo apt update && sudo apt install pandoc rpm && cargo install cargo-deb && cargo install cargo-generate-rpm
       - run: make linux-package linux-deb linux-rpm
       - name: Release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
