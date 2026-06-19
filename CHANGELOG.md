@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.4](https://github.com/pcvolkmer/osc-variant/compare/v0.12.3...v0.12.4) (2026-06-19)
+
+
+### Features
+
+* add man page ([#88](https://github.com/pcvolkmer/osc-variant/issues/88)) ([f70e303](https://github.com/pcvolkmer/osc-variant/commit/f70e303fbbef5705b0ae494867c57f89d73bb073))
+* handle references to multiple forms ([#90](https://github.com/pcvolkmer/osc-variant/issues/90)) ([14e3eb1](https://github.com/pcvolkmer/osc-variant/commit/14e3eb1415915d1e7fc77edecf910ea340de7eb7))
+
 ## [0.12.3](https://github.com/pcvolkmer/osc-variant/compare/v0.12.2...v0.12.3) (2026-06-05)
 
 
