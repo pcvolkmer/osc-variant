@@ -468,6 +468,7 @@ where
                 .entry
                 .iter()
                 .flat_map(|entry| &entry.data_form_references)
+                .flatten()
                 .flat_map(|rdf| {
                     rdf.referenced_data_form
                         .iter()

@@ -506,7 +506,7 @@ pub struct Entry {
     einfuegen_verhindern: Option<String>,
     #[serde(rename = "DataFormReferences", default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub data_form_references: Option<ReferencedDataForm>,
+    pub data_form_references: Option<Vec<ReferencedDataForm>>,
 }
 
 impl FormEntry for Entry {
@@ -518,19 +518,25 @@ impl FormEntry for Entry {
         self.type_.clone()
     }
 
+    #[allow(clippy::expect_used)]
     fn update_referenced_data_form(&mut self, value: String) {
         self.referenced_data_form = Some(value.clone());
 
         // Add new minimal form reference if not already present
         if let Some(ref mut form) = self.data_form_references
+            && !form.is_empty()
             && !form
+                .first()
+                .expect("Non empty form reference required")
                 .referenced_data_form
                 .iter()
                 .map(super::Comparable::get_name)
                 .collect::<Vec<String>>()
                 .contains(&value)
         {
-            form.referenced_data_form
+            form.first_mut()
+                .expect("Non empty form reference required")
+                .referenced_data_form
                 .push(Form::new_form_reference(&value));
         }
     }
