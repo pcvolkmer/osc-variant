@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/pcvolkmer/osc-variant/compare/v0.12.4...v0.13.0) (2026-06-25)
+
+
+### Features
+
+* add support for multiple referenced data forms ([#91](https://github.com/pcvolkmer/osc-variant/issues/91)) ([33ecc8b](https://github.com/pcvolkmer/osc-variant/commit/33ecc8b5ff66102963399e7d2b3c3194cf6e4752))
+
 ## [0.12.4](https://github.com/pcvolkmer/osc-variant/compare/v0.12.3...v0.12.4) (2026-06-19)
 
 
