@@ -243,7 +243,7 @@ Zum Erstellen von Varianten einer OSC-Datei wird eine Profildatei im YAML-Format
 
 In ihr sind die durchzuführenden Änderungen definiert. Eine Profildatei hat die folgende Form:
 
-```
+```yaml
 forms:
   - name: "ExampleForm"
     form_fields:
@@ -278,6 +278,20 @@ Hierzu wird die Anwendung angewiesen im Formular "ExampleForm" den Formularverwe
   anzupassen. Dies kann in `form_fields`, als auch `form_references` geschehen.
 
 und dabei die vorhandenen Angaben für den Formularverweis zu ersetzen.
+
+Es ist auch möglich, den Formularverweis auf mehrere andere Formularvarianten zu setzen.
+
+```yaml
+    form_references:
+      - name: "ref_first_mtb"
+        referenced_data_form:
+          - "Formularverweis.VarianteA"
+          - "Formularverweis.VarianteB"
+        anzeige_auswahl: "Referenziertes Formular vom: {Datum}"
+        anzeige: "Datum im referenzierten Formular: {Datum}"
+```
+Systembedingt kann hierbei (aktuell mit Onkostar 2.14.x) nicht für jeden Verweis ein anderer Anzeigetext angegeben werden.
+Alle Angaben in `referenced_data_form` werden bestehenden Einträgen hinzugefügt und ersetzen sie nicht.
 
 Die Angaben für `referenced_data_form`, `anzeige_auswahl`, `anzeige` und `scripts_code` sind optional.
 Wird keine Angabe gemacht, wird der bestehende Wert beibehalten.

@@ -118,6 +118,30 @@
           <GUID>34874112-d651-457b-a554-178a43ed38ed</GUID>
           <Revision>1</Revision>
         </Entry>
+        <Entry>
+          <Name>ref_einzelempfehlung</Name>
+          <NameExport>ref_einzelempfehlung</NameExport>
+          <Description>Therapie-Empfehlung</Description>
+          <Type>formReference</Type>
+          <SubTable/>
+          <ScaleUnit/>
+          <MaxLength>0</MaxLength>
+          <DefaultValue/>
+          <Active>true</Active>
+          <Readonly>false</Readonly>
+          <Filterable>false</Filterable>
+          <MultipleChoice>false</MultipleChoice>
+          <Position>0.0</Position>
+          <Note/>
+          <DateEstimatedAllowed>false</DateEstimatedAllowed>
+          <DateUnknownAllowed>false</DateUnknownAllowed>
+          <oeChoiceOptions>0</oeChoiceOptions>
+          <Fachabteilungsbezug>false</Fachabteilungsbezug>
+          <Use/>
+          <SID>20119</SID>
+          <GUID>2638f478-fb11-4569-8fb4-cdaa98acc525</GUID>
+          <Revision>1</Revision>
+        </Entry>
       </Entries>
       <Ordner>
         <Bibliothek>
@@ -660,6 +684,89 @@
           <Revision>3</Revision>
           <vorherigeWerte>false</vorherigeWerte>
           <EinfuegenVerhindern>false</EinfuegenVerhindern>
+        </Entry>
+        <Entry>
+          <Type>formReference</Type>
+          <Name>Formularverweis</Name>
+          <Description>Verweis zur einem Formular</Description>
+          <Active>true</Active>
+          <Readonly>false</Readonly>
+          <Printable>true</Printable>
+          <Position>2.0</Position>
+          <Note/>
+          <Beschriftung1/>
+          <Beschriftung2/>
+          <WertAnzeigenPatmodul>false</WertAnzeigenPatmodul>
+          <MultipleChoice>false</MultipleChoice>
+          <DefaultValue/>
+          <Alignment>0</Alignment>
+          <Direction>0</Direction>
+          <DataCatalogueEntry />
+          <ElementParent/>
+          <ProcedureDateStatus>none</ProcedureDateStatus>
+          <ZuordnungErkrankung>0</ZuordnungErkrankung>
+          <GrafikAusrichtung>0</GrafikAusrichtung>
+          <Mandatory>false</Mandatory>
+          <Datenart>BOTH</Datenart>
+          <NotSpecified>false</NotSpecified>
+          <Scripts>
+            <Code>/* test */</Code>
+            <Valid>true</Valid>
+          </Scripts>
+          <ReferencedDataForm>Anderes Formular</ReferencedDataForm>
+          <Anzeige>Verweis</Anzeige>
+          <AnzeigeAuswahl>{Datum}</AnzeigeAuswahl>
+          <Druckvorlage/>
+          <Speichern>1</Speichern>
+          <LeerAusblenden>true</LeerAusblenden>
+          <GeschlossenAnzeigen>false</GeschlossenAnzeigen>
+          <Min>0</Min>
+          <Max>0</Max>
+          <InUebersichtAnzeigen>false</InUebersichtAnzeigen>
+          <Hinweis/>
+          <Platzhalter/>
+          <ShowAuspraegungen>true</ShowAuspraegungen>
+          <ProzedurdatumUebernehmen>false</ProzedurdatumUebernehmen>
+          <Vorschlaege>false</Vorschlaege>
+          <AnzeigeAuswahldialog/>
+          <SucheAuswahldialog/>
+          <MindestbreiteLabel>0</MindestbreiteLabel>
+          <MindestbreiteFeld>0</MindestbreiteFeld>
+          <OrganisationunitFilter>0</OrganisationunitFilter>
+          <Aktion>0</Aktion>
+          <GroesseTextfeld>0</GroesseTextfeld>
+          <FilterAufheben>false</FilterAufheben>
+          <Resizable>false</Resizable>
+          <Verschluesselt>false</Verschluesselt>
+          <MemoArt>1</MemoArt>
+          <DateValidFrom>12432</DateValidFrom>
+          <DateValidTo>0</DateValidTo>
+          <DateValidFuture>true</DateValidFuture>
+          <Titel/>
+          <InAuswertung>false</InAuswertung>
+          <InAuswertungGraph>false</InAuswertungGraph>
+          <AlignmentPatModul>0</AlignmentPatModul>
+          <DirectionPatModul>0</DirectionPatModul>
+          <SeitenumbruchPatModul>true</SeitenumbruchPatModul>
+          <MarkierungIgnorieren>false</MarkierungIgnorieren>
+          <SucheArt>0</SucheArt>
+          <SID>20119</SID>
+          <GUID>2c5897aa-6ab4-474c-b94d-67ca74ffb7ea</GUID>
+          <Revision>20</Revision>
+          <vorherigeWerte>false</vorherigeWerte>
+          <EinfuegenVerhindern>false</EinfuegenVerhindern>
+          <DataFormReferences>
+            <ReferencedDataForm>
+              <Category>0</Category>
+              <Name>Anderes Formular</Name>
+              <Readonly>false</Readonly>
+              <TudokPosition>0</TudokPosition>
+              <hatUnterformulare>false</hatUnterformulare>
+              <SID>20119</SID>
+              <GUID>06847050-ff8f-46c4-87b8-9584c0cef990</GUID>
+              <Revision>1</Revision>
+            </ReferencedDataForm>
+          </DataFormReferences>
         </Entry>
       </Entries>
       <PlausibilityRules/>

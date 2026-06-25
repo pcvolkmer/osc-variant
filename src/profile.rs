@@ -72,9 +72,30 @@ pub trait WithScriptsCode {
 }
 
 #[derive(Deserialize)]
+#[serde(untagged)]
+pub enum ReferencedDataForms {
+    Single(String),
+    Multiple(Vec<String>),
+}
+
+fn deserialize_referenced_data_forms<'de, D>(
+    deserializer: D,
+) -> Result<Option<Vec<String>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    match Option::<ReferencedDataForms>::deserialize(deserializer)? {
+        Some(ReferencedDataForms::Single(single)) => Ok(Some(vec![single])),
+        Some(ReferencedDataForms::Multiple(multiple)) => Ok(Some(multiple)),
+        None => Ok(None),
+    }
+}
+
+#[derive(Deserialize)]
 pub struct FormReference {
     pub name: String,
-    pub referenced_data_form: Option<String>,
+    #[serde(default, deserialize_with = "deserialize_referenced_data_forms")]
+    pub referenced_data_form: Option<Vec<String>>,
     pub anzeige: Option<String>,
     pub anzeige_auswahl: Option<String>,
     #[serde(alias = "never_hide", default)]
@@ -171,7 +192,55 @@ mod tests {
                 assert_eq!(profile.forms[0].form_references[0].name, "ref_first_mtb");
                 assert_eq!(
                     profile.forms[0].form_references[0].referenced_data_form,
-                    Some("OS.Tumorkonferenz.VarianteUKW".to_string())
+                    Some(vec!["OS.Tumorkonferenz.VarianteUKW".to_string()])
+                );
+                assert_eq!(
+                    profile.forms[0].form_references[0].anzeige,
+                    Some("Datum: {Datum}".to_string())
+                );
+                assert_eq!(
+                    profile.forms[0].form_references[0].anzeige_auswahl,
+                    Some("TK vom {Datum}".to_string())
+                );
+                assert!(profile.forms[0].form_references[0].remove_filter);
+                assert_eq!(
+                    profile.forms[0].form_references[0].escaped_scripts_code(),
+                    Some("// Example code&#10;console.log(42);".to_string())
+                );
+            }
+            Err(e) => panic!("Cannot deserialize profile: {e}"),
+        }
+    }
+
+    #[test]
+    fn should_deserialize_form_reference_with_multiple_referenced_data_forms() {
+        let content = "forms:
+               - name: 'DNPM Therapieplan'
+                 form_references:
+                   - name: ref_first_mtb
+                     referenced_data_form:
+                       - 'OS.Tumorkonferenz.VarianteUKW'
+                       - 'OS.Tumorkonferenz.VarianteUMR'
+                     anzeige: 'Datum: {Datum}'
+                     anzeige_auswahl: 'TK vom {Datum}'
+                     remove_filter: true
+                     scripts_code: |-
+                       // Example code
+                       console.log(42);
+            ";
+
+        match Profile::from_str(content) {
+            Ok(profile) => {
+                assert_eq!(profile.forms.len(), 1);
+                assert_eq!(profile.forms[0].name, "DNPM Therapieplan");
+                assert_eq!(profile.forms[0].form_references.len(), 1);
+                assert_eq!(profile.forms[0].form_references[0].name, "ref_first_mtb");
+                assert_eq!(
+                    profile.forms[0].form_references[0].referenced_data_form,
+                    Some(vec![
+                        "OS.Tumorkonferenz.VarianteUKW".to_string(),
+                        "OS.Tumorkonferenz.VarianteUMR".to_string()
+                    ])
                 );
                 assert_eq!(
                     profile.forms[0].form_references[0].anzeige,

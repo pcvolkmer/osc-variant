@@ -312,8 +312,10 @@ where
     E: FormEntry,
 {
     if entry.get_type() == "formReference" && entry.get_name() == form_reference.name {
-        if let Some(profile_referenced_data_form) = &form_reference.referenced_data_form {
-            entry.update_referenced_data_form(profile_referenced_data_form.clone());
+        if let Some(profile_referenced_data_forms) = &form_reference.referenced_data_form {
+            for profile_referenced_data_form in profile_referenced_data_forms {
+                entry.update_referenced_data_form(profile_referenced_data_form.clone());
+            }
         }
         if let Some(profile_anzeige) = &form_reference.anzeige {
             entry.update_anzeige(profile_anzeige.clone());
