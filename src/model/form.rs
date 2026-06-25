@@ -1212,4 +1212,96 @@ mod tests {
         assert_eq!(actual.entry[0].filter, None);
         assert_eq!(actual.entry[1].filter, None);
     }
+
+    #[test]
+    fn should_add_single_new_form_reference() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_references:
+                   - name: Formularverweis
+                     referenced_data_form: 'Formularvariante'
+                     anzeige: 'Variantendatum: {Datum}'
+                     anzeige_auswahl: 'Variantendatum {Datum}'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        onkostar_editor.apply_profile(&profile);
+
+        let Some(actual) = &onkostar_editor.editor.data_form[0].entries else {
+            panic!()
+        };
+
+        let Some(data_form_references) = &actual.entry[4].data_form_references else {
+            panic!()
+        };
+
+        assert_eq!(data_form_references.len(), 1);
+        assert_eq!(data_form_references[0].referenced_data_form.len(), 2);
+
+        assert_eq!(
+            &data_form_references[0].referenced_data_form[0].name,
+            "Anderes Formular"
+        );
+        assert_eq!(
+            &data_form_references[0].referenced_data_form[1].name,
+            "Formularvariante"
+        );
+    }
+
+    #[test]
+    fn should_add_multiple_new_form_references() {
+        let onkostar_editor = OnkostarEditor::from_str(include_str!("../../tests/test.osc"));
+
+        assert!(onkostar_editor.is_ok());
+        let mut onkostar_editor = onkostar_editor.unwrap();
+
+        let profile = "forms:
+               - name: 'Hauptformular'
+                 form_references:
+                   - name: Formularverweis
+                     referenced_data_form:
+                       - 'Formularvariante A'
+                       - 'Formularvariante B'
+                     anzeige: 'Variantendatum: {Datum}'
+                     anzeige_auswahl: 'Variantendatum {Datum}'
+            ";
+
+        let profile = Profile::from_str(profile);
+        assert!(profile.is_ok());
+        let profile = profile.unwrap();
+
+        onkostar_editor.apply_profile(&profile);
+
+        let Some(actual) = &onkostar_editor.editor.data_form[0].entries else {
+            panic!()
+        };
+
+        let Some(data_form_references) = &actual.entry[4].data_form_references else {
+            panic!()
+        };
+
+        assert_eq!(data_form_references.len(), 1);
+        assert_eq!(data_form_references[0].referenced_data_form.len(), 3);
+
+        assert_eq!(
+            &data_form_references[0].referenced_data_form[0].name,
+            "Anderes Formular"
+        );
+        assert_eq!(
+            &data_form_references[0].referenced_data_form[1].name,
+            "Formularvariante A"
+        );
+        assert_eq!(
+            &data_form_references[0].referenced_data_form[2].name,
+            "Formularvariante B"
+        );
+    }
 }
