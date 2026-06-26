@@ -40,11 +40,11 @@ linux-man:
 	pandoc -s man/osc-variant.1.md -t man -o man/osc-variant.1
 
 .PHONY: linux-deb
-linux-deb: linux-binary-x86_64 linux-man
+linux-deb: linux-binary-x86_64 linux-man  bash-completion
 	cargo deb --no-build --strip --target=x86_64-unknown-linux-gnu --output=.
 
 .PHONY: linux-rpm
-linux-rpm: linux-binary-x86_64 linux-man
+linux-rpm: linux-binary-x86_64 linux-man  bash-completion
 	cargo generate-rpm --target=x86_64-unknown-linux-gnu --output=.
 
 binary-all: win-binary-x86_64 linux-binary-x86_64
@@ -57,12 +57,18 @@ win-binary-x86_64:
 linux-binary-x86_64:
 	cargo build --release --target=x86_64-unknown-linux-gnu --features unzip-osb
 
+.PHONY: bash-completion
+bash-completion:
+	mkdir completion/
+	cargo run --release -- completion bash > completion/osc-variant.bash
+
 .PHONY: install
 install:
 	cargo install --path .
 
 .PHONY: clean
 clean:
+	rm -rf completion/ || true
 	cargo clean
 	rm -rf $(NAME) 2>/dev/null || true
 	rm *_win64.zip 2>/dev/null || true
