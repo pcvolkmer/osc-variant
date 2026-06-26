@@ -20,7 +20,6 @@
 
 use crate::model::form::Notice;
 use crate::model::requirements::Requires;
-use console::style;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
@@ -310,21 +309,6 @@ pub trait FormEntryContainer {
     fn apply_notices(&mut self, notices: Vec<Notice>);
 }
 
-pub trait Listable
-where
-    Self: Comparable,
-{
-    fn to_listed_string(&self) -> String;
-
-    fn to_verbose_listed_string(&self) -> String {
-        format!(
-            "{} {}",
-            self.to_listed_string(),
-            style(format!("[{}]", &self.get_hash()[..7])).dim()
-        )
-    }
-}
-
 pub trait Sortable {
     fn sorting_key(&self) -> String;
 
@@ -340,6 +324,10 @@ pub trait Named {
     fn get_name(&self) -> String;
 }
 
+pub trait Revisioned {
+    fn get_revision(&self) -> u16;
+}
+
 pub trait TypedEntry {
     fn is_form_reference(&self) -> bool;
     fn is_subform(&self) -> bool;
@@ -347,9 +335,8 @@ pub trait TypedEntry {
     fn is_label(&self) -> bool;
 }
 
-pub trait Comparable: Debug + Named {
+pub trait Comparable: Debug + Named + Revisioned {
     fn get_guid(&self) -> String;
-    fn get_revision(&self) -> u16;
     fn get_hash(&self) -> String {
         let mut h = DefaultHasher::new();
         format!("{self:?}").hash(&mut h);

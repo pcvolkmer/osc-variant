@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2023-2024 the original author or authors.
+ * Copyright (C) 2023-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ pub mod bundles;
 mod checks;
 mod cli;
 mod commands;
+mod console;
 mod file_io;
 mod model;
 mod notices;

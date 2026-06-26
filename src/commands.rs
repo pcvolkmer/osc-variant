@@ -22,6 +22,7 @@ use crate::bundles::{add_bundle_version, cleanup_bundle_objects, create_bundle};
 use crate::bundles::{bundle_info, export_bundle_versions, search_bundle_versions};
 use crate::checks::{CheckNotice, check_file, print};
 use crate::cli::{BundleSubCommand, BundleVersionSpec, Cli, SubCommand};
+use crate::console::{PrintableDiff, PrintableList, PrintableTree};
 use crate::file_io::{FileError, FileReader, InputFile};
 use crate::model::FormEntryContainer;
 use crate::model::form::Notice;

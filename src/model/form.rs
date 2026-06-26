@@ -22,13 +22,11 @@ use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::other::Entry;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
-    Ansichten, Comparable, Entries, FolderContained, FormEntryContainer, Kennzahlen, Listable,
-    MenuCategory, Named, PlausibilityRules, PunkteKategorien, Script, Sortable, TypedEntry,
+    Ansichten, Comparable, Entries, FolderContained, FormEntryContainer, Kennzahlen, MenuCategory,
+    Named, PlausibilityRules, PunkteKategorien, Revisioned, Script, Sortable, TypedEntry,
 };
 use crate::model::{Haeufigkeiten, Ordner};
-use console::style;
 use serde::{Deserialize, Serialize};
-use std::any::TypeId;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -261,29 +259,6 @@ impl<Type: 'static> FormEntryContainer for Form<Type> {
     }
 }
 
-impl<Type: 'static> Listable for Form<Type>
-where
-    Form<Type>: Comparable,
-{
-    fn to_listed_string(&self) -> String {
-        format!(
-            "{} ({}) '{}' in Revision '{}'",
-            if TypeId::of::<Type>() == TypeId::of::<DataFormType>() {
-                "Formular"
-            } else {
-                "Unterformular"
-            },
-            if self.is_system_library_content() {
-                style("S").yellow()
-            } else {
-                style("u")
-            },
-            style(&self.name).yellow(),
-            style(&self.revision).yellow()
-        )
-    }
-}
-
 impl<Type: 'static> Sortable for Form<Type> {
     fn sorting_key(&self) -> String {
         self.name.clone()
@@ -324,39 +299,13 @@ impl<Type> Named for Form<Type> {
     }
 }
 
-impl<Type> Comparable for Form<Type>
-where
-    Type: Debug + 'static,
-    Self: Named,
-{
-    fn get_guid(&self) -> String {
-        self.guid.clone()
-    }
-
+impl<Type> Revisioned for Form<Type> {
     fn get_revision(&self) -> u16 {
         self.revision
     }
-
-    fn compare_by_requirement(a: &Self, b: &Self) -> Ordering {
-        if a.get_name() == b.get_name()
-            || a.is_system_library_content()
-            || b.is_system_library_content()
-        {
-            return Ordering::Equal;
-        }
-
-        if a.requires_form_reference(&b.get_name()) || a.requires_subform(&b.get_name()) {
-            return Ordering::Greater;
-        }
-
-        Ordering::Less
-    }
 }
 
-impl<Type> Requires for Form<Type>
-where
-    Self: Listable + 'static,
-{
+impl<Type> Requires for Form<Type> {
     fn requires_form_reference(&self, name: &str) -> bool {
         if let Some(ref entries) = self.entries {
             entries
@@ -441,7 +390,7 @@ where
                 .flat_map(|rdf| {
                     rdf.referenced_data_form
                         .iter()
-                        .map(|x| x.name.clone())
+                        .map(|x| x.get_name())
                         .collect::<Vec<_>>()
                 })
                 .map(|entry| match all.find_data_form(entry.as_str()) {
@@ -482,6 +431,31 @@ where
         }
 
         result
+    }
+}
+
+impl<Type> Comparable for Form<Type>
+where
+    Type: Debug + 'static,
+    Self: Named,
+{
+    fn get_guid(&self) -> String {
+        self.guid.clone()
+    }
+
+    fn compare_by_requirement(a: &Self, b: &Self) -> Ordering {
+        if a.get_name() == b.get_name()
+            || a.is_system_library_content()
+            || b.is_system_library_content()
+        {
+            return Ordering::Equal;
+        }
+
+        if a.requires_form_reference(&b.get_name()) || a.requires_subform(&b.get_name()) {
+            return Ordering::Greater;
+        }
+
+        Ordering::Less
     }
 }
 

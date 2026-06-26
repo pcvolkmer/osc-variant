@@ -20,12 +20,11 @@
 
 use std::collections::HashSet;
 
-use console::style;
 use serde::{Deserialize, Serialize};
 
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
-use crate::model::{Ansichten, Comparable, FolderContained, Listable, Named, Ordner, Sortable};
+use crate::model::{Ansichten, Comparable, FolderContained, Named, Ordner, Revisioned, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -65,18 +64,9 @@ impl Named for DataCatalogue {
     }
 }
 
-impl Listable for DataCatalogue {
-    fn to_listed_string(&self) -> String {
-        format!(
-            "Datenkatalog ({}) '{}' in Revision '{}'",
-            if self.is_system_library_content() {
-                style("S").yellow()
-            } else {
-                style("u")
-            },
-            style(&self.name).yellow(),
-            style(&self.revision).yellow()
-        )
+impl Revisioned for DataCatalogue {
+    fn get_revision(&self) -> u16 {
+        self.revision
     }
 }
 
@@ -97,10 +87,6 @@ impl Sortable for DataCatalogue {
 impl Comparable for DataCatalogue {
     fn get_guid(&self) -> String {
         self.guid.clone()
-    }
-
-    fn get_revision(&self) -> u16 {
-        self.revision
     }
 }
 
@@ -125,27 +111,6 @@ impl Requires for DataCatalogue {
         result.sort_unstable_by_key(Requirement::sorting_key);
 
         result
-    }
-
-    fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor, verbose: bool) -> String {
-        format!(
-            "{}\n{}",
-            if verbose {
-                self.to_verbose_listed_string()
-            } else {
-                self.to_listed_string()
-            },
-            self.get_required_entries(all)
-                .iter()
-                .filter_map(|entry| match entry {
-                    Requirement::PropertyCatalogue(_)
-                    | Requirement::ExternalPropertyCatalogue(_) => {
-                        Some(format!("  - {entry}\n"))
-                    }
-                    _ => None,
-                })
-                .collect::<String>()
-        )
     }
 }
 

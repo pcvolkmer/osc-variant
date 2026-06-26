@@ -18,7 +18,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use std::cmp::Ordering;
 use std::fmt::Debug;
 use std::str::FromStr;
 
@@ -26,10 +25,9 @@ use crate::model::data_catalogue::DataCatalogue;
 use crate::model::form::{DataFormType, Form, UnterformularType};
 use crate::model::other::{Ablaufschema, Akte, RecordLinkage, Rskript, SidGuid};
 use crate::model::property_catalogue::PropertyCatalogue;
-use crate::model::requirements::Requires;
-use crate::model::{Comparable, FolderContained, Listable, Named, Sortable};
+use crate::model::{Comparable, FolderContained, Named, Sortable};
 use crate::profile::{Profile, ProfileApplicable};
-use console::style;
+
 use quick_xml::de::from_str;
 use serde::{Deserialize, Serialize};
 
@@ -112,20 +110,7 @@ impl OnkostarEditor {
             });
     }
 
-    pub fn print_list(&self, verbose: bool) {
-        println!(
-            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte sind gespeichert",
-            style(&self.info_xml.datum_xml).yellow(),
-            style(&self.info_xml.name).yellow(),
-            style(&self.info_xml.version).yellow()
-        );
-        Self::print_items("Merkmalskataloge", &self.editor.property_catalogue, verbose);
-        Self::print_items("Datenkataloge", &self.editor.data_catalogue, verbose);
-        Self::print_items("Formulare", &self.editor.data_form, verbose);
-        Self::print_items("Unterformulare", &self.editor.unterformular, verbose);
-    }
-
-    fn filter_by_name_contains(&mut self, name: &str) {
+    pub fn filter_by_name_contains(&mut self, name: &str) {
         self.editor
             .property_catalogue
             .retain(|e| e.get_name().contains(name));
@@ -138,79 +123,6 @@ impl OnkostarEditor {
         self.editor
             .unterformular
             .retain(|e| e.get_name().contains(name));
-    }
-    pub fn print_list_filtered(&mut self, name: &str, verbose: bool) {
-        println!(
-            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte für '{}' sind gespeichert",
-            style(&self.info_xml.datum_xml).yellow(),
-            style(&self.info_xml.name).yellow(),
-            style(&self.info_xml.version).yellow(),
-            name
-        );
-
-        self.filter_by_name_contains(name);
-
-        Self::print_items("Merkmalskataloge", &self.editor.property_catalogue, verbose);
-        Self::print_items("Datenkataloge", &self.editor.data_catalogue, verbose);
-        Self::print_items("Formulare", &self.editor.data_form, verbose);
-        Self::print_items("Unterformulare", &self.editor.unterformular, verbose);
-    }
-
-    fn print_items(title: &str, list: &[impl Listable], verbose: bool) {
-        print!("\n{} {}", list.len(), style(title).underlined());
-        println!(
-            " - Inhalte der Systembibliothek sind mit ({}), der Benutzerbibliothek mit (u) markiert",
-            style("S").yellow()
-        );
-        for entry in list {
-            if verbose {
-                println!("{}", entry.to_verbose_listed_string());
-                continue;
-            }
-            println!("{}", entry.to_listed_string());
-        }
-    }
-
-    pub fn print_tree(&self, verbose: bool) {
-        println!(
-            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte sind gespeichert",
-            style(&self.info_xml.datum_xml).yellow(),
-            style(&self.info_xml.name).yellow(),
-            style(&self.info_xml.version).yellow()
-        );
-
-        Self::print_items("Merkmalskataloge", &self.editor.property_catalogue, verbose);
-        self.print_items_tree("Datenkataloge", &self.editor.data_catalogue, verbose);
-        self.print_items_tree("Formulare", &self.editor.data_form, verbose);
-        self.print_items_tree("Unterformulare", &self.editor.unterformular, verbose);
-    }
-
-    pub fn print_tree_filtered(&mut self, name: &str, verbose: bool) {
-        println!(
-            "Die Datei wurde am {} mit {} in Version {} erstellt.\n\nFolgende Inhalte für '{}' sind gespeichert",
-            style(&self.info_xml.datum_xml).yellow(),
-            style(&self.info_xml.name).yellow(),
-            style(&self.info_xml.version).yellow(),
-            name
-        );
-
-        self.filter_by_name_contains(name);
-
-        Self::print_items("Merkmalskataloge", &self.editor.property_catalogue, verbose);
-        self.print_items_tree("Datenkataloge", &self.editor.data_catalogue, verbose);
-        self.print_items_tree("Formulare", &self.editor.data_form, verbose);
-        self.print_items_tree("Unterformulare", &self.editor.unterformular, verbose);
-    }
-
-    fn print_items_tree(&self, title: &str, list: &[impl Requires], verbose: bool) {
-        print!("\n{} {}", list.len(), style(title).underlined());
-        println!(
-            " - Inhalte der Systembibliothek sind mit ({}), der Benutzerbibliothek mit (u) markiert",
-            style("S").yellow()
-        );
-        for entry in list {
-            println!("{}", entry.to_requirement_string(self, verbose));
-        }
     }
 
     pub fn sorted(&mut self) {
@@ -271,125 +183,6 @@ impl OnkostarEditor {
         self.editor
             .unterformular
             .retain(|e| !e.is_system_library_content());
-    }
-
-    pub fn print_diff(&mut self, other: &mut Self, strict: bool) {
-        println!();
-
-        println!(
-            "Datei A wurde am {} mit {} in Version {} erstellt.",
-            style(&self.info_xml.datum_xml).yellow(),
-            style(&self.info_xml.name).yellow(),
-            style(&self.info_xml.version).yellow()
-        );
-
-        println!(
-            "Datei B wurde am {} mit {} in Version {} erstellt.",
-            style(&other.info_xml.datum_xml).yellow(),
-            style(&other.info_xml.name).yellow(),
-            style(&other.info_xml.version).yellow()
-        );
-
-        self.sorted();
-        other.sorted();
-
-        Self::print_item_diff(
-            "Merkmalskataloge",
-            &self.editor.property_catalogue,
-            &other.editor.property_catalogue,
-            strict,
-        );
-        Self::print_item_diff(
-            "Datenkataloge",
-            &self.editor.data_catalogue,
-            &other.editor.data_catalogue,
-            strict,
-        );
-        Self::print_item_diff(
-            "Formulare",
-            &self.editor.data_form,
-            &other.editor.data_form,
-            strict,
-        );
-        Self::print_item_diff(
-            "Unterformulare",
-            &self.editor.unterformular,
-            &other.editor.unterformular,
-            strict,
-        );
-    }
-
-    fn print_item_diff(
-        title: &str,
-        list_a: &[impl Comparable + Named],
-        list_b: &[impl Comparable + Named],
-        strict: bool,
-    ) {
-        println!("\n{}", style(title).underlined());
-
-        let mut has_diff = false;
-
-        let names_a = list_a.iter().map(Named::get_name).collect::<Vec<_>>();
-        let names_b = list_b.iter().map(Named::get_name).collect::<Vec<_>>();
-
-        for entry in &names_b {
-            if !names_a.contains(entry) {
-                println!("{}: {}", entry, style("Nicht in Datei A enthalten!").red());
-                has_diff = true;
-            }
-        }
-
-        for entry in &names_a {
-            if !names_b.contains(entry) {
-                println!("{}: {}", entry, style("Nicht in Datei B enthalten!").red());
-                has_diff = true;
-            }
-        }
-
-        for entry_a in list_a {
-            for entry_b in list_b {
-                if entry_a.get_name() == entry_b.get_name() {
-                    match entry_a.get_revision().cmp(&entry_b.get_revision()) {
-                        Ordering::Less => {
-                            println!(
-                                "{}: {} (Revision {} < Revision {})",
-                                entry_a.get_name(),
-                                style("Neuer in Datei B").yellow(),
-                                style(entry_a.get_revision()).blue(),
-                                style(entry_b.get_revision()).green()
-                            );
-                            has_diff = true;
-                        }
-                        Ordering::Greater => {
-                            println!(
-                                "{}: {} (Revision {} > Revision {})",
-                                entry_a.get_name(),
-                                style("Neuer in Datei A").yellow(),
-                                style(entry_a.get_revision()).green(),
-                                style(entry_b.get_revision()).blue()
-                            );
-                            has_diff = true;
-                        }
-                        Ordering::Equal => {
-                            if strict && entry_a.get_hash() != entry_b.get_hash() {
-                                println!(
-                                    "{}: {} (z.B. GUID oder Reihenfolge von Unterelementen)",
-                                    entry_a.get_name(),
-                                    style("Inhaltlich verschieden").yellow()
-                                );
-                                has_diff = true;
-                            } else if strict {
-                                println!("{}: {}", entry_a.get_name(), style("Identisch").green());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if !has_diff {
-            println!("Keine Unterschiede");
-        }
     }
 }
 

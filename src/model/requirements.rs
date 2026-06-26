@@ -22,8 +22,7 @@ use crate::model::data_catalogue::DataCatalogue;
 use crate::model::form::{DataFormType, Form, UnterformularType};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::property_catalogue::PropertyCatalogue;
-use crate::model::{Listable, Named, Sortable};
-use std::fmt::Display;
+use crate::model::{Named, Sortable};
 
 #[allow(clippy::enum_variant_names)]
 pub enum Requirement<'a> {
@@ -66,40 +65,7 @@ impl Sortable for Requirement<'_> {
     }
 }
 
-impl Display for Requirement<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let str = match self {
-            Requirement::PropertyCatalogue(item) => item.to_listed_string(),
-            Requirement::DataCatalogue(item) => item.to_listed_string(),
-            Requirement::DataFormReference(item) | Requirement::DataFormSubform(item) => {
-                item.to_listed_string()
-            }
-            Requirement::UnterformularReference(item) | Requirement::UnterformularSubform(item) => {
-                item.to_listed_string()
-            }
-            Requirement::ExternalPropertyCatalogue(name) => {
-                format!("Merkmalskatalog (-) '{name}' - hier nicht enthalten")
-            }
-            Requirement::ExternalDataCatalogue(name) => {
-                format!("Datenkatalog (-) '{name}' - hier nicht enthalten")
-            }
-            Requirement::ExternalDataFormReference(name)
-            | Requirement::ExternalDataFormSubform(name) => {
-                format!("Formular (-) '{name}' - hier nicht enthalten")
-            }
-            Requirement::ExternalUnterformularReference(name)
-            | Requirement::ExternalUnterformularSubform(name) => {
-                format!("Unterformular (-) '{name}' - hier nicht enthalten")
-            }
-        };
-        write!(f, "{str}")
-    }
-}
-
-pub trait Requires
-where
-    Self: Listable,
-{
+pub trait Requires {
     fn requires_form_reference(&self, _: &str) -> bool {
         false
     }
@@ -109,55 +75,4 @@ where
     }
 
     fn get_required_entries<'a>(&'a self, all: &'a OnkostarEditor) -> Vec<Requirement<'a>>;
-
-    fn to_requirement_string<'a>(&'a self, all: &'a OnkostarEditor, verbose: bool) -> String {
-        format!(
-            "{}\n{}",
-            if verbose {
-                self.to_verbose_listed_string()
-            } else {
-                self.to_listed_string()
-            },
-            self.get_required_entries(all)
-                .iter()
-                .filter_map(|entry| match entry {
-                    Requirement::DataCatalogue(x) => {
-                        let inner = x
-                            .get_required_entries(all)
-                            .iter()
-                            .map(|inner_entry| match inner_entry {
-                                Requirement::PropertyCatalogue(_) => Some(inner_entry.to_string()),
-                                Requirement::ExternalPropertyCatalogue(_) => {
-                                    Some(inner_entry.to_string())
-                                }
-                                _ => None,
-                            })
-                            .filter_map(|item| item.map(|item| format!("    - {item}\n")))
-                            .collect::<String>();
-                        if inner.is_empty() {
-                            Some(format!("  + {}\n", x.to_listed_string()))
-                        } else {
-                            Some(format!("  + {}\n{}", x.to_listed_string(), inner))
-                        }
-                    }
-                    Requirement::ExternalDataCatalogue(_) => {
-                        Some(format!("  + {entry}\n"))
-                    }
-                    Requirement::DataFormReference(_)
-                    | Requirement::ExternalDataFormReference(_)
-                    | Requirement::UnterformularReference(_)
-                    | Requirement::ExternalUnterformularReference(_) => {
-                        Some(format!("  > {entry}\n"))
-                    }
-                    Requirement::DataFormSubform(_)
-                    | Requirement::ExternalDataFormSubform(_)
-                    | Requirement::UnterformularSubform(_)
-                    | Requirement::ExternalUnterformularSubform(_) => {
-                        Some(format!("  * {entry}\n"))
-                    }
-                    _ => None,
-                })
-                .collect::<String>()
-        )
-    }
 }

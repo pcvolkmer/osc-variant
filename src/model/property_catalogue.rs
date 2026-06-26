@@ -18,10 +18,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use console::style;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Comparable, FolderContained, Listable, Named, Ordner, Sortable};
+use crate::model::{Comparable, FolderContained, Named, Ordner, Revisioned, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -57,18 +56,9 @@ impl Named for PropertyCatalogue {
     }
 }
 
-impl Listable for PropertyCatalogue {
-    fn to_listed_string(&self) -> String {
-        format!(
-            "Merkmalskatalog ({}) '{}' in Revision '{}'",
-            if self.is_system_library_content() {
-                style("S").yellow()
-            } else {
-                style("u")
-            },
-            style(&self.name).yellow(),
-            style(&self.revision).yellow()
-        )
+impl Revisioned for PropertyCatalogue {
+    fn get_revision(&self) -> u16 {
+        self.revision
     }
 }
 
@@ -91,10 +81,6 @@ impl Sortable for PropertyCatalogue {
 impl Comparable for PropertyCatalogue {
     fn get_guid(&self) -> String {
         self.guid.clone().unwrap_or_default().clone()
-    }
-
-    fn get_revision(&self) -> u16 {
-        self.revision
     }
 }
 
