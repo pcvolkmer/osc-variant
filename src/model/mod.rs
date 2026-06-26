@@ -20,7 +20,6 @@
 
 use crate::model::form::Notice;
 use crate::model::requirements::Requires;
-use crate::profile::{FormField, FormReference, Profile, WithScriptsCode};
 use console::style;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
@@ -127,11 +126,11 @@ pub struct Ansichten {
 #[serde(deny_unknown_fields)]
 pub struct MenuCategory {
     #[serde(rename = "name")]
-    name: String,
+    pub(crate) name: String,
     #[serde(rename = "position")]
-    position: String,
+    pub(crate) position: String,
     #[serde(rename = "column")]
-    column: String,
+    pub(crate) column: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -307,54 +306,7 @@ pub struct Kennzahl {
     haeufigkeitennenner: String,
 }
 
-fn apply_profile_to_form_entry<E>(entry: &mut E, form_reference: &FormReference)
-where
-    E: FormEntry,
-{
-    if entry.get_type() == "formReference" && entry.get_name() == form_reference.name {
-        if let Some(profile_referenced_data_forms) = &form_reference.referenced_data_form {
-            for profile_referenced_data_form in profile_referenced_data_forms {
-                entry.update_referenced_data_form(profile_referenced_data_form.clone());
-            }
-        }
-        if let Some(profile_anzeige) = &form_reference.anzeige {
-            entry.update_anzeige(profile_anzeige.clone());
-        }
-        if let Some(profile_anzeige_auswahl) = &form_reference.anzeige_auswahl {
-            entry.update_anzeige_auswahl(profile_anzeige_auswahl.clone());
-        }
-        if let Some(scripts_code) = &form_reference.escaped_scripts_code() {
-            entry.update_scripts_code(scripts_code.clone());
-        }
-        if form_reference.remove_filter {
-            entry.remove_filter();
-        }
-    }
-}
-
-fn apply_profile_to_form_field<E>(entry: &mut E, form_field: &FormField)
-where
-    E: FormEntry,
-{
-    if entry.get_name() == form_field.name {
-        if form_field.hide {
-            entry.hide();
-        }
-        if let Some(new_default_value) = &form_field.default_value {
-            entry.update_default_value(new_default_value.clone());
-        }
-        if let Some(scripts_code) = &form_field.escaped_scripts_code() {
-            entry.update_scripts_code(scripts_code.clone());
-        }
-        if form_field.remove_filter {
-            entry.remove_filter();
-        }
-    }
-}
-
 pub trait FormEntryContainer {
-    fn apply_profile(&mut self, profile: &Profile);
-
     fn apply_notices(&mut self, notices: Vec<Notice>);
 }
 
@@ -384,8 +336,11 @@ pub trait Sortable {
     }
 }
 
-pub trait Comparable: Debug {
+pub trait Named {
     fn get_name(&self) -> String;
+}
+
+pub trait Comparable: Debug + Named {
     fn get_guid(&self) -> String;
     fn get_revision(&self) -> u16;
     fn get_hash(&self) -> String {
@@ -401,9 +356,9 @@ pub trait Comparable: Debug {
     }
 }
 
-pub trait FormEntry {
-    fn get_name(&self) -> String;
-    fn get_type(&self) -> String;
+pub trait UpdatableEntry: Named {
+    fn is_form_reference(&self) -> bool;
+    fn is_subform(&self) -> bool;
     fn update_referenced_data_form(&mut self, value: String);
     fn update_anzeige(&mut self, value: String);
     fn update_anzeige_auswahl(&mut self, value: String);
@@ -413,7 +368,7 @@ pub trait FormEntry {
     fn remove_filter(&mut self);
 }
 
-pub trait FolderContent {
+pub trait FolderContained {
     fn get_library_folder(&self) -> String;
 
     fn is_system_library_content(&self) -> bool {

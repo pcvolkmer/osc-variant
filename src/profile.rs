@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2023-2024 the original author or authors.
+ * Copyright (C) 2023-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+use crate::model::{Named, UpdatableEntry};
 use serde::Deserialize;
 use std::str::FromStr;
 
@@ -131,6 +132,91 @@ pub struct MenuCategory {
     pub name: String,
     pub position: String,
     pub column: String,
+}
+
+pub trait ProfileApplicable
+where
+    Self: Named,
+{
+    fn apply_profile(&mut self, profile: &Profile);
+}
+
+impl<Type: 'static> ProfileApplicable for crate::model::form::Form<Type> {
+    fn apply_profile(&mut self, profile: &Profile) {
+        profile.forms.iter().for_each(|profile_form| {
+            if self.get_name() == profile_form.name
+                && let Some(ref mut entries) = self.entries
+            {
+                entries.entry.iter_mut().for_each(|entry| {
+                    profile_form
+                        .form_references
+                        .iter()
+                        .for_each(|form_reference| {
+                            apply_profile_to_form_entry(entry, form_reference);
+                        });
+
+                    // Hide form field using filter set to "false" if requested and change default value
+                    profile_form
+                        .form_fields
+                        .iter()
+                        .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
+
+                    if let Some(menu_category) = &profile_form.menu_category {
+                        self.menu_category = Some(crate::model::MenuCategory {
+                            name: menu_category.name.clone(),
+                            position: menu_category.position.clone(),
+                            column: menu_category.column.clone(),
+                        });
+                    }
+                });
+            }
+        });
+    }
+}
+
+fn apply_profile_to_form_entry<E>(entry: &mut E, form_reference: &FormReference)
+where
+    E: UpdatableEntry,
+{
+    if entry.is_form_reference() && entry.get_name() == form_reference.name {
+        if let Some(profile_referenced_data_forms) = &form_reference.referenced_data_form {
+            for profile_referenced_data_form in profile_referenced_data_forms {
+                entry.update_referenced_data_form(profile_referenced_data_form.clone());
+            }
+        }
+        if let Some(profile_anzeige) = &form_reference.anzeige {
+            entry.update_anzeige(profile_anzeige.clone());
+        }
+        if let Some(profile_anzeige_auswahl) = &form_reference.anzeige_auswahl {
+            entry.update_anzeige_auswahl(profile_anzeige_auswahl.clone());
+        }
+        if let Some(scripts_code) = &form_reference.escaped_scripts_code() {
+            entry.update_scripts_code(scripts_code.clone());
+        }
+        if form_reference.remove_filter {
+            entry.remove_filter();
+        }
+    }
+}
+
+fn apply_profile_to_form_field<E>(entry: &mut E, form_field: &FormField)
+where
+    E: UpdatableEntry,
+{
+    if entry.get_name() == form_field.name {
+        if form_field.hide {
+            entry.hide();
+        }
+        if let Some(new_default_value) = &form_field.default_value {
+            entry.update_default_value(new_default_value.clone());
+        }
+        if let Some(scripts_code) = &form_field.escaped_scripts_code() {
+            entry.update_scripts_code(scripts_code.clone());
+        }
+        if form_field.remove_filter {
+            entry.remove_filter();
+        }
+    }
 }
 
 #[allow(clippy::panic)]

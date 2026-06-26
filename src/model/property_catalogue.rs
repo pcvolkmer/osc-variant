@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2024 the original author or authors.
+ * Copyright (C) 2024-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 use console::style;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Comparable, FolderContent, Listable, Ordner, Sortable};
+use crate::model::{Comparable, FolderContained, Listable, Named, Ordner, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -49,6 +49,12 @@ pub struct PropertyCatalogue {
     versions: Versions,
     #[serde(rename = "Ordner")]
     ordner: Ordner,
+}
+
+impl Named for PropertyCatalogue {
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
 }
 
 impl Listable for PropertyCatalogue {
@@ -83,10 +89,6 @@ impl Sortable for PropertyCatalogue {
 }
 
 impl Comparable for PropertyCatalogue {
-    fn get_name(&self) -> String {
-        self.name.clone()
-    }
-
     fn get_guid(&self) -> String {
         self.guid.clone().unwrap_or_default().clone()
     }
@@ -96,7 +98,7 @@ impl Comparable for PropertyCatalogue {
     }
 }
 
-impl FolderContent for PropertyCatalogue {
+impl FolderContained for PropertyCatalogue {
     fn get_library_folder(&self) -> String {
         self.ordner.bibliothek.name.clone()
     }

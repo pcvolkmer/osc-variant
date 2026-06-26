@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2023-2024 the original author or authors.
+ * Copyright (C) 2023-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ use crate::model::data_catalogue::DataCatalogue;
 use crate::model::form::{DataFormType, Form, UnterformularType};
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::property_catalogue::PropertyCatalogue;
-use crate::model::{Comparable, Listable, Sortable};
+use crate::model::{Listable, Named, Sortable};
 use std::fmt::Display;
 
 #[allow(clippy::enum_variant_names)]

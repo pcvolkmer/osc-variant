@@ -19,7 +19,7 @@
  */
 
 use crate::model::form::{DataFormReferenceType, Form};
-use crate::model::{Ansicht, Filter, FormEntry, Ordner, RefEntries, Script, Sortable};
+use crate::model::{Ansicht, Filter, Named, Ordner, RefEntries, Script, Sortable, UpdatableEntry};
 use serde::{Deserialize, Serialize};
 
 // Ablaufschema ...
@@ -509,13 +509,19 @@ pub struct Entry {
     pub data_form_references: Option<Vec<ReferencedDataForm>>,
 }
 
-impl FormEntry for Entry {
+impl Named for Entry {
     fn get_name(&self) -> String {
         self.name.clone()
     }
+}
 
-    fn get_type(&self) -> String {
-        self.type_.clone()
+impl UpdatableEntry for Entry {
+    fn is_form_reference(&self) -> bool {
+        self.type_ == "formReference"
+    }
+
+    fn is_subform(&self) -> bool {
+        self.type_ == "subform"
     }
 
     #[allow(clippy::expect_used)]
@@ -530,7 +536,7 @@ impl FormEntry for Entry {
                 .expect("Non empty form reference required")
                 .referenced_data_form
                 .iter()
-                .map(super::Comparable::get_name)
+                .map(Named::get_name)
                 .collect::<Vec<String>>()
                 .contains(&value)
         {

@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2024 the original author or authors.
+ * Copyright (C) 2024-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ use crate::model::form::{DataFormType, Form, UnterformularType};
 use crate::model::other::{Ablaufschema, Akte, RecordLinkage, Rskript, SidGuid};
 use crate::model::property_catalogue::PropertyCatalogue;
 use crate::model::requirements::{Requirement, Requires};
-use crate::model::{Comparable, FolderContent, FormEntryContainer, Listable, Sortable};
-use crate::profile::Profile;
+use crate::model::{Comparable, FolderContained, Listable, Named, Sortable};
+use crate::profile::{Profile, ProfileApplicable};
 use console::style;
 use quick_xml::de::from_str;
 use serde::{Deserialize, Serialize};
@@ -323,16 +323,16 @@ impl OnkostarEditor {
 
     fn print_item_diff(
         title: &str,
-        list_a: &[impl Comparable],
-        list_b: &[impl Comparable],
+        list_a: &[impl Comparable + Named],
+        list_b: &[impl Comparable + Named],
         strict: bool,
     ) {
         println!("\n{}", style(title).underlined());
 
         let mut has_diff = false;
 
-        let names_a = list_a.iter().map(Comparable::get_name).collect::<Vec<_>>();
-        let names_b = list_b.iter().map(Comparable::get_name).collect::<Vec<_>>();
+        let names_a = list_a.iter().map(Named::get_name).collect::<Vec<_>>();
+        let names_b = list_b.iter().map(Named::get_name).collect::<Vec<_>>();
 
         for entry in &names_b {
             if !names_a.contains(entry) {

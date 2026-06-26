@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2023-2024 the original author or authors.
+ * Copyright (C) 2023-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::requirements::{Requirement, Requires};
-use crate::model::{Ansichten, Comparable, FolderContent, Listable, Ordner, Sortable};
+use crate::model::{Ansichten, Comparable, FolderContained, Listable, Named, Ordner, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -59,6 +59,12 @@ pub struct DataCatalogue {
     ansichten: Option<Ansichten>,
 }
 
+impl Named for DataCatalogue {
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+}
+
 impl Listable for DataCatalogue {
     fn to_listed_string(&self) -> String {
         format!(
@@ -89,10 +95,6 @@ impl Sortable for DataCatalogue {
 }
 
 impl Comparable for DataCatalogue {
-    fn get_name(&self) -> String {
-        self.name.clone()
-    }
-
     fn get_guid(&self) -> String {
         self.guid.clone()
     }
@@ -147,7 +149,7 @@ impl Requires for DataCatalogue {
     }
 }
 
-impl FolderContent for DataCatalogue {
+impl FolderContained for DataCatalogue {
     fn get_library_folder(&self) -> String {
         self.ordner.bibliothek.name.clone()
     }

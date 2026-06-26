@@ -23,12 +23,10 @@ use crate::model::onkostar_editor::OnkostarEditor;
 use crate::model::other::Entry;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
-    Ansichten, Comparable, Entries, FolderContent, FormEntry, FormEntryContainer, Kennzahlen,
-    Listable, MenuCategory, PlausibilityRules, PunkteKategorien, Script, Sortable,
-    apply_profile_to_form_entry, apply_profile_to_form_field,
+    Ansichten, Comparable, Entries, FolderContained, FormEntryContainer, Kennzahlen, Listable,
+    MenuCategory, Named, PlausibilityRules, PunkteKategorien, Script, Sortable, UpdatableEntry,
 };
 use crate::model::{Haeufigkeiten, Ordner};
-use crate::profile::Profile;
 use console::style;
 use serde::{Deserialize, Serialize};
 use std::any::TypeId;
@@ -209,7 +207,7 @@ pub struct Form<Type> {
     seitenanzahl_sichtbar: Option<bool>,
     #[serde(rename = "Entries")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    entries: Option<Entries<Entry>>,
+    pub(crate) entries: Option<Entries<Entry>>,
     #[serde(rename = "PlausibilityRules")]
     #[serde(skip_serializing_if = "Option::is_none")]
     plausibility_rules: Option<PlausibilityRules<DataFormEntries>>,
@@ -224,7 +222,7 @@ pub struct Form<Type> {
     ordner: Option<Ordner>,
     #[serde(rename = "MenuCategory")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    menu_category: Option<MenuCategory>,
+    pub(crate) menu_category: Option<MenuCategory>,
     #[serde(rename = "PunkteKategorien")]
     #[serde(skip_serializing_if = "Option::is_none")]
     punkte_kategorien: Option<PunkteKategorien>,
@@ -234,37 +232,6 @@ pub struct Form<Type> {
 }
 
 impl<Type: 'static> FormEntryContainer for Form<Type> {
-    fn apply_profile(&mut self, profile: &Profile) {
-        profile.forms.iter().for_each(|profile_form| {
-            if self.name == profile_form.name
-                && let Some(ref mut entries) = self.entries
-            {
-                entries.entry.iter_mut().for_each(|entry| {
-                    profile_form
-                        .form_references
-                        .iter()
-                        .for_each(|form_reference| {
-                            apply_profile_to_form_entry(entry, form_reference);
-                        });
-
-                    // Hide form field using filter set to "false" if requested and change default value
-                    profile_form
-                        .form_fields
-                        .iter()
-                        .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
-
-                    if let Some(menu_category) = &profile_form.menu_category {
-                        self.menu_category = Some(MenuCategory {
-                            name: menu_category.name.clone(),
-                            position: menu_category.position.clone(),
-                            column: menu_category.column.clone(),
-                        });
-                    }
-                });
-            }
-        });
-    }
-
     fn apply_notices(&mut self, notices: Vec<Notice>) {
         let mut has_updates = false;
 
@@ -352,14 +319,17 @@ impl<Type: 'static> Sortable for Form<Type> {
     }
 }
 
-impl<Type> Comparable for Form<Type>
-where
-    Type: Debug + 'static,
-{
+impl<Type> Named for Form<Type> {
     fn get_name(&self) -> String {
         self.name.clone()
     }
+}
 
+impl<Type> Comparable for Form<Type>
+where
+    Type: Debug + 'static,
+    Self: Named,
+{
     fn get_guid(&self) -> String {
         self.guid.clone()
     }
@@ -447,7 +417,7 @@ where
             let referenced_forms = &mut entries
                 .entry
                 .iter()
-                .filter(|&entry| entry.get_type() == "formReference")
+                .filter(|&entry| entry.is_form_reference())
                 .filter_map(|entry| match &entry.referenced_data_form {
                     Some(name) => Some(name),
                     None => None,
@@ -493,7 +463,7 @@ where
             let sub_forms = &mut entries
                 .entry
                 .iter()
-                .filter(|&entry| entry.get_type() == "subform")
+                .filter(|&entry| entry.is_subform())
                 .filter_map(|entry| match &entry.referenced_data_form {
                     Some(name) => Some(name),
                     None => None,
@@ -516,7 +486,7 @@ where
     }
 }
 
-impl<Type: 'static> FolderContent for Form<Type> {
+impl<Type: 'static> FolderContained for Form<Type> {
     fn get_library_folder(&self) -> String {
         match &self.ordner {
             Some(ordner) => ordner.bibliothek.name.clone(),
