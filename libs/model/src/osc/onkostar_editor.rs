@@ -21,11 +21,11 @@
 use std::fmt::Debug;
 use std::str::FromStr;
 
-use crate::model::data_catalogue::DataCatalogue;
-use crate::model::form::{DataFormType, Form, UnterformularType};
-use crate::model::other::{Ablaufschema, Akte, RecordLinkage, Rskript, SidGuid};
-use crate::model::property_catalogue::PropertyCatalogue;
-use crate::model::{Comparable, FolderContained, Named, Sortable};
+use crate::osc::data_catalogue::DataCatalogue;
+use crate::osc::form::{DataFormType, Form, UnterformularType};
+use crate::osc::other::{Ablaufschema, Akte, RecordLinkage, Rskript, SidGuid};
+use crate::osc::property_catalogue::PropertyCatalogue;
+use crate::osc::{Comparable, FolderContained, Named, Sortable};
 use crate::profile::{Profile, ProfileApplicable};
 
 use quick_xml::de::from_str;

@@ -20,7 +20,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Comparable, FolderContained, Named, Ordner, Revisioned, Sortable};
+use crate::osc::{Comparable, FolderContained, Named, Ordner, Revisioned, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]

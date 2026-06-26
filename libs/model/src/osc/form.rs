@@ -18,35 +18,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::other::Entry;
-use crate::model::requirements::{Requirement, Requires};
-use crate::model::{
-    Ansichten, Comparable, Entries, FolderContained, FormEntryContainer, Kennzahlen, MenuCategory,
-    Named, PlausibilityRules, PunkteKategorien, Revisioned, Script, Sortable, TypedEntry,
+use crate::osc::onkostar_editor::OnkostarEditor;
+use crate::osc::other::Entry;
+use crate::osc::requirements::{Requirement, Requires};
+use crate::osc::{
+    Ansichten, Comparable, Entries, FolderContained, Kennzahlen, MenuCategory, Named,
+    PlausibilityRules, PunkteKategorien, Revisioned, Script, Sortable, TypedEntry,
 };
-use crate::model::{Haeufigkeiten, Ordner};
+use crate::osc::{Haeufigkeiten, Ordner};
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::marker::PhantomData;
-
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
-pub(crate) struct Notice {
-    #[serde(rename = "Formular")]
-    pub(crate) form: String,
-    #[serde(rename = "Formularfeldbeschreibung")]
-    pub(crate) form_field_description: String,
-    #[serde(rename = "Formularfeld")]
-    pub(crate) form_field: String,
-    #[serde(rename = "GUID")]
-    pub(crate) guid: String,
-    #[serde(rename = "Hinweis als HTML")]
-    pub(crate) html: String,
-    #[serde(skip)]
-    pub(crate) position: String,
-}
 
 #[derive(Debug)]
 pub struct DataFormType;
@@ -165,7 +149,7 @@ pub struct Form<Type> {
     #[serde(skip_serializing_if = "Option::is_none")]
     drucken: Option<String>,
     #[serde(rename = "hatUnterformulare")]
-    pub(crate) hat_unterformulare: bool,
+    pub hat_unterformulare: bool,
     #[serde(rename = "ScriptBeimSchliessen")]
     #[serde(skip_serializing_if = "Option::is_none")]
     script_beim_schliessen: Option<Script>,
@@ -192,7 +176,7 @@ pub struct Form<Type> {
     #[serde(rename = "GUID")]
     guid: String,
     #[serde(rename = "Revision")]
-    revision: u16,
+    pub revision: u16,
     #[serde(rename = "maxAnzahl")]
     #[serde(skip_serializing_if = "Option::is_none")]
     max_anzahl: Option<u16>,
@@ -204,7 +188,7 @@ pub struct Form<Type> {
     seitenanzahl_sichtbar: Option<bool>,
     #[serde(rename = "Entries")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) entries: Option<Entries<Entry>>,
+    pub entries: Option<Entries<Entry>>,
     #[serde(rename = "PlausibilityRules")]
     #[serde(skip_serializing_if = "Option::is_none")]
     plausibility_rules: Option<PlausibilityRules<DataFormEntries>>,
@@ -226,37 +210,6 @@ pub struct Form<Type> {
     #[serde(rename = "Ansichten")]
     #[serde(skip_serializing_if = "Option::is_none")]
     ansichten: Option<Ansichten>,
-}
-
-impl<Type: 'static> FormEntryContainer for Form<Type> {
-    fn apply_notices(&mut self, notices: Vec<Notice>) {
-        let mut has_updates = false;
-
-        if let Some(ref mut entries) = self.entries {
-            entries.entry.iter_mut().for_each(|entry| {
-                for notice in &notices {
-                    if entry.guid == notice.guid && !notice.html.trim().is_empty() {
-                        match entry.hinweis {
-                            Some(ref mut hinweis) => {
-                                if hinweis.trim() != notice.html.trim() {
-                                    has_updates = true;
-                                    entry.revision += 1;
-                                    *hinweis = notice.html.trim().to_string();
-                                }
-                            }
-                            None => entry.hinweis = Some(notice.html.trim().to_string()),
-                        }
-
-                        entry.hinweis = Some(notice.html.trim().to_string());
-                    }
-                }
-            });
-        }
-
-        if has_updates {
-            self.revision += 1;
-        }
-    }
 }
 
 impl<Type: 'static> Sortable for Form<Type> {
@@ -555,8 +508,8 @@ pub struct DataFormEntries {
 mod tests {
     use std::str::FromStr;
 
-    use crate::model::Script;
-    use crate::model::onkostar_editor::OnkostarEditor;
+    use crate::osc::Script;
+    use crate::osc::onkostar_editor::OnkostarEditor;
     use crate::profile::Profile;
 
     #[test]

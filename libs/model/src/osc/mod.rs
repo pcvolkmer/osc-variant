@@ -18,8 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use crate::model::form::Notice;
-use crate::model::requirements::Requires;
+use crate::osc::requirements::Requires;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::collections::hash_map::DefaultHasher;
@@ -79,7 +78,7 @@ pub struct PlausibilityRule<T> {
 #[serde(deny_unknown_fields)]
 pub struct Entries<T> {
     #[serde(rename = "Entry")]
-    pub(crate) entry: Vec<T>,
+    pub entry: Vec<T>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -305,9 +304,7 @@ pub struct Kennzahl {
     haeufigkeitennenner: String,
 }
 
-pub trait FormEntryContainer {
-    fn apply_notices(&mut self, notices: Vec<Notice>);
-}
+pub trait FormEntryContainer {}
 
 pub trait Sortable {
     fn sorting_key(&self) -> String;

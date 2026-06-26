@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use crate::model::{Named, TypedEntry, UpdatableEntry};
+use crate::osc::{Named, TypedEntry, UpdatableEntry};
 use serde::Deserialize;
 use std::str::FromStr;
 
@@ -34,11 +34,11 @@ pub struct Profile {
 impl Profile {
     pub fn embedded_profile(name: &str) -> Result<Profile, String> {
         let s = match name {
-            "UKA" => include_str!("../examples/dnpm-uka.yml"),
-            "UKM" | "UMR" => include_str!("../examples/dnpm-umr.yml"),
-            "UKR" => include_str!("../examples/dnpm-ukr.yml"),
-            "UKW" => include_str!("../examples/dnpm-ukw.yml"),
-            "UMG" => include_str!("../examples/dnpm-umg.yml"),
+            "UKA" => include_str!("../../../examples/dnpm-uka.yml"),
+            "UKM" | "UMR" => include_str!("../../../examples/dnpm-umr.yml"),
+            "UKR" => include_str!("../../../examples/dnpm-ukr.yml"),
+            "UKW" => include_str!("../../../examples/dnpm-ukw.yml"),
+            "UMG" => include_str!("../../../examples/dnpm-umg.yml"),
             _ => return Err(format!("Not an embedded profile: '{name}'")),
         };
 
@@ -141,7 +141,7 @@ where
     fn apply_profile(&mut self, profile: &Profile);
 }
 
-impl<Type: 'static> ProfileApplicable for crate::model::form::Form<Type> {
+impl<Type: 'static> ProfileApplicable for crate::osc::form::Form<Type> {
     fn apply_profile(&mut self, profile: &Profile) {
         profile.forms.iter().for_each(|profile_form| {
             if self.get_name() == profile_form.name
@@ -162,7 +162,7 @@ impl<Type: 'static> ProfileApplicable for crate::model::form::Form<Type> {
                         .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
 
                     if let Some(menu_category) = &profile_form.menu_category {
-                        self.menu_category = Some(crate::model::MenuCategory {
+                        self.menu_category = Some(crate::osc::MenuCategory {
                             name: menu_category.name.clone(),
                             position: menu_category.position.clone(),
                             column: menu_category.column.clone(),

@@ -24,15 +24,13 @@ use crate::checks::{CheckNotice, check_file, print};
 use crate::cli::{BundleSubCommand, BundleVersionSpec, Cli, SubCommand};
 use crate::console::{PrintableDiff, PrintableList, PrintableTree};
 use crate::file_io::{FileError, FileReader, InputFile};
-use crate::model::FormEntryContainer;
-use crate::model::form::Notice;
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::notices::WithNotice;
-use crate::profile::Profile;
+use crate::notices::{Notice, WithNotice};
 use clap::CommandFactory;
 use clap_complete::{Shell, generate};
 use console::style;
 use encoding_rs::WINDOWS_1252;
+use model::osc::onkostar_editor::OnkostarEditor;
+use model::profile::Profile;
 use quick_xml::se::Serializer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -415,7 +413,7 @@ fn handle_export_notice_csv(inputfile: &str) -> Result<(), Box<dyn Error>> {
         .editor
         .data_form
         .iter()
-        .flat_map(super::model::form::Form::get_notices)
+        .flat_map(model::osc::form::Form::get_notices)
         .filter(|notice| !notice.guid.is_empty())
         .collect::<Vec<_>>();
 
@@ -423,7 +421,7 @@ fn handle_export_notice_csv(inputfile: &str) -> Result<(), Box<dyn Error>> {
         .editor
         .unterformular
         .iter()
-        .flat_map(super::model::form::Form::get_notices)
+        .flat_map(model::osc::form::Form::get_notices)
         .filter(|notice| !notice.guid.is_empty())
         .collect::<Vec<_>>();
 

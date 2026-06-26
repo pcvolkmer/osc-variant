@@ -17,16 +17,15 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use crate::model::data_catalogue::DataCatalogue;
-use crate::model::form::{DataFormType, Form};
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::property_catalogue::PropertyCatalogue;
-use crate::model::requirements::{Requirement, Requires};
-use crate::model::{Comparable, FolderContained, Named, Revisioned};
 use console::style;
+use model::osc::data_catalogue::DataCatalogue;
+use model::osc::form::{DataFormType, Form};
+use model::osc::onkostar_editor::OnkostarEditor;
+use model::osc::property_catalogue::PropertyCatalogue;
+use model::osc::requirements::{Requirement, Requires};
+use model::osc::{Comparable, FolderContained, Named, Revisioned};
 use std::any::TypeId;
 use std::cmp::Ordering;
-use std::fmt::Display;
 
 pub trait PrintableItemList
 where
@@ -135,19 +134,19 @@ where
                         }
                     }
                     Requirement::ExternalDataCatalogue(_) => {
-                        Some(format!("  + {entry}\n"))
+                        Some(format!("  + {}\n", entry.to_string()))
                     }
                     Requirement::DataFormReference(_)
                     | Requirement::ExternalDataFormReference(_)
                     | Requirement::UnterformularReference(_)
                     | Requirement::ExternalUnterformularReference(_) => {
-                        Some(format!("  > {entry}\n"))
+                        Some(format!("  > {}\n", entry.to_string()))
                     }
                     Requirement::DataFormSubform(_)
                     | Requirement::ExternalDataFormSubform(_)
                     | Requirement::UnterformularSubform(_)
                     | Requirement::ExternalUnterformularSubform(_) => {
-                        Some(format!("  * {entry}\n"))
+                        Some(format!("  * {}\n", entry.to_string()))
                     }
                     _ => None,
                 })
@@ -170,7 +169,7 @@ impl PrintableRequirement for DataCatalogue {
                 .filter_map(|entry| match entry {
                     Requirement::PropertyCatalogue(_)
                     | Requirement::ExternalPropertyCatalogue(_) => {
-                        Some(format!("  - {entry}\n"))
+                        Some(format!("  - {}\n", entry.to_string()))
                     }
                     _ => None,
                 })
@@ -413,9 +412,13 @@ impl PrintableDiff for OnkostarEditor {
     }
 }
 
-impl Display for Requirement<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let str = match self {
+trait DisplayableRequirement {
+    fn to_string(&self) -> String;
+}
+
+impl DisplayableRequirement for Requirement<'_> {
+    fn to_string(&self) -> String {
+        match self {
             Requirement::PropertyCatalogue(item) => item.to_listed_string(),
             Requirement::DataCatalogue(item) => item.to_listed_string(),
             Requirement::DataFormReference(item) | Requirement::DataFormSubform(item) => {
@@ -438,7 +441,6 @@ impl Display for Requirement<'_> {
             | Requirement::ExternalUnterformularSubform(name) => {
                 format!("Unterformular (-) '{name}' - hier nicht enthalten")
             }
-        };
-        write!(f, "{str}")
+        }
     }
 }

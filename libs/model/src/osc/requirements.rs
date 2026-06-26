@@ -18,11 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use crate::model::data_catalogue::DataCatalogue;
-use crate::model::form::{DataFormType, Form, UnterformularType};
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::property_catalogue::PropertyCatalogue;
-use crate::model::{Named, Sortable};
+use crate::osc::data_catalogue::DataCatalogue;
+use crate::osc::form::{DataFormType, Form, UnterformularType};
+use crate::osc::onkostar_editor::OnkostarEditor;
+use crate::osc::property_catalogue::PropertyCatalogue;
+use crate::osc::{Named, Sortable};
 
 #[allow(clippy::enum_variant_names)]
 pub enum Requirement<'a> {

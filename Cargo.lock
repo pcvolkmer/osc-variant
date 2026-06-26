@@ -769,6 +769,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "model"
+version = "0.13.0"
+dependencies = [
+ "quick-xml",
+ "serde",
+ "serde_yaml",
+]
+
+[[package]]
 name = "num-conv"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -819,12 +828,12 @@ dependencies = [
  "encoding_rs",
  "git2",
  "indicatif",
+ "model",
  "quick-xml",
  "regex",
  "semver",
  "serde",
  "serde_json",
- "serde_yaml",
  "sha2 0.11.0",
  "zip",
 ]

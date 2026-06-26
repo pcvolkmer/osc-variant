@@ -22,9 +22,9 @@ use std::collections::HashSet;
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::requirements::{Requirement, Requires};
-use crate::model::{Ansichten, Comparable, FolderContained, Named, Ordner, Revisioned, Sortable};
+use crate::osc::onkostar_editor::OnkostarEditor;
+use crate::osc::requirements::{Requirement, Requires};
+use crate::osc::{Ansichten, Comparable, FolderContained, Named, Ordner, Revisioned, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]

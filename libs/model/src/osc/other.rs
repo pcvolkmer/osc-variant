@@ -18,8 +18,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use crate::model::form::{DataFormReferenceType, Form};
-use crate::model::{
+use crate::osc::form::{DataFormReferenceType, Form};
+use crate::osc::{
     Ansicht, Filter, Named, Ordner, RefEntries, Script, Sortable, TypedEntry, UpdatableEntry,
 };
 use serde::{Deserialize, Serialize};
@@ -310,7 +310,7 @@ pub struct Entry {
     #[serde(rename = "Name")]
     pub(crate) name: String,
     #[serde(rename = "Description")]
-    pub(crate) description: String,
+    pub description: String,
     #[serde(rename = "Active")]
     active: bool,
     #[serde(rename = "Readonly")]
@@ -318,7 +318,7 @@ pub struct Entry {
     #[serde(rename = "Printable")]
     printable: bool,
     #[serde(rename = "Position")]
-    pub(crate) position: String,
+    pub position: String,
     #[serde(rename = "Note")]
     note: String,
     #[serde(rename = "Beschriftung1")]
@@ -346,7 +346,7 @@ pub struct Entry {
     #[serde(rename = "ElementParent")]
     element_parent: String,
     #[serde(rename = "ProcedureDateStatus")]
-    pub(crate) procedure_date_status: String,
+    pub procedure_date_status: String,
     #[serde(rename = "ZuordnungErkrankung")]
     zuordnung_erkrankung: String,
     #[serde(rename = "Grafik")]
@@ -362,7 +362,7 @@ pub struct Entry {
     datenart: Option<String>,
     #[serde(rename = "Filter")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) filter: Option<Filter>,
+    pub filter: Option<Filter>,
     #[serde(rename = "NotSpecified")]
     not_specified: bool,
     #[serde(rename = "Scripts")]
@@ -402,7 +402,7 @@ pub struct Entry {
     in_uebersicht_anzeigen: bool,
     #[serde(rename = "Hinweis")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub(crate) hinweis: Option<String>,
+    pub hinweis: Option<String>,
     #[serde(rename = "Vorschlagskategorie")]
     #[serde(skip_serializing_if = "Option::is_none")]
     vorschlagskategorie: Option<String>,
@@ -497,9 +497,9 @@ pub struct Entry {
     #[serde(rename = "SID")]
     sid: String,
     #[serde(rename = "GUID")]
-    pub(crate) guid: String,
+    pub guid: String,
     #[serde(rename = "Revision")]
-    pub(crate) revision: u16,
+    pub revision: u16,
     #[serde(rename = "vorherigeWerte")]
     #[serde(skip_serializing_if = "Option::is_none")]
     vorherige_werte: Option<String>,

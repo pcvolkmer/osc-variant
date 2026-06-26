@@ -21,11 +21,11 @@ use std::fmt::{Display, Formatter};
 use std::path::Path;
 
 use crate::checks::CheckNotice::{ErrorWithCode, Info};
-use crate::model::form::{DataFormType, Form, UnterformularType};
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::requirements::{Requirement, Requires};
-use crate::model::{Comparable, Named};
 use console::style;
+use model::osc::form::{DataFormType, Form, UnterformularType};
+use model::osc::onkostar_editor::OnkostarEditor;
+use model::osc::requirements::{Requirement, Requires};
+use model::osc::{Comparable, Named, TypedEntry};
 
 #[cfg(feature = "unzip-osb")]
 pub mod osb;
@@ -361,7 +361,7 @@ fn common_check<T>(form: &Form<T>) -> Vec<CheckNotice> {
             .entry
             .iter()
             .filter(|entry| {
-                entry.type_ == "formReference"
+                entry.is_form_reference()
                     && entry.referenced_data_form.is_none()
                     && entry.data_form_references.is_none()
             })
@@ -374,7 +374,7 @@ fn common_check<T>(form: &Form<T>) -> Vec<CheckNotice> {
         Some(ref entries) => entries
             .entry
             .iter()
-            .filter(|entry| entry.type_ == "formReference" && entry.referenced_data_form.is_none())
+            .filter(|entry| entry.is_form_reference() && entry.referenced_data_form.is_none())
             .map(|entry| format!("'{}'", entry.get_name()))
             .collect::<Vec<_>>(),
         None => vec![],

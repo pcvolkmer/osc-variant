@@ -18,13 +18,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 use crate::cli::BundleVersionSpec;
-use crate::model::Comparable;
-use crate::model::data_catalogue::DataCatalogue;
-use crate::model::form::{DataFormType, Form, UnterformularType};
-use crate::model::onkostar_editor::{Editor, InfoXML, OnkostarEditor};
-use crate::model::property_catalogue::PropertyCatalogue;
 use console::style;
 use git2::build::CheckoutBuilder;
+use model::osc::Comparable;
+use model::osc::data_catalogue::DataCatalogue;
+use model::osc::form::{DataFormType, Form, UnterformularType};
+use model::osc::onkostar_editor::{Editor, InfoXML, OnkostarEditor};
+use model::osc::property_catalogue::PropertyCatalogue;
 use regex::Regex;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
