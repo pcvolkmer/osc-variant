@@ -9,27 +9,37 @@ readme = "README.md"
 
 [workspace]
 resolver = "3"
-members = ["libs/deob", "libs/model"]
-default-members = [".", "libs/model"]
+members = ["libs/deob", "libs/model", "libs/bundles"]
+default-members = [".", "libs/model", "libs/bundles"]
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+quick-xml = { version = "0.40", features = ["escape-html", "serialize"], default-features = false }
+semver = "1.0"
+regex = "1.12"
+sha2 = { version = "0.11", default-features = false }
+dirs = "6.0"
+base16ct = { version = "1.0", features = ["alloc"] }
+model = { path = "libs/model", version = "0.13.0" }
+bundles = { path = "libs/bundles", version = "0.13.0" }
+git2 = { version = "0.21", features = ["https"] }
 
 [dependencies]
 clap = { version = "4.6", features = ["std", "help", "usage", "derive", "error-context"], default-features = false }
 clap_complete = "4.6"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+bytes = "1.11"
 csv = "1.4"
-quick-xml = { version = "0.40", features = ["escape-html", "serialize"], default-features = false }
 console = "0.16"
 indicatif = "0.18"
-bytes = "1.11"
-sha2 = { version = "0.11", default-features = false }
-base16ct = { version = "1.0", features = ["alloc"] }
 encoding_rs = "0.8"
-semver = "1.0"
-regex = "1.12"
-git2 = { version = "0.21", features = ["https"] }
-dirs = "6.0"
-model = { path = "libs/model", version = "0.13.0" }
+quick-xml.workspace = true
+serde.workspace = true
+sha2.workspace = true
+base16ct.workspace = true
+model.workspace = true
+bundles.workspace = true
 # Optional dependencies
 deob = { path = "libs/deob", version = "0.13.0", optional = true }
 zip = { version = "8.6", optional = true }

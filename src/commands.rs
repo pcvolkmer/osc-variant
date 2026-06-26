@@ -17,14 +17,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-#[cfg(feature = "bundle-edit")]
-use crate::bundles::{add_bundle_version, cleanup_bundle_objects, create_bundle};
-use crate::bundles::{bundle_info, export_bundle_versions, search_bundle_versions};
+
 use crate::checks::{CheckNotice, check_file, print};
-use crate::cli::{BundleSubCommand, BundleVersionSpec, Cli, SubCommand};
+use crate::cli::{BundleSubCommand, Cli, SubCommand};
 use crate::console::{PrintableDiff, PrintableList, PrintableTree};
 use crate::file_io::{FileError, FileReader, InputFile};
 use crate::notices::{Notice, WithNotice};
+use bundles::{BundleVersionSpec, bundle_info, export_bundle_versions, search_bundle_versions};
 use clap::CommandFactory;
 use clap_complete::{Shell, generate};
 use console::style;
@@ -41,6 +40,9 @@ use std::fs::OpenOptions;
 use std::io::Write;
 use std::ops::Add;
 use std::path::{Path, PathBuf};
+
+#[cfg(feature = "bundle-edit")]
+use bundles::{add_bundle_version, cleanup_bundle_objects, create_bundle};
 
 pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> {
     match command {
@@ -476,8 +478,21 @@ fn handle_add_bundle_version(
 
 fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>> {
     let matches = search_bundle_versions(&name).map_err(Box::new)?;
-    for match_str in matches.iter().take(limit) {
-        println!("{match_str}");
+    for bundle_info in matches.iter().take(limit) {
+        let formatted_name = format!(
+            "{} = \"{}\"",
+            bundle_info
+                .name
+                .clone()
+                .replace(&name, &style(&name).green().bold().bright().to_string()),
+            bundle_info.version
+        );
+        let description = bundle_info.description.clone().unwrap_or_default();
+
+        let len = 30 - bundle_info.name.len() - bundle_info.version.len();
+        let formatted_name = formatted_name.add(" ".repeat(len).as_str());
+
+        println!("{formatted_name} # {description}");
     }
     if matches.len() > limit {
         println!("... und {} weitere Treffer", matches.len() - limit);

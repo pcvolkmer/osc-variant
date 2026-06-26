@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2023-2026 the original author or authors.
+ * Copyright (C) 2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use crate::cli::Cli;
-use crate::commands::handle;
-use clap::Parser;
-use std::error::Error;
+pub use bundles::*;
 
-mod checks;
-mod cli;
-mod commands;
-mod console;
-mod file_io;
-mod notices;
-
-#[cfg(feature = "unzip-osb")]
-mod unzip_osb;
-
-fn main() -> Result<(), Box<dyn Error>> {
-    let cli = Cli::parse();
-    handle(cli.cmd, cli.verbose)?;
-    Ok(())
-}
+pub mod bundles;

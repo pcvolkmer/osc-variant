@@ -17,8 +17,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use crate::cli::BundleVersionSpec;
-use console::style;
+
 use git2::build::CheckoutBuilder;
 use model::osc::Comparable;
 use model::osc::data_catalogue::DataCatalogue;
@@ -31,8 +30,39 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::fmt::{Debug, Display, Formatter};
 use std::fs;
-use std::ops::Add;
 use std::path::PathBuf;
+use std::str::FromStr;
+
+#[derive(Clone)]
+pub struct BundleVersionSpec {
+    pub bundle_name: String,
+    pub version_tag: Option<String>,
+}
+
+impl FromStr for BundleVersionSpec {
+    type Err = String;
+
+    #[allow(clippy::expect_used)]
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.split('@');
+        let bundle_name = parts.next().ok_or("Bundle-Name fehlt")?;
+        let version_tag = parts.next().map(ToString::to_string);
+        Ok(BundleVersionSpec {
+            bundle_name: bundle_name.to_string(),
+            version_tag: if let Some(version_tag) = version_tag {
+                // Ensure strict semver as default
+                let numbers = Regex::new(r"^\d").expect("Regex fehlerhaft");
+                if numbers.is_match(&version_tag) {
+                    Some(format!("={version_tag}"))
+                } else {
+                    Some(version_tag)
+                }
+            } else {
+                None
+            },
+        })
+    }
+}
 
 trait BundleableInfoXML {
     fn from_bundle_version(version: &BundleVersion) -> InfoXML;
@@ -385,7 +415,7 @@ pub fn add_bundle_version(
     Ok(())
 }
 
-pub fn search_bundle_versions(name: &str) -> Result<Vec<String>, BundleError> {
+pub fn search_bundle_versions(name: &str) -> Result<Vec<BundleInfo>, BundleError> {
     update_bundle_repo_or_exit!();
 
     let mut matches = read_index_or_empty()?.bundles;
@@ -400,20 +430,22 @@ pub fn search_bundle_versions(name: &str) -> Result<Vec<String>, BundleError> {
                 .filter_map(|version| version.tag.clone())
                 .next_back()
                 .unwrap_or("latest".to_string());
-            let formatted_name = format!(
-                "{} = \"{}\"",
-                bundle
-                    .name
-                    .clone()
-                    .replace(name, &style(name).green().bold().bright().to_string()),
-                version
-            );
+            let name = bundle.name.clone();
             let description = bundle.description.clone().unwrap_or_default();
 
-            let len = 30 - bundle.name.len() - version.len();
-            let formatted_name = formatted_name.add(" ".repeat(len).as_str());
-
-            format!("{formatted_name} # {description}")
+            BundleInfo {
+                name,
+                version: version.clone(),
+                latest_version: version,
+                info_xml: InfoXML {
+                    datum_xml: "".to_string(),
+                    name: "".to_string(),
+                    version: "".to_string(),
+                },
+                description: Some(description),
+                license: None,
+                repository: None,
+            }
         })
         .collect::<Vec<_>>();
     Ok(matches)

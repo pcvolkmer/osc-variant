@@ -17,10 +17,9 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+use bundles::BundleVersionSpec;
 use clap::{Parser, Subcommand};
 use clap_complete::Shell;
-use regex::Regex;
-use std::str::FromStr;
 
 #[derive(Parser)]
 #[command(author, version, about)]
@@ -200,35 +199,4 @@ pub enum BundleSubCommand {
     #[cfg(feature = "bundle-edit")]
     #[command(about = "Räume das Repository auf")]
     Cleanup,
-}
-
-#[derive(Clone)]
-pub struct BundleVersionSpec {
-    pub bundle_name: String,
-    pub version_tag: Option<String>,
-}
-
-impl FromStr for BundleVersionSpec {
-    type Err = String;
-
-    #[allow(clippy::expect_used)]
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut parts = s.split('@');
-        let bundle_name = parts.next().ok_or("Bundle-Name fehlt")?;
-        let version_tag = parts.next().map(ToString::to_string);
-        Ok(BundleVersionSpec {
-            bundle_name: bundle_name.to_string(),
-            version_tag: if let Some(version_tag) = version_tag {
-                // Ensure strict semver as default
-                let numbers = Regex::new(r"^\d").expect("Regex fehlerhaft");
-                if numbers.is_match(&version_tag) {
-                    Some(format!("={version_tag}"))
-                } else {
-                    Some(version_tag)
-                }
-            } else {
-                None
-            },
-        })
-    }
 }
