@@ -44,6 +44,21 @@ use std::path::{Path, PathBuf};
 #[cfg(feature = "bundle-edit")]
 use bundles::{add_bundle_version, cleanup_bundle_objects, create_bundle};
 
+#[macro_export]
+macro_rules! update_bundle_repo_or_exit {
+    () => {
+        use bundles::BundleError;
+
+        match bundles::update_bundle_repo() {
+            Err(err @ BundleError::UpdateError) => {
+                eprintln!("{}", style(err).red());
+            }
+            Err(err) => return Err(Box::new(err)),
+            Ok(()) => {}
+        }
+    };
+}
+
 pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> {
     match command {
         SubCommand::Completion { shell } => handle_completion(shell),
@@ -460,6 +475,7 @@ fn handle_create_bundle(
     license: Option<String>,
     repository: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
+    update_bundle_repo_or_exit!();
     create_bundle(&name, &description, license, repository).map_err(Box::new)?;
     Ok(())
 }
@@ -471,12 +487,14 @@ fn handle_add_bundle_version(
     tag: Option<String>,
     message: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
+    update_bundle_repo_or_exit!();
     let data = &mut FileReader::<OnkostarEditor>::read(&file)?;
     add_bundle_version(&name, data, tag, message).map_err(Box::new)?;
     Ok(())
 }
 
 fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>> {
+    update_bundle_repo_or_exit!();
     let matches = search_bundle_versions(&name).map_err(Box::new)?;
     for bundle_info in matches.iter().take(limit) {
         let formatted_name = format!(
@@ -501,6 +519,7 @@ fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>
 }
 
 fn handle_bundle_info(spec: BundleVersionSpec) -> Result<(), Box<dyn Error>> {
+    update_bundle_repo_or_exit!();
     let bundle_info = bundle_info(&spec).map_err(Box::new)?;
 
     println!("{}", style(bundle_info.name).bold().green().bright());
@@ -542,6 +561,7 @@ fn handle_export_bundle_version(
     spec: BundleVersionSpec,
     compact: bool,
 ) -> Result<(), Box<dyn Error>> {
+    update_bundle_repo_or_exit!();
     let data = export_bundle_versions(&spec)?;
 
     let mut buf = String::new();
@@ -566,6 +586,7 @@ fn handle_export_bundle_version(
 
 #[cfg(feature = "bundle-edit")]
 fn handle_cleanup_bundle_objects() -> Result<(), Box<dyn Error>> {
+    update_bundle_repo_or_exit!();
     cleanup_bundle_objects()?;
     Ok(())
 }

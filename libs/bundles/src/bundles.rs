@@ -185,7 +185,7 @@ fn get_repo_path(path: &str) -> PathBuf {
     }
 }
 
-fn update_bundle_repo() -> Result<(), BundleError> {
+pub fn update_bundle_repo() -> Result<(), BundleError> {
     if let Ok(repo) = git2::Repository::open(get_repo_path("")) {
         let mut remote = repo
             .find_remote("origin")
@@ -219,18 +219,6 @@ fn update_bundle_repo() -> Result<(), BundleError> {
     }
 
     Ok(())
-}
-
-macro_rules! update_bundle_repo_or_exit {
-    () => {
-        match update_bundle_repo() {
-            Err(err @ BundleError::UpdateError) => {
-                eprintln!("{err}");
-            }
-            Err(err) => return Err(err),
-            Ok(()) => {}
-        }
-    };
 }
 
 fn read_index_or_empty() -> Result<Index, BundleError> {
@@ -277,8 +265,6 @@ pub fn create_bundle(
     license: Option<String>,
     repository: Option<String>,
 ) -> Result<(), BundleError> {
-    update_bundle_repo_or_exit!();
-
     let regex = Regex::new(r"^[a-zA-Z0-9_\-]{5,24}$").expect("Invalid regex");
     if !regex.is_match(name) {
         return Err(BundleError::Other("Der Bundle-Name muss zwischen 5 und 24 Zeichen lang sein und darf nur aus Buchstaben, Zahlen und Unter- und Bindestrichen bestehen".to_string()));
@@ -318,8 +304,6 @@ pub fn add_bundle_version(
     tag: Option<String>,
     message: Option<String>,
 ) -> Result<(), BundleError> {
-    update_bundle_repo_or_exit!();
-
     if let Some(tag) = &tag
         && Version::parse(tag).is_err()
     {
@@ -416,8 +400,6 @@ pub fn add_bundle_version(
 }
 
 pub fn search_bundle_versions(name: &str) -> Result<Vec<BundleInfo>, BundleError> {
-    update_bundle_repo_or_exit!();
-
     let mut matches = read_index_or_empty()?.bundles;
     matches.sort_by_key(|bundle| bundle.name.clone());
     let matches = matches
@@ -452,8 +434,6 @@ pub fn search_bundle_versions(name: &str) -> Result<Vec<BundleInfo>, BundleError
 }
 
 pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> {
-    update_bundle_repo_or_exit!();
-
     let bundle = read_index_or_empty()?
         .bundles
         .into_iter()
@@ -521,8 +501,6 @@ pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> 
 
 #[allow(clippy::expect_used)]
 pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor, BundleError> {
-    update_bundle_repo_or_exit!();
-
     let id_regex =
         Regex::new(r"^[0-9a-f]{7,64}").expect("Invalid regex pattern for bundle version ID");
 
@@ -612,8 +590,6 @@ pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor
 }
 
 pub fn cleanup_bundle_objects() -> Result<(), BundleError> {
-    update_bundle_repo_or_exit!();
-
     let bundle_versions = read_index_or_empty()?
         .bundles
         .iter()
