@@ -34,6 +34,20 @@ use std::fs;
 use std::ops::Add;
 use std::path::PathBuf;
 
+trait BundleableInfoXML {
+    fn from_bundle_version(version: &BundleVersion) -> InfoXML;
+}
+
+impl BundleableInfoXML for InfoXML {
+    fn from_bundle_version(bundle_version: &BundleVersion) -> Self {
+        Self {
+            datum_xml: bundle_version.info_xml.datum_xml.clone(),
+            name: bundle_version.info_xml.name.clone(),
+            version: bundle_version.info_xml.version.clone(),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 struct Index {
     bundles: Vec<Bundle>,

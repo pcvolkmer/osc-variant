@@ -22,7 +22,6 @@ use std::cmp::Ordering;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-use crate::bundles::BundleVersion;
 use crate::checks::{CheckNotice, Checkable};
 use crate::model::data_catalogue::DataCatalogue;
 use crate::model::form::{DataFormType, Form, UnterformularType};
@@ -508,16 +507,6 @@ pub struct InfoXML {
     pub name: String,
     #[serde(rename = "Version")]
     pub version: String,
-}
-
-impl InfoXML {
-    pub fn from_bundle_version(bundle_version: &BundleVersion) -> Self {
-        Self {
-            datum_xml: bundle_version.info_xml.datum_xml.clone(),
-            name: bundle_version.info_xml.name.clone(),
-            version: bundle_version.info_xml.version.clone(),
-        }
-    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
