@@ -20,6 +20,11 @@
 use std::fmt::{Display, Formatter};
 use std::path::Path;
 
+use crate::checks::CheckNotice::{ErrorWithCode, Info};
+use crate::model::form::{DataFormType, Form, UnterformularType};
+use crate::model::onkostar_editor::OnkostarEditor;
+use crate::model::requirements::{Requirement, Requires};
+use crate::model::{Comparable, Named};
 use console::style;
 
 #[cfg(feature = "unzip-osb")]
@@ -264,5 +269,196 @@ pub fn print() {
         },
     ] {
         println!("{problem}\n");
+    }
+}
+
+impl Checkable for OnkostarEditor {
+    fn check(&self) -> Vec<CheckNotice> {
+        fn requirement_error(
+            form: &impl Comparable,
+            item: &impl Comparable,
+            t: &str,
+        ) -> CheckNotice {
+            CheckNotice::ErrorWithCode {
+                code: "2023-0004".to_string(),
+                description: format!(
+                    "'{}' hat einen Verweis auf zuvor nicht definiertes {t} '{}' (OSTARSUPP-13212)",
+                    form.get_name(),
+                    item.get_name()
+                ),
+                line: None,
+                example: None,
+            }
+        }
+
+        // Inner form checks
+
+        let mut result = self
+            .editor
+            .data_form
+            .iter()
+            .flat_map(Form::check)
+            .collect::<Vec<_>>();
+
+        let other = &mut self
+            .editor
+            .unterformular
+            .iter()
+            .flat_map(Form::check)
+            .collect::<Vec<_>>();
+
+        result.append(other);
+
+        // Check requirements
+
+        let mut requirement_checked_forms = vec![];
+
+        self.editor.unterformular.iter().for_each(|form| {
+            requirement_checked_forms.push(form.get_name());
+            form.get_required_entries(self)
+                .iter()
+                .for_each(|entry| match entry {
+                    Requirement::DataFormReference(item) => {
+                        if !requirement_checked_forms.contains(&item.get_name()) {
+                            result.push(requirement_error(form, *item, "Formular"));
+                        }
+                    }
+                    Requirement::UnterformularReference(item) => {
+                        if !requirement_checked_forms.contains(&item.get_name()) {
+                            result.push(requirement_error(form, *item, "Unterformular"));
+                        }
+                    }
+                    _ => {}
+                });
+        });
+
+        self.editor.data_form.iter().for_each(|form| {
+            requirement_checked_forms.push(form.get_name());
+            form.get_required_entries(self)
+                .iter()
+                .for_each(|entry| match entry {
+                    Requirement::DataFormReference(item) => {
+                        if !requirement_checked_forms.contains(&item.get_name()) {
+                            result.push(requirement_error(form, *item, "Formular"));
+                        }
+                    }
+                    Requirement::UnterformularReference(item) => {
+                        if !requirement_checked_forms.contains(&item.get_name()) {
+                            result.push(requirement_error(form, *item, "Unterformular"));
+                        }
+                    }
+                    _ => {}
+                });
+        });
+
+        result
+    }
+}
+
+fn common_check<T>(form: &Form<T>) -> Vec<CheckNotice> {
+    let missing_forms_in_refs = match form.entries {
+        Some(ref entries) => entries
+            .entry
+            .iter()
+            .filter(|entry| {
+                entry.type_ == "formReference"
+                    && entry.referenced_data_form.is_none()
+                    && entry.data_form_references.is_none()
+            })
+            .map(|entry| format!("'{}'", entry.get_name()))
+            .collect::<Vec<_>>(),
+        None => vec![],
+    };
+
+    let missing_forms_in_refs_legacy = match form.entries {
+        Some(ref entries) => entries
+            .entry
+            .iter()
+            .filter(|entry| entry.type_ == "formReference" && entry.referenced_data_form.is_none())
+            .map(|entry| format!("'{}'", entry.get_name()))
+            .collect::<Vec<_>>(),
+        None => vec![],
+    };
+
+    let mut result = vec![];
+
+    if !missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
+        result.push(ErrorWithCode {
+            code: "2024-0005".to_string(),
+            description: format!(
+                "Formular '{}' hat Formularverweise ohne Angabe des Formulars in: {}",
+                form.get_name(),
+                missing_forms_in_refs.join(", ")
+            ),
+            line: None,
+            example: None,
+        });
+    }
+
+    if missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
+        result.push(Info {
+            description: format!(
+                "Formular '{}' hat Formularverweise, die erst in neueren Onkostar-Versionen ab 2.14.0 funktionieren",
+                form.get_name()
+            ),
+            line: None,
+        });
+    }
+
+    result
+}
+
+impl Checkable for Form<DataFormType> {
+    fn check(&self) -> Vec<CheckNotice> {
+        let mut result = match self.entries {
+            Some(ref entries) => {
+                if entries
+                    .entry
+                    .iter()
+                    .filter(|entry| entry.procedure_date_status != "none")
+                    .count()
+                    == 0
+                {
+                    vec![ErrorWithCode {
+                        code: "2023-0002".to_string(),
+                        description: format!(
+                            "Formular '{}' hat keine Angabe zum Prozedurdatum",
+                            self.get_name()
+                        ),
+                        line: None,
+                        example: None,
+                    }]
+                } else {
+                    vec![]
+                }
+            }
+            None => vec![],
+        };
+
+        result.append(&mut common_check(self));
+
+        result
+    }
+}
+
+impl Checkable for Form<UnterformularType> {
+    fn check(&self) -> Vec<CheckNotice> {
+        let mut result = if self.hat_unterformulare {
+            vec![ErrorWithCode {
+                code: "2023-0001".to_string(),
+                description: format!(
+                    "Unterformular '{}' mit Markierung 'hat Unterformulare'",
+                    self.get_name()
+                ),
+                line: None,
+                example: None,
+            }]
+        } else {
+            vec![]
+        };
+
+        result.append(&mut common_check(self));
+
+        result
     }
 }
