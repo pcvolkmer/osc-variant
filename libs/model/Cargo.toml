@@ -7,6 +7,6 @@ edition = "2024"
 name = "model"
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9"
-quick-xml = { version = "0.40", features = ["escape-html", "serialize"], default-features = false }
+serde.workspace = true
+serde_yaml.workspace = true
+quick-xml.workspace = true

@@ -63,6 +63,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 
 [[package]]
+name = "bundles"
+version = "0.13.0"
+dependencies = [
+ "base16ct",
+ "dirs",
+ "git2",
+ "model",
+ "regex",
+ "semver",
+ "serde",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
 name = "bytes"
 version = "1.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -755,22 +770,18 @@ name = "osc-variant"
 version = "0.13.0"
 dependencies = [
  "base16ct",
+ "bundles",
  "bytes",
  "clap",
  "clap_complete",
  "console",
  "csv",
  "deob",
- "dirs",
  "encoding_rs",
- "git2",
  "indicatif",
  "model",
  "quick-xml",
- "regex",
- "semver",
  "serde",
- "serde_json",
  "sha2",
  "zip",
 ]

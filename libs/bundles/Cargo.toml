@@ -1,0 +1,18 @@
+[package]
+name = "bundles"
+version = "0.13.0"
+edition = "2024"
+
+[lib]
+name = "bundles"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+semver.workspace = true
+regex.workspace = true
+git2.workspace = true
+dirs.workspace = true
+model.workspace = true
+sha2.workspace = true
+base16ct.workspace = true
