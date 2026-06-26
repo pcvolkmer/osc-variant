@@ -26,6 +26,7 @@ use crate::file_io::{FileError, FileReader, InputFile};
 use crate::model::FormEntryContainer;
 use crate::model::form::Notice;
 use crate::model::onkostar_editor::OnkostarEditor;
+use crate::notices::WithNotice;
 use crate::profile::Profile;
 use clap::CommandFactory;
 use clap_complete::{Shell, generate};
@@ -408,6 +409,7 @@ fn handle_check(file: Option<String>, list: bool, password: Option<String>) {
 
 fn handle_export_notice_csv(inputfile: &str) -> Result<(), Box<dyn Error>> {
     let data = &mut FileReader::<OnkostarEditor>::read(inputfile)?;
+
     let mut notices = data
         .editor
         .data_form

@@ -29,6 +29,7 @@ mod cli;
 mod commands;
 mod file_io;
 mod model;
+mod notices;
 mod profile;
 #[cfg(feature = "unzip-osb")]
 mod unzip_osb;

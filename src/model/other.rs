@@ -19,7 +19,9 @@
  */
 
 use crate::model::form::{DataFormReferenceType, Form};
-use crate::model::{Ansicht, Filter, Named, Ordner, RefEntries, Script, Sortable, UpdatableEntry};
+use crate::model::{
+    Ansicht, Filter, Named, Ordner, RefEntries, Script, Sortable, TypedEntry, UpdatableEntry,
+};
 use serde::{Deserialize, Serialize};
 
 // Ablaufschema ...
@@ -515,7 +517,7 @@ impl Named for Entry {
     }
 }
 
-impl UpdatableEntry for Entry {
+impl TypedEntry for Entry {
     fn is_form_reference(&self) -> bool {
         self.type_ == "formReference"
     }
@@ -524,6 +526,16 @@ impl UpdatableEntry for Entry {
         self.type_ == "subform"
     }
 
+    fn is_section(&self) -> bool {
+        self.type_ == "section"
+    }
+
+    fn is_label(&self) -> bool {
+        self.type_ == "label"
+    }
+}
+
+impl UpdatableEntry for Entry {
     #[allow(clippy::expect_used)]
     fn update_referenced_data_form(&mut self, value: String) {
         self.referenced_data_form = Some(value.clone());

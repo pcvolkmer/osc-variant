@@ -24,7 +24,7 @@ use crate::model::other::Entry;
 use crate::model::requirements::{Requirement, Requires};
 use crate::model::{
     Ansichten, Comparable, Entries, FolderContained, FormEntryContainer, Kennzahlen, Listable,
-    MenuCategory, Named, PlausibilityRules, PunkteKategorien, Script, Sortable, UpdatableEntry,
+    MenuCategory, Named, PlausibilityRules, PunkteKategorien, Script, Sortable, TypedEntry,
 };
 use crate::model::{Haeufigkeiten, Ordner};
 use console::style;
@@ -496,37 +496,6 @@ impl<Type: 'static> FolderContained for Form<Type> {
 }
 
 impl<Type> Form<Type> {
-    pub(crate) fn get_notices(&self) -> Vec<Notice> {
-        if let Some(entries) = &self.entries {
-            entries
-                .entry
-                .iter()
-                .filter(|entry| {
-                    entry.type_ != "subform"
-                        && entry.type_ != "section"
-                        && entry.type_ != "label"
-                        && if let Some(filter) = &entry.filter {
-                            filter.condition.trim() != "false"
-                        } else {
-                            true
-                        }
-                })
-                .flat_map(|entry| {
-                    Some(Notice {
-                        form: self.name.clone(),
-                        form_field: entry.name.clone(),
-                        form_field_description: entry.description.clone(),
-                        guid: entry.guid.clone(),
-                        html: entry.hinweis.clone().unwrap_or_default(),
-                        position: entry.position.clone(),
-                    })
-                })
-                .collect()
-        } else {
-            vec![]
-        }
-    }
-
     fn common_check(&self) -> Vec<CheckNotice> {
         let missing_forms_in_refs = match self.entries {
             Some(ref entries) => entries

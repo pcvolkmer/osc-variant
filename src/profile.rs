@@ -18,7 +18,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use crate::model::{Named, UpdatableEntry};
+use crate::model::{Named, TypedEntry, UpdatableEntry};
 use serde::Deserialize;
 use std::str::FromStr;
 
@@ -176,7 +176,7 @@ impl<Type: 'static> ProfileApplicable for crate::model::form::Form<Type> {
 
 fn apply_profile_to_form_entry<E>(entry: &mut E, form_reference: &FormReference)
 where
-    E: UpdatableEntry,
+    E: UpdatableEntry + TypedEntry,
 {
     if entry.is_form_reference() && entry.get_name() == form_reference.name {
         if let Some(profile_referenced_data_forms) = &form_reference.referenced_data_form {

@@ -197,7 +197,7 @@ pub struct FeldWert {
 #[serde(deny_unknown_fields)]
 pub struct Filter {
     #[serde(rename = "Condition")]
-    condition: String,
+    pub condition: String,
     #[serde(rename = "Valid")]
     valid: bool,
     #[serde(rename = "RefEntries")]
@@ -340,6 +340,13 @@ pub trait Named {
     fn get_name(&self) -> String;
 }
 
+pub trait TypedEntry {
+    fn is_form_reference(&self) -> bool;
+    fn is_subform(&self) -> bool;
+    fn is_section(&self) -> bool;
+    fn is_label(&self) -> bool;
+}
+
 pub trait Comparable: Debug + Named {
     fn get_guid(&self) -> String;
     fn get_revision(&self) -> u16;
@@ -357,8 +364,6 @@ pub trait Comparable: Debug + Named {
 }
 
 pub trait UpdatableEntry: Named {
-    fn is_form_reference(&self) -> bool;
-    fn is_subform(&self) -> bool;
     fn update_referenced_data_form(&mut self, value: String);
     fn update_anzeige(&mut self, value: String);
     fn update_anzeige_auswahl(&mut self, value: String);
