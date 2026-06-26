@@ -101,6 +101,8 @@ pub struct BundleVersion {
     tag: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     message: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    license: Option<String>,
     pub info_xml: InfoXML,
 }
 
@@ -303,6 +305,7 @@ pub fn add_bundle_version(
     data: &mut OnkostarEditor,
     tag: Option<String>,
     message: Option<String>,
+    license: Option<String>,
 ) -> Result<(), BundleError> {
     if let Some(tag) = &tag
         && Version::parse(tag).is_err()
@@ -373,6 +376,10 @@ pub fn add_bundle_version(
         name: name.to_string(),
         tag: bundle_version_content.tag.clone(),
         message,
+        license: match license.clone() {
+            Some(license) => Some(license),
+            None => bundle.license.clone(),
+        },
         info_xml: InfoXML {
             datum_xml: data.info_xml.datum_xml.clone(),
             name: data.info_xml.name.clone(),
@@ -492,7 +499,10 @@ pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> 
         latest_version: latest_version.tag.clone().unwrap_or_default(),
         info_xml: InfoXML::from_bundle_version(requested_version),
         description: bundle.description.clone(),
-        license: bundle.license.clone(),
+        license: match &requested_version.license {
+            Some(license) => Some(license.clone()),
+            None => bundle.license.clone(),
+        },
         repository: bundle.repository.clone(),
     };
 

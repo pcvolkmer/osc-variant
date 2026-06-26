@@ -110,7 +110,8 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
                 file,
                 tag,
                 message,
-            } => handle_add_bundle_version(bundle_name, file, tag, message)?,
+                license,
+            } => handle_add_bundle_version(bundle_name, file, tag, message, license)?,
             BundleSubCommand::List { limit } => handle_search_bundle(String::new(), limit)?,
             BundleSubCommand::Search { bundle_name, limit } => {
                 handle_search_bundle(bundle_name, limit)?;
@@ -486,10 +487,11 @@ fn handle_add_bundle_version(
     file: String,
     tag: Option<String>,
     message: Option<String>,
+    license: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
     update_bundle_repo_or_exit!();
     let data = &mut FileReader::<OnkostarEditor>::read(&file)?;
-    add_bundle_version(&name, data, tag, message).map_err(Box::new)?;
+    add_bundle_version(&name, data, tag, message, license).map_err(Box::new)?;
     Ok(())
 }
 

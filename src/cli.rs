@@ -171,6 +171,11 @@ pub enum BundleSubCommand {
             help = "Beschreibung der Bundle-Version (Optional)"
         )]
         message: Option<String>,
+        #[arg(
+            long = "license",
+            help = "Lizenz der Version, wenn abweichend vom Bundle"
+        )]
+        license: Option<String>,
     },
     #[command(about = "Liste alle Bundles auf")]
     List {
