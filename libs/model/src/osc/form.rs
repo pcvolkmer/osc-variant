@@ -17,41 +17,20 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-use crate::checks::CheckNotice::{ErrorWithCode, Info};
-use crate::checks::{CheckNotice, Checkable};
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::model::other::Entry;
-use crate::model::requirements::{Requirement, Requires};
-use crate::model::{
-    Ansichten, Comparable, Entries, FolderContent, FormEntry, FormEntryContainer, Kennzahlen,
-    Listable, MenuCategory, PlausibilityRules, PunkteKategorien, Script, Sortable,
-    apply_profile_to_form_entry, apply_profile_to_form_field,
+
+use crate::osc::onkostar_editor::OnkostarEditor;
+use crate::osc::other::Entry;
+use crate::osc::requirements::{Requirement, Requires};
+use crate::osc::{
+    Ansichten, Comparable, Entries, FolderContained, Kennzahlen, MenuCategory, Named,
+    PlausibilityRules, PunkteKategorien, Revisioned, Script, Sortable, TypedEntry,
 };
-use crate::model::{Haeufigkeiten, Ordner};
-use crate::profile::Profile;
-use console::style;
+use crate::osc::{Haeufigkeiten, Ordner};
 use serde::{Deserialize, Serialize};
-use std::any::TypeId;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::marker::PhantomData;
-
-#[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
-pub(crate) struct Notice {
-    #[serde(rename = "Formular")]
-    pub(crate) form: String,
-    #[serde(rename = "Formularfeldbeschreibung")]
-    pub(crate) form_field_description: String,
-    #[serde(rename = "Formularfeld")]
-    pub(crate) form_field: String,
-    #[serde(rename = "GUID")]
-    pub(crate) guid: String,
-    #[serde(rename = "Hinweis als HTML")]
-    pub(crate) html: String,
-    #[serde(skip)]
-    pub(crate) position: String,
-}
 
 #[derive(Debug)]
 pub struct DataFormType;
@@ -170,7 +149,7 @@ pub struct Form<Type> {
     #[serde(skip_serializing_if = "Option::is_none")]
     drucken: Option<String>,
     #[serde(rename = "hatUnterformulare")]
-    hat_unterformulare: bool,
+    pub hat_unterformulare: bool,
     #[serde(rename = "ScriptBeimSchliessen")]
     #[serde(skip_serializing_if = "Option::is_none")]
     script_beim_schliessen: Option<Script>,
@@ -197,7 +176,7 @@ pub struct Form<Type> {
     #[serde(rename = "GUID")]
     guid: String,
     #[serde(rename = "Revision")]
-    revision: u16,
+    pub revision: u16,
     #[serde(rename = "maxAnzahl")]
     #[serde(skip_serializing_if = "Option::is_none")]
     max_anzahl: Option<u16>,
@@ -209,7 +188,7 @@ pub struct Form<Type> {
     seitenanzahl_sichtbar: Option<bool>,
     #[serde(rename = "Entries")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    entries: Option<Entries<Entry>>,
+    pub entries: Option<Entries<Entry>>,
     #[serde(rename = "PlausibilityRules")]
     #[serde(skip_serializing_if = "Option::is_none")]
     plausibility_rules: Option<PlausibilityRules<DataFormEntries>>,
@@ -224,98 +203,13 @@ pub struct Form<Type> {
     ordner: Option<Ordner>,
     #[serde(rename = "MenuCategory")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    menu_category: Option<MenuCategory>,
+    pub(crate) menu_category: Option<MenuCategory>,
     #[serde(rename = "PunkteKategorien")]
     #[serde(skip_serializing_if = "Option::is_none")]
     punkte_kategorien: Option<PunkteKategorien>,
     #[serde(rename = "Ansichten")]
     #[serde(skip_serializing_if = "Option::is_none")]
     ansichten: Option<Ansichten>,
-}
-
-impl<Type: 'static> FormEntryContainer for Form<Type> {
-    fn apply_profile(&mut self, profile: &Profile) {
-        profile.forms.iter().for_each(|profile_form| {
-            if self.name == profile_form.name
-                && let Some(ref mut entries) = self.entries
-            {
-                entries.entry.iter_mut().for_each(|entry| {
-                    profile_form
-                        .form_references
-                        .iter()
-                        .for_each(|form_reference| {
-                            apply_profile_to_form_entry(entry, form_reference);
-                        });
-
-                    // Hide form field using filter set to "false" if requested and change default value
-                    profile_form
-                        .form_fields
-                        .iter()
-                        .for_each(|form_field| apply_profile_to_form_field(entry, form_field));
-
-                    if let Some(menu_category) = &profile_form.menu_category {
-                        self.menu_category = Some(MenuCategory {
-                            name: menu_category.name.clone(),
-                            position: menu_category.position.clone(),
-                            column: menu_category.column.clone(),
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    fn apply_notices(&mut self, notices: Vec<Notice>) {
-        let mut has_updates = false;
-
-        if let Some(ref mut entries) = self.entries {
-            entries.entry.iter_mut().for_each(|entry| {
-                for notice in &notices {
-                    if entry.guid == notice.guid && !notice.html.trim().is_empty() {
-                        match entry.hinweis {
-                            Some(ref mut hinweis) => {
-                                if hinweis.trim() != notice.html.trim() {
-                                    has_updates = true;
-                                    entry.revision += 1;
-                                    *hinweis = notice.html.trim().to_string();
-                                }
-                            }
-                            None => entry.hinweis = Some(notice.html.trim().to_string()),
-                        }
-
-                        entry.hinweis = Some(notice.html.trim().to_string());
-                    }
-                }
-            });
-        }
-
-        if has_updates {
-            self.revision += 1;
-        }
-    }
-}
-
-impl<Type: 'static> Listable for Form<Type>
-where
-    Form<Type>: Comparable,
-{
-    fn to_listed_string(&self) -> String {
-        format!(
-            "{} ({}) '{}' in Revision '{}'",
-            if TypeId::of::<Type>() == TypeId::of::<DataFormType>() {
-                "Formular"
-            } else {
-                "Unterformular"
-            },
-            if self.is_system_library_content() {
-                style("S").yellow()
-            } else {
-                style("u")
-            },
-            style(&self.name).yellow(),
-            style(&self.revision).yellow()
-        )
-    }
 }
 
 impl<Type: 'static> Sortable for Form<Type> {
@@ -352,42 +246,19 @@ impl<Type: 'static> Sortable for Form<Type> {
     }
 }
 
-impl<Type> Comparable for Form<Type>
-where
-    Type: Debug + 'static,
-{
+impl<Type> Named for Form<Type> {
     fn get_name(&self) -> String {
         self.name.clone()
     }
+}
 
-    fn get_guid(&self) -> String {
-        self.guid.clone()
-    }
-
+impl<Type> Revisioned for Form<Type> {
     fn get_revision(&self) -> u16 {
         self.revision
     }
-
-    fn compare_by_requirement(a: &Self, b: &Self) -> Ordering {
-        if a.get_name() == b.get_name()
-            || a.is_system_library_content()
-            || b.is_system_library_content()
-        {
-            return Ordering::Equal;
-        }
-
-        if a.requires_form_reference(&b.get_name()) || a.requires_subform(&b.get_name()) {
-            return Ordering::Greater;
-        }
-
-        Ordering::Less
-    }
 }
 
-impl<Type> Requires for Form<Type>
-where
-    Self: Listable + 'static,
-{
+impl<Type> Requires for Form<Type> {
     fn requires_form_reference(&self, name: &str) -> bool {
         if let Some(ref entries) = self.entries {
             entries
@@ -447,7 +318,7 @@ where
             let referenced_forms = &mut entries
                 .entry
                 .iter()
-                .filter(|&entry| entry.get_type() == "formReference")
+                .filter(|&entry| entry.is_form_reference())
                 .filter_map(|entry| match &entry.referenced_data_form {
                     Some(name) => Some(name),
                     None => None,
@@ -472,7 +343,7 @@ where
                 .flat_map(|rdf| {
                     rdf.referenced_data_form
                         .iter()
-                        .map(|x| x.name.clone())
+                        .map(|x| x.get_name())
                         .collect::<Vec<_>>()
                 })
                 .map(|entry| match all.find_data_form(entry.as_str()) {
@@ -493,7 +364,7 @@ where
             let sub_forms = &mut entries
                 .entry
                 .iter()
-                .filter(|&entry| entry.get_type() == "subform")
+                .filter(|&entry| entry.is_subform())
                 .filter_map(|entry| match &entry.referenced_data_form {
                     Some(name) => Some(name),
                     None => None,
@@ -516,155 +387,37 @@ where
     }
 }
 
-impl<Type: 'static> FolderContent for Form<Type> {
+impl<Type> Comparable for Form<Type>
+where
+    Type: Debug + 'static,
+    Self: Named,
+{
+    fn get_guid(&self) -> String {
+        self.guid.clone()
+    }
+
+    fn compare_by_requirement(a: &Self, b: &Self) -> Ordering {
+        if a.get_name() == b.get_name()
+            || a.is_system_library_content()
+            || b.is_system_library_content()
+        {
+            return Ordering::Equal;
+        }
+
+        if a.requires_form_reference(&b.get_name()) || a.requires_subform(&b.get_name()) {
+            return Ordering::Greater;
+        }
+
+        Ordering::Less
+    }
+}
+
+impl<Type: 'static> FolderContained for Form<Type> {
     fn get_library_folder(&self) -> String {
         match &self.ordner {
             Some(ordner) => ordner.bibliothek.name.clone(),
             None => String::new(),
         }
-    }
-}
-
-impl<Type> Form<Type> {
-    pub(crate) fn get_notices(&self) -> Vec<Notice> {
-        if let Some(entries) = &self.entries {
-            entries
-                .entry
-                .iter()
-                .filter(|entry| {
-                    entry.type_ != "subform"
-                        && entry.type_ != "section"
-                        && entry.type_ != "label"
-                        && if let Some(filter) = &entry.filter {
-                            filter.condition.trim() != "false"
-                        } else {
-                            true
-                        }
-                })
-                .flat_map(|entry| {
-                    Some(Notice {
-                        form: self.name.clone(),
-                        form_field: entry.name.clone(),
-                        form_field_description: entry.description.clone(),
-                        guid: entry.guid.clone(),
-                        html: entry.hinweis.clone().unwrap_or_default(),
-                        position: entry.position.clone(),
-                    })
-                })
-                .collect()
-        } else {
-            vec![]
-        }
-    }
-
-    fn common_check(&self) -> Vec<CheckNotice> {
-        let missing_forms_in_refs = match self.entries {
-            Some(ref entries) => entries
-                .entry
-                .iter()
-                .filter(|entry| {
-                    entry.type_ == "formReference"
-                        && entry.referenced_data_form.is_none()
-                        && entry.data_form_references.is_none()
-                })
-                .map(|entry| format!("'{}'", entry.get_name()))
-                .collect::<Vec<_>>(),
-            None => vec![],
-        };
-
-        let missing_forms_in_refs_legacy = match self.entries {
-            Some(ref entries) => entries
-                .entry
-                .iter()
-                .filter(|entry| {
-                    entry.type_ == "formReference" && entry.referenced_data_form.is_none()
-                })
-                .map(|entry| format!("'{}'", entry.get_name()))
-                .collect::<Vec<_>>(),
-            None => vec![],
-        };
-
-        let mut result = vec![];
-
-        if !missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
-            result.push(ErrorWithCode {
-                code: "2024-0005".to_string(),
-                description: format!(
-                    "Formular '{}' hat Formularverweise ohne Angabe des Formulars in: {}",
-                    self.name,
-                    missing_forms_in_refs.join(", ")
-                ),
-                line: None,
-                example: None,
-            });
-        }
-
-        if missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
-            result.push(Info {
-                description: format!(
-                    "Formular '{}' hat Formularverweise, die erst in neueren Onkostar-Versionen ab 2.14.0 funktionieren",
-                    self.name
-                ),
-                line: None,
-            });
-        }
-
-        result
-    }
-}
-
-impl Checkable for Form<DataFormType> {
-    fn check(&self) -> Vec<CheckNotice> {
-        let mut result = match self.entries {
-            Some(ref entries) => {
-                if entries
-                    .entry
-                    .iter()
-                    .filter(|entry| entry.procedure_date_status != "none")
-                    .count()
-                    == 0
-                {
-                    vec![ErrorWithCode {
-                        code: "2023-0002".to_string(),
-                        description: format!(
-                            "Formular '{}' hat keine Angabe zum Prozedurdatum",
-                            self.name
-                        ),
-                        line: None,
-                        example: None,
-                    }]
-                } else {
-                    vec![]
-                }
-            }
-            None => vec![],
-        };
-
-        result.append(&mut self.common_check());
-
-        result
-    }
-}
-
-impl Checkable for Form<UnterformularType> {
-    fn check(&self) -> Vec<CheckNotice> {
-        let mut result = if self.hat_unterformulare {
-            vec![ErrorWithCode {
-                code: "2023-0001".to_string(),
-                description: format!(
-                    "Unterformular '{}' mit Markierung 'hat Unterformulare'",
-                    self.name
-                ),
-                line: None,
-                example: None,
-            }]
-        } else {
-            vec![]
-        };
-
-        result.append(&mut self.common_check());
-
-        result
     }
 }
 
@@ -755,8 +508,8 @@ pub struct DataFormEntries {
 mod tests {
     use std::str::FromStr;
 
-    use crate::model::Script;
-    use crate::model::onkostar_editor::OnkostarEditor;
+    use crate::osc::Script;
+    use crate::osc::onkostar_editor::OnkostarEditor;
     use crate::profile::Profile;
 
     #[test]

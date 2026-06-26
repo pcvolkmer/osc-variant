@@ -25,8 +25,8 @@ use std::marker::PhantomData;
 use std::path::Path;
 use std::str::FromStr;
 
-use crate::model::onkostar_editor::OnkostarEditor;
-use crate::profile::Profile;
+use model::osc::onkostar_editor::OnkostarEditor;
+use model::profile::Profile;
 
 pub enum FileError {
     Reading(String, String),

@@ -1,7 +1,7 @@
 /*
  * This file is part of osc-variant
  *
- * Copyright (C) 2024 the original author or authors.
+ * Copyright (C) 2024-2026 the original author or authors.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-use console::style;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Comparable, FolderContent, Listable, Ordner, Sortable};
+use crate::osc::{Comparable, FolderContained, Named, Ordner, Revisioned, Sortable};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
@@ -51,18 +50,15 @@ pub struct PropertyCatalogue {
     ordner: Ordner,
 }
 
-impl Listable for PropertyCatalogue {
-    fn to_listed_string(&self) -> String {
-        format!(
-            "Merkmalskatalog ({}) '{}' in Revision '{}'",
-            if self.is_system_library_content() {
-                style("S").yellow()
-            } else {
-                style("u")
-            },
-            style(&self.name).yellow(),
-            style(&self.revision).yellow()
-        )
+impl Named for PropertyCatalogue {
+    fn get_name(&self) -> String {
+        self.name.clone()
+    }
+}
+
+impl Revisioned for PropertyCatalogue {
+    fn get_revision(&self) -> u16 {
+        self.revision
     }
 }
 
@@ -83,20 +79,12 @@ impl Sortable for PropertyCatalogue {
 }
 
 impl Comparable for PropertyCatalogue {
-    fn get_name(&self) -> String {
-        self.name.clone()
-    }
-
     fn get_guid(&self) -> String {
         self.guid.clone().unwrap_or_default().clone()
     }
-
-    fn get_revision(&self) -> u16 {
-        self.revision
-    }
 }
 
-impl FolderContent for PropertyCatalogue {
+impl FolderContained for PropertyCatalogue {
     fn get_library_folder(&self) -> String {
         self.ordner.bibliothek.name.clone()
     }

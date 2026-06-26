@@ -23,7 +23,7 @@ use std::path::Path;
 use std::str::FromStr;
 
 use crate::checks::{CheckNotice, Checkable};
-use crate::model::onkostar_editor::OnkostarEditor;
+use model::osc::onkostar_editor::OnkostarEditor;
 
 pub fn check_file(file: &Path) -> Result<Vec<CheckNotice>, CheckNotice> {
     match fs::read_to_string(file) {
