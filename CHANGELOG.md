@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.1](https://github.com/pcvolkmer/osc-variant/compare/v0.13.0...v0.13.1) (2026-06-26)
+
+
+### Features
+
+* license by version ([#95](https://github.com/pcvolkmer/osc-variant/issues/95)) ([6eb99d8](https://github.com/pcvolkmer/osc-variant/commit/6eb99d8ae1e11ccbfeaa7b961506850059b2405a))
+
 ## [0.13.0](https://github.com/pcvolkmer/osc-variant/compare/v0.12.4...v0.13.0) (2026-06-25)
 
 
