@@ -151,6 +151,13 @@ pub struct BundleInfo {
     pub description: Option<String>,
     pub license: Option<String>,
     pub repository: Option<String>,
+    pub versions: Vec<BundleVersionInfo>,
+}
+
+pub struct BundleVersionInfo {
+    pub name: String,
+    pub version: String,
+    pub license: String,
 }
 
 impl Debug for BundleError {
@@ -422,18 +429,27 @@ pub fn search_bundle_versions(name: &str) -> Result<Vec<BundleInfo>, BundleError
             let name = bundle.name.clone();
             let description = bundle.description.clone().unwrap_or_default();
 
+            let info_xml = bundle
+                .versions
+                .iter()
+                .filter(|version| version.tag.is_some())
+                .map(InfoXML::from_bundle_version)
+                .next_back()
+                .unwrap_or(InfoXML {
+                    datum_xml: "".to_string(),
+                    name: "".to_string(),
+                    version: "".to_string(),
+                });
+
             BundleInfo {
                 name,
                 version: version.clone(),
                 latest_version: version,
-                info_xml: InfoXML {
-                    datum_xml: "".to_string(),
-                    name: "".to_string(),
-                    version: "".to_string(),
-                },
+                info_xml,
                 description: Some(description),
-                license: None,
+                license: bundle.license.clone(),
                 repository: None,
+                versions: sorted_version_info_desc(&bundle),
             }
         })
         .collect::<Vec<_>>();
@@ -494,7 +510,7 @@ pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> 
     )))?;
 
     let bundle_info = BundleInfo {
-        name: bundle.name,
+        name: bundle.name.clone(),
         version: requested_version.tag.clone().unwrap_or_default(),
         latest_version: latest_version.tag.clone().unwrap_or_default(),
         info_xml: InfoXML::from_bundle_version(requested_version),
@@ -504,6 +520,7 @@ pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> 
             None => bundle.license.clone(),
         },
         repository: bundle.repository.clone(),
+        versions: sorted_version_info_desc(&bundle),
     };
 
     Ok(bundle_info)
@@ -672,4 +689,32 @@ pub fn cleanup_bundle_objects() -> Result<(), BundleError> {
         });
 
     Ok(())
+}
+
+fn sorted_version_info_desc(bundle: &Bundle) -> Vec<BundleVersionInfo> {
+    let versions = bundle
+        .versions
+        .iter()
+        .map(|version| BundleVersionInfo {
+            name: version.name.clone(),
+            version: version.tag.clone().unwrap_or("-".to_string()),
+            license: match &version.license {
+                Some(license) => license.clone(),
+                None => bundle.license.clone().unwrap_or_default(),
+            },
+        })
+        .collect::<Vec<_>>();
+
+    let mut versions = versions
+        .into_iter()
+        .filter(|version| version.version.parse::<Version>().is_ok())
+        .collect::<Vec<_>>();
+
+    versions.sort_by(|a, b| {
+        let version_a: Version = a.version.clone().parse().unwrap_or(Version::new(0, 0, 0));
+        let version_b: Version = b.version.clone().parse().unwrap_or(Version::new(0, 0, 0));
+        version_b.cmp_precedence(&version_a)
+    });
+
+    versions
 }
