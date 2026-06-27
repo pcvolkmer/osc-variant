@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.2](https://github.com/pcvolkmer/osc-variant/compare/v0.13.1...v0.13.2) (2026-06-27)
+
+
+### Features
+
+* add BundleVersionInfo and add info_xml ([#97](https://github.com/pcvolkmer/osc-variant/issues/97)) ([66a0325](https://github.com/pcvolkmer/osc-variant/commit/66a0325e44b5f207bb2f8b364eea2ce37d49943c))
+
 ## [0.13.1](https://github.com/pcvolkmer/osc-variant/compare/v0.13.0...v0.13.1) (2026-06-26)
 
 
