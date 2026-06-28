@@ -129,14 +129,14 @@ von Bundles aktualisiert.
 
 Hierdurch ist es möglich, weitere OSC-Dateien aus einem zentralen Repository zu beziehen.
 
-## list
-Liste alle Bundles auf
-
 ## search
 Suche nach einem Bundle
 
 ## info
 Informationen zu einem Bundle
+
+## list
+Liste den Inhalt eines Bundles auf
 
 ## export
 Exportiere ein Bundle als OSC-Datei

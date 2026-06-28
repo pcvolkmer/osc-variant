@@ -187,9 +187,9 @@ Unterbefehle:
 
 ```
 Commands:
-  list    Liste alle Bundles auf
   search  Suche nach einem Bundle
   info    Infos zu einem Bundle
+  list    Liste den Inhalt eines Bundles auf
   export  Exportiere ein Bundle als OSC-Datei
 ```
 
