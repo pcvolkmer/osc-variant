@@ -144,6 +144,30 @@ pub enum SubCommand {
 
 #[derive(Subcommand)]
 pub enum BundleSubCommand {
+    #[command(about = "Suche nach einem Bundle")]
+    Search {
+        #[arg(help = "Name des Bundles)")]
+        bundle_name: String,
+        #[arg(help = "Maximale Anzahl", default_value_t = 10)]
+        limit: usize,
+    },
+    #[command(about = "Infos zu einem Bundle")]
+    Info {
+        #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
+        spec: BundleVersionSpec,
+    },
+    #[command(about = "Liste den Inhalt eines Bundles auf")]
+    List {
+        #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
+        spec: BundleVersionSpec,
+    },
+    #[command(about = "Exportiere ein Bundle als OSC-Datei")]
+    Export {
+        #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
+        spec: BundleVersionSpec,
+        #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
+        compact: bool,
+    },
     #[cfg(feature = "bundle-edit")]
     #[command(about = "Erstelle ein Bundle")]
     Create {
@@ -176,30 +200,6 @@ pub enum BundleSubCommand {
             help = "Lizenz der Version, wenn abweichend vom Bundle"
         )]
         license: Option<String>,
-    },
-    #[command(about = "Liste alle Bundles auf")]
-    List {
-        #[arg(help = "Maximale Anzahl", default_value_t = 10)]
-        limit: usize,
-    },
-    #[command(about = "Suche nach einem Bundle")]
-    Search {
-        #[arg(help = "Name des Bundles)")]
-        bundle_name: String,
-        #[arg(help = "Maximale Anzahl", default_value_t = 10)]
-        limit: usize,
-    },
-    #[command(about = "Infos zu einem Bundle")]
-    Info {
-        #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
-        spec: BundleVersionSpec,
-    },
-    #[command(about = "Exportiere ein Bundle als OSC-Datei")]
-    Export {
-        #[arg(help = "Bundle-Version-Spezifikation ('Bundle-Name'[@'Versions-Tag'])")]
-        spec: BundleVersionSpec,
-        #[arg(long = "compact", help = "Kompakte Ausgabe, ohne Einrücken (Optional)")]
-        compact: bool,
     },
     #[cfg(feature = "bundle-edit")]
     #[command(about = "Räume das Repository auf")]

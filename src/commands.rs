@@ -112,7 +112,7 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
                 message,
                 license,
             } => handle_add_bundle_version(bundle_name, file, tag, message, license)?,
-            BundleSubCommand::List { limit } => handle_search_bundle(String::new(), limit)?,
+            BundleSubCommand::List { spec } => handle_list_bundle_version(spec, verbose)?,
             BundleSubCommand::Search { bundle_name, limit } => {
                 handle_search_bundle(bundle_name, limit)?;
             }
@@ -556,6 +556,16 @@ fn handle_bundle_info(spec: BundleVersionSpec) -> Result<(), Box<dyn Error>> {
     if let Some(value) = bundle_info.repository {
         println!("{} {}", style("Repository:").green().bright(), value);
     }
+    Ok(())
+}
+
+fn handle_list_bundle_version(
+    spec: BundleVersionSpec,
+    verbose: bool,
+) -> Result<(), Box<dyn Error>> {
+    update_bundle_repo_or_exit!();
+    let data = export_bundle_versions(&spec)?;
+    OnkostarEditor::print_list(&data, verbose);
     Ok(())
 }
 
