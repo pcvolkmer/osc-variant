@@ -140,6 +140,7 @@ struct Object {
 pub enum BundleError {
     InitializationError,
     UpdateError,
+    ExportError,
     Other(String),
 }
 
@@ -176,6 +177,7 @@ impl Display for BundleError {
                 f,
                 "Fehler beim Aktualisieren des Bundles-Repositorys. Verbleibe auf altem Stand."
             ),
+            BundleError::ExportError => write!(f, "Fehler beim Exportieren des Bundles"),
             BundleError::Other(err) => write!(f, "{err}"),
         }
     }
@@ -565,6 +567,10 @@ pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor
             .filter_map(|id| fs::read_to_string(get_repo_path(&format!("/objects/{id}.json"))).ok())
             .filter_map(|json| serde_json::from_str::<PropertyCatalogue>(&json).ok())
             .collect::<Vec<_>>();
+        if property_catalogue.len() < bundle_version_content.property_catalogues.len() {
+            return Err(BundleError::ExportError);
+        }
+
         let data_catalogue = bundle_version_content
             .data_catalogues
             .iter()
@@ -572,6 +578,10 @@ pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor
             .filter_map(|id| fs::read_to_string(get_repo_path(&format!("/objects/{id}.json"))).ok())
             .filter_map(|json| serde_json::from_str::<DataCatalogue>(&json).ok())
             .collect::<Vec<_>>();
+        if data_catalogue.len() < bundle_version_content.data_catalogues.len() {
+            return Err(BundleError::ExportError);
+        }
+
         let data_form = bundle_version_content
             .data_forms
             .iter()
@@ -579,6 +589,10 @@ pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor
             .filter_map(|id| fs::read_to_string(get_repo_path(&format!("/objects/{id}.json"))).ok())
             .filter_map(|json| serde_json::from_str::<Form<DataFormType>>(&json).ok())
             .collect::<Vec<_>>();
+        if data_form.len() < bundle_version_content.data_forms.len() {
+            return Err(BundleError::ExportError);
+        }
+
         let unterformular = bundle_version_content
             .sub_forms
             .iter()
@@ -586,6 +600,9 @@ pub fn export_bundle_versions(spec: &BundleVersionSpec) -> Result<OnkostarEditor
             .filter_map(|id| fs::read_to_string(get_repo_path(&format!("/objects/{id}.json"))).ok())
             .filter_map(|json| serde_json::from_str::<Form<UnterformularType>>(&json).ok())
             .collect::<Vec<_>>();
+        if unterformular.len() < bundle_version_content.sub_forms.len() {
+            return Err(BundleError::ExportError);
+        }
 
         return Ok(OnkostarEditor {
             editor: Editor {
