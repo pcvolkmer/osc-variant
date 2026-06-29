@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.13.2](https://github.com/pcvolkmer/osc-variant/compare/v0.13.1...v0.13.2) (2026-06-29)
+
+
+### Features
+
+* add BundleVersionInfo and add info_xml ([#97](https://github.com/pcvolkmer/osc-variant/issues/97)) ([66a0325](https://github.com/pcvolkmer/osc-variant/commit/66a0325e44b5f207bb2f8b364eea2ce37d49943c))
+* return error if not all bundle parts are exported correctly ([#99](https://github.com/pcvolkmer/osc-variant/issues/99)) ([ad73790](https://github.com/pcvolkmer/osc-variant/commit/ad7379005e164e999793a8aaaf12b2c760e67db1))
+* show sha256 in bundle info ([#101](https://github.com/pcvolkmer/osc-variant/issues/101)) ([da24848](https://github.com/pcvolkmer/osc-variant/commit/da248483dc733c50d657c65f81bf7d48af232afe))
+* use sub-command 'list' to list bundle content ([#100](https://github.com/pcvolkmer/osc-variant/issues/100)) ([8c7b9bc](https://github.com/pcvolkmer/osc-variant/commit/8c7b9bc1773d38e74f728cd984898ac2c6864027))
+
 ## [0.13.1](https://github.com/pcvolkmer/osc-variant/compare/v0.13.0...v0.13.1) (2026-06-26)
 
 
