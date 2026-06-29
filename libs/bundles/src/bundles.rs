@@ -451,7 +451,7 @@ pub fn search_bundle_versions(name: &str) -> Result<Vec<BundleInfo>, BundleError
                 description: Some(description),
                 license: bundle.license.clone(),
                 repository: None,
-                versions: sorted_version_info_desc(&bundle),
+                versions: sorted_version_info_by_version(bundle),
             }
         })
         .collect::<Vec<_>>();
@@ -522,7 +522,7 @@ pub fn bundle_info(spec: &BundleVersionSpec) -> Result<BundleInfo, BundleError> 
             None => bundle.license.clone(),
         },
         repository: bundle.repository.clone(),
-        versions: sorted_version_info_desc(&bundle),
+        versions: sorted_version_info_by_version(&bundle),
     };
 
     Ok(bundle_info)
@@ -708,7 +708,7 @@ pub fn cleanup_bundle_objects() -> Result<(), BundleError> {
     Ok(())
 }
 
-fn sorted_version_info_desc(bundle: &Bundle) -> Vec<BundleVersionInfo> {
+fn sorted_version_info_by_version(bundle: &Bundle) -> Vec<BundleVersionInfo> {
     let versions = bundle
         .versions
         .iter()

@@ -117,7 +117,7 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
                 handle_search_bundle(bundle_name, limit)?;
             }
             BundleSubCommand::Info { spec } => {
-                handle_bundle_info(spec)?;
+                handle_bundle_info(spec, verbose)?;
             }
             BundleSubCommand::Export { spec, compact } => {
                 handle_export_bundle_version(spec, compact)?;
@@ -520,7 +520,7 @@ fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>
     Ok(())
 }
 
-fn handle_bundle_info(spec: BundleVersionSpec) -> Result<(), Box<dyn Error>> {
+fn handle_bundle_info(spec: BundleVersionSpec, _: bool) -> Result<(), Box<dyn Error>> {
     update_bundle_repo_or_exit!();
     let bundle_info = bundle_info(&spec).map_err(Box::new)?;
 
@@ -528,6 +528,8 @@ fn handle_bundle_info(spec: BundleVersionSpec) -> Result<(), Box<dyn Error>> {
     if let Some(value) = bundle_info.description {
         println!("{value}");
     }
+
+    println!();
 
     if bundle_info.version == bundle_info.latest_version {
         println!(
@@ -556,6 +558,32 @@ fn handle_bundle_info(spec: BundleVersionSpec) -> Result<(), Box<dyn Error>> {
     if let Some(value) = bundle_info.repository {
         println!("{} {}", style("Repository:").green().bright(), value);
     }
+
+    println!();
+
+    let data = export_bundle_versions(&spec)?;
+    let mut buf = String::new();
+    let mut serializer = Serializer::new(&mut buf);
+    serializer.indent(' ', 2);
+
+    data.serialize(serializer)
+        .map_err(|_| FileError::Writing("Cannot serialize result".to_string(), String::new()))?;
+
+    let output = &"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        .to_string()
+        .add(buf.as_str())
+        .add("\n");
+
+    let mut hasher = Sha256::new();
+    hasher.update(output);
+    let hash = hasher.finalize();
+
+    println!(
+        "{}{}",
+        style("sha256:").green(),
+        style(base16ct::lower::encode_string(&hash)).dim()
+    );
+
     Ok(())
 }
 
