@@ -617,4 +617,56 @@ impl Sortable for Entry {
 pub struct ReferencedDataForm {
     #[serde(rename = "ReferencedDataForm", default)]
     pub referenced_data_form: Vec<Form<DataFormReferenceType>>,
+
+    #[serde(rename = "ReferencedDataFormEntry", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub referenced_data_form_entry: Option<Vec<ReferencedDataFormEntry>>,
+}
+
+#[allow(clippy::struct_excessive_bools)]
+#[allow(clippy::struct_field_names)]
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct ReferencedDataFormEntry {
+    #[serde(rename = "Name")]
+    pub(crate) name: String,
+    #[serde(rename = "Active")]
+    active: bool,
+    #[serde(rename = "Readonly")]
+    read_only: bool,
+    #[serde(rename = "Printable")]
+    printable: bool,
+    #[serde(rename = "Position")]
+    pub position: String,
+    #[serde(rename = "MultipleChoice")]
+    multiple_choice: bool,
+    #[serde(rename = "DefaultValue", default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    default_value: Option<String>,
+    #[serde(rename = "Alignment")]
+    alignment: String,
+    #[serde(rename = "Direction")]
+    direction: String,
+    #[serde(rename = "ZuordnungErkrankung")]
+    zuordnung_erkrankung: String,
+    #[serde(rename = "NotSpecified")]
+    not_specified: bool,
+    #[serde(rename = "Speichern")]
+    speichern: String,
+    #[serde(rename = "LeerAusblenden")]
+    leer_ausblenden: bool,
+    #[serde(rename = "Min")]
+    min: u32,
+    #[serde(rename = "Max")]
+    max: u32,
+    #[serde(rename = "InUebersichtAnzeigen")]
+    in_uebersicht_anzeigen: bool,
+    #[serde(rename = "ProzedurdatumUebernehmen")]
+    prozedurdatum_uebernehmen: bool,
+    #[serde(rename = "SID")]
+    sid: String,
+    #[serde(rename = "GUID")]
+    pub guid: String,
+    #[serde(rename = "Revision")]
+    pub revision: u16,
 }
