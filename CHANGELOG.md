@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.3](https://github.com/pcvolkmer/osc-variant/compare/v0.13.2...v0.13.3) (2026-07-04)
+
+
+### Features
+
+* add optional ReferencedDataFormEntry to ReferencedDataForm ([#102](https://github.com/pcvolkmer/osc-variant/issues/102)) ([57751aa](https://github.com/pcvolkmer/osc-variant/commit/57751aa922f7f719c0985974cd3858e3351303ac))
+
 ## [0.13.2](https://github.com/pcvolkmer/osc-variant/compare/v0.13.1...v0.13.2) (2026-06-29)
 
 
