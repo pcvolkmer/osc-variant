@@ -1,4 +1,8 @@
 forms:
+  - name: 'DNPM UF ConsentMV Verlauf'
+    form_fields:
+      - name: version
+        default_value: "Version 02"
   - name: 'DNPM Klinik/Anamnese'
     form_fields:
       - name: Leitlinienstatus
@@ -10,19 +14,18 @@ forms:
     form_references:
       - name: MTB
         referenced_data_form: 'UKR.Tumorkonferenz'
-    menu_category:
-      name: Sonstiges
-      position: 99.0
-      column: 3
   - name: 'DNPM UF Therapielinie'
     form_fields:
       - name: Ergebnis
-        default_value: "x"
+        default_value: "X"
       - name: Beendigung
         default_value: "U"
       - name: Abbruchsgrund
         default_value: "u"
   - name: 'DNPM Therapieplan'
+    form_fields:
+      - name: statusbegruendung
+        default_value: ""
     form_references:
       - name: referstemtb
         referenced_data_form: 'UKR.Tumorkonferenz'
@@ -33,12 +36,3 @@ forms:
       - name: reftkreevaluation
         referenced_data_form: 'UKR.Tumorkonferenz'
         anzeige_auswahl: '{TK.shortdesc} vom {Datum}'
-    menu_category:
-      name: Sonstiges
-      position: 99.0
-      column: 3
-  - name: 'DNPM FollowUp'
-    menu_category:
-      name: Sonstiges
-      position: 100.0
-      column: 3
