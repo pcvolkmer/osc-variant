@@ -20,7 +20,6 @@
 use std::fmt::{Display, Formatter};
 use std::path::Path;
 
-use crate::checks::CheckNotice::{ErrorWithCode, Info};
 use console::style;
 use model::osc::form::{DataFormType, Form, UnterformularType};
 use model::osc::onkostar_editor::OnkostarEditor;
@@ -383,7 +382,7 @@ fn common_check<T>(form: &Form<T>) -> Vec<CheckNotice> {
     let mut result = vec![];
 
     if !missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
-        result.push(ErrorWithCode {
+        result.push(CheckNotice::ErrorWithCode {
             code: "2024-0005".to_string(),
             description: format!(
                 "Formular '{}' hat Formularverweise ohne Angabe des Formulars in: {}",
@@ -396,7 +395,7 @@ fn common_check<T>(form: &Form<T>) -> Vec<CheckNotice> {
     }
 
     if missing_forms_in_refs.is_empty() && !missing_forms_in_refs_legacy.is_empty() {
-        result.push(Info {
+        result.push(CheckNotice::Info {
             description: format!(
                 "Formular '{}' hat Formularverweise, die erst in neueren Onkostar-Versionen ab 2.14.0 funktionieren",
                 form.get_name()
@@ -419,7 +418,7 @@ impl Checkable for Form<DataFormType> {
                     .count()
                     == 0
                 {
-                    vec![ErrorWithCode {
+                    vec![CheckNotice::ErrorWithCode {
                         code: "2023-0002".to_string(),
                         description: format!(
                             "Formular '{}' hat keine Angabe zum Prozedurdatum",
@@ -444,7 +443,7 @@ impl Checkable for Form<DataFormType> {
 impl Checkable for Form<UnterformularType> {
     fn check(&self) -> Vec<CheckNotice> {
         let mut result = if self.hat_unterformulare {
-            vec![ErrorWithCode {
+            vec![CheckNotice::ErrorWithCode {
                 code: "2023-0001".to_string(),
                 description: format!(
                     "Unterformular '{}' mit Markierung 'hat Unterformulare'",

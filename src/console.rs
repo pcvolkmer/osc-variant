@@ -285,8 +285,8 @@ pub trait PrintableDiff {
     fn print_diff(&mut self, other: &mut Self, strict: bool);
     fn print_item_diff(
         title: &str,
-        list_a: &[impl Comparable + Named],
-        list_b: &[impl Comparable + Named],
+        list_a: &[impl Comparable],
+        list_b: &[impl Comparable],
         strict: bool,
     );
 }
@@ -340,8 +340,8 @@ impl PrintableDiff for OnkostarEditor {
 
     fn print_item_diff(
         title: &str,
-        list_a: &[impl Comparable + Named],
-        list_b: &[impl Comparable + Named],
+        list_a: &[impl Comparable],
+        list_b: &[impl Comparable],
         strict: bool,
     ) {
         println!("\n{}", style(title).underlined());
