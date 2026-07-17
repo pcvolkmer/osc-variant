@@ -103,7 +103,7 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
                 description,
                 license,
                 repository,
-            } => handle_create_bundle(bundle_name, description, license, repository)?,
+            } => handle_create_bundle(&bundle_name, &description, license, repository)?,
             #[cfg(feature = "bundle-edit")]
             BundleSubCommand::AddVersion {
                 bundle_name,
@@ -111,16 +111,16 @@ pub fn handle(command: SubCommand, verbose: bool) -> Result<(), Box<dyn Error>> 
                 tag,
                 message,
                 license,
-            } => handle_add_bundle_version(bundle_name, file, tag, message, license)?,
-            BundleSubCommand::List { spec } => handle_list_bundle_version(spec, verbose)?,
+            } => handle_add_bundle_version(&bundle_name, &file, tag, message, license)?,
+            BundleSubCommand::List { spec } => handle_list_bundle_version(&spec, verbose)?,
             BundleSubCommand::Search { bundle_name, limit } => {
-                handle_search_bundle(bundle_name, limit)?;
+                handle_search_bundle(&bundle_name, limit)?;
             }
             BundleSubCommand::Info { spec } => {
-                handle_bundle_info(spec, verbose)?;
+                handle_bundle_info(&spec, verbose)?;
             }
             BundleSubCommand::Export { spec, compact } => {
-                handle_export_bundle_version(spec, compact)?;
+                handle_export_bundle_version(&spec, compact)?;
             }
             #[cfg(feature = "bundle-edit")]
             BundleSubCommand::Cleanup => handle_cleanup_bundle_objects()?,
@@ -471,40 +471,40 @@ fn handle_export_notice_csv(inputfile: &str) -> Result<(), Box<dyn Error>> {
 
 #[cfg(feature = "bundle-edit")]
 fn handle_create_bundle(
-    name: String,
-    description: String,
+    name: &str,
+    description: &str,
     license: Option<String>,
     repository: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
     update_bundle_repo_or_exit!();
-    create_bundle(&name, &description, license, repository).map_err(Box::new)?;
+    create_bundle(name, description, license, repository).map_err(Box::new)?;
     Ok(())
 }
 
 #[cfg(feature = "bundle-edit")]
 fn handle_add_bundle_version(
-    name: String,
-    file: String,
+    name: &str,
+    file: &str,
     tag: Option<String>,
     message: Option<String>,
     license: Option<String>,
 ) -> Result<(), Box<dyn Error>> {
     update_bundle_repo_or_exit!();
-    let data = &mut FileReader::<OnkostarEditor>::read(&file)?;
-    add_bundle_version(&name, data, tag, message, license).map_err(Box::new)?;
+    let data = &mut FileReader::<OnkostarEditor>::read(file)?;
+    add_bundle_version(name, data, tag, message, license).map_err(Box::new)?;
     Ok(())
 }
 
-fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>> {
+fn handle_search_bundle(name: &str, limit: usize) -> Result<(), Box<dyn Error>> {
     update_bundle_repo_or_exit!();
-    let matches = search_bundle_versions(&name).map_err(Box::new)?;
+    let matches = search_bundle_versions(name).map_err(Box::new)?;
     for bundle_info in matches.iter().take(limit) {
         let formatted_name = format!(
             "{} = \"{}\"",
             bundle_info
                 .name
                 .clone()
-                .replace(&name, &style(&name).green().bold().bright().to_string()),
+                .replace(name, &style(&name).green().bold().bright().to_string()),
             bundle_info.version
         );
         let description = bundle_info.description.clone().unwrap_or_default();
@@ -520,9 +520,9 @@ fn handle_search_bundle(name: String, limit: usize) -> Result<(), Box<dyn Error>
     Ok(())
 }
 
-fn handle_bundle_info(spec: BundleVersionSpec, _: bool) -> Result<(), Box<dyn Error>> {
+fn handle_bundle_info(spec: &BundleVersionSpec, _: bool) -> Result<(), Box<dyn Error>> {
     update_bundle_repo_or_exit!();
-    let bundle_info = bundle_info(&spec).map_err(Box::new)?;
+    let bundle_info = bundle_info(spec).map_err(Box::new)?;
 
     println!("{}", style(bundle_info.name).bold().green().bright());
     if let Some(value) = bundle_info.description {
@@ -561,7 +561,7 @@ fn handle_bundle_info(spec: BundleVersionSpec, _: bool) -> Result<(), Box<dyn Er
 
     println!();
 
-    let data = export_bundle_versions(&spec)?;
+    let data = export_bundle_versions(spec)?;
     let mut buf = String::new();
     let mut serializer = Serializer::new(&mut buf);
     serializer.indent(' ', 2);
@@ -588,21 +588,21 @@ fn handle_bundle_info(spec: BundleVersionSpec, _: bool) -> Result<(), Box<dyn Er
 }
 
 fn handle_list_bundle_version(
-    spec: BundleVersionSpec,
+    spec: &BundleVersionSpec,
     verbose: bool,
 ) -> Result<(), Box<dyn Error>> {
     update_bundle_repo_or_exit!();
-    let data = export_bundle_versions(&spec)?;
+    let data = export_bundle_versions(spec)?;
     OnkostarEditor::print_list(&data, verbose);
     Ok(())
 }
 
 fn handle_export_bundle_version(
-    spec: BundleVersionSpec,
+    spec: &BundleVersionSpec,
     compact: bool,
 ) -> Result<(), Box<dyn Error>> {
     update_bundle_repo_or_exit!();
-    let data = export_bundle_versions(&spec)?;
+    let data = export_bundle_versions(spec)?;
 
     let mut buf = String::new();
 
