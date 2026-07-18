@@ -57,15 +57,13 @@ impl<Type> WithNotice for Form<Type> {
                             true
                         }
                 })
-                .flat_map(|entry| {
-                    Some(Notice {
-                        form: self.get_name(),
-                        form_field: entry.get_name(),
-                        form_field_description: entry.description.clone(),
-                        guid: entry.guid.clone(),
-                        html: entry.hinweis.clone().unwrap_or_default(),
-                        position: entry.position.clone(),
-                    })
+                .map(|entry| Notice {
+                    form: self.get_name(),
+                    form_field: entry.get_name(),
+                    form_field_description: entry.description.clone(),
+                    guid: entry.guid.clone(),
+                    html: entry.hinweis.clone().unwrap_or_default(),
+                    position: entry.position.clone(),
                 })
                 .collect()
         } else {

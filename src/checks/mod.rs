@@ -275,19 +275,33 @@ impl Checkable for OnkostarEditor {
     fn check(&self) -> Vec<CheckNotice> {
         fn requirement_error(
             form: &impl Comparable,
-            item: &impl Comparable,
-            t: &str,
-        ) -> CheckNotice {
-            CheckNotice::ErrorWithCode {
-                code: "2023-0004".to_string(),
-                description: format!(
-                    "'{}' hat einen Verweis auf zuvor nicht definiertes {t} '{}' (OSTARSUPP-13212)",
-                    form.get_name(),
-                    item.get_name()
-                ),
-                line: None,
-                example: None,
-            }
+            entry: &Requirement,
+        ) -> Option<(CheckNotice, String)> {
+            let t = match entry {
+                Requirement::DataFormReference(_) => "Formular",
+                Requirement::UnterformularReference(_) => "Unterformular",
+                _ => return None,
+            };
+
+            let item_name = match entry {
+                Requirement::DataFormReference(item) => item.get_name(),
+                Requirement::UnterformularReference(item) => item.get_name(),
+                _ => return None,
+            };
+
+            Some((
+                CheckNotice::ErrorWithCode {
+                    code: "2023-0004".to_string(),
+                    description: format!(
+                        "'{}' hat einen Verweis auf zuvor nicht definiertes {t} '{}' (OSTARSUPP-13212)",
+                        form.get_name(),
+                        item_name
+                    ),
+                    line: None,
+                    example: None,
+                },
+                item_name,
+            ))
         }
 
         // Inner form checks
@@ -314,40 +328,24 @@ impl Checkable for OnkostarEditor {
 
         self.editor.unterformular.iter().for_each(|form| {
             requirement_checked_forms.push(form.get_name());
-            form.get_required_entries(self)
-                .iter()
-                .for_each(|entry| match entry {
-                    Requirement::DataFormReference(item) => {
-                        if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, *item, "Formular"));
-                        }
-                    }
-                    Requirement::UnterformularReference(item) => {
-                        if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, *item, "Unterformular"));
-                        }
-                    }
-                    _ => {}
-                });
+            form.get_required_entries(self).iter().for_each(|entry| {
+                if let Some((check_notice, item_name)) = requirement_error(form, entry)
+                    && !requirement_checked_forms.contains(&item_name)
+                {
+                    result.push(check_notice);
+                }
+            });
         });
 
         self.editor.data_form.iter().for_each(|form| {
             requirement_checked_forms.push(form.get_name());
-            form.get_required_entries(self)
-                .iter()
-                .for_each(|entry| match entry {
-                    Requirement::DataFormReference(item) => {
-                        if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, *item, "Formular"));
-                        }
-                    }
-                    Requirement::UnterformularReference(item) => {
-                        if !requirement_checked_forms.contains(&item.get_name()) {
-                            result.push(requirement_error(form, *item, "Unterformular"));
-                        }
-                    }
-                    _ => {}
-                });
+            form.get_required_entries(self).iter().for_each(|entry| {
+                if let Some((check_notice, item_name)) = requirement_error(form, entry)
+                    && !requirement_checked_forms.contains(&item_name)
+                {
+                    result.push(check_notice);
+                }
+            });
         });
 
         result
